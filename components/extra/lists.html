@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List Components Pack</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc; color: #0f172a; padding: 3rem 1.5rem; line-height: 1.5;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+
+    .list-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .list-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a; }
+
+    /* 1. User Status List */
+    .user-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; }
+    .user-item:last-child { border-bottom: none; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #6366f1; color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .status-online { background: #10b981; }
+    .status-offline { background: #94a3b8; }
+
+    /* 2. Timeline List */
+    .timeline-item { position: relative; padding-left: 2rem; padding-bottom: 1.25rem; border-left: 2px solid #e2e8f0; }
+    .timeline-item:last-child { border-left: 2px solid transparent; padding-bottom: 0; }
+    .timeline-dot { position: absolute; left: -7px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: #4f46e5; border: 2px solid #fff; }
+
+    /* 3. Checkmark List */
+    .check-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .check-item { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: #334155; }
+    .check-icon { width: 20px; height: 20px; border-radius: 50%; background: #d1fae5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 style="font-size: 2rem; font-weight: 800;">Lists & Timelines Pack</h1>
+    <p style="color: #64748b; margin-top: 0.25rem;">Reusable list formats for team feeds, activity timeline, and features.</p>
+
+    <div class="grid">
+      <!-- User List -->
+      <div class="list-card">
+        <div class="list-title">👥 Team Members</div>
+        <div class="user-item">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div class="user-avatar">AR</div>
+            <div>
+              <div style="font-weight:600; font-size:0.9rem;">Alex Rivera</div>
+              <div style="font-size:0.75rem; color:#64748b;">Frontend Lead</div>
+            </div>
+          </div>
+          <span style="font-size:0.75rem; color:#10b981;"><span class="status-dot status-online"></span>Online</span>
+        </div>
+
+        <div class="user-item">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div class="user-avatar" style="background:#10b981;">SC</div>
+            <div>
+              <div style="font-weight:600; font-size:0.9rem;">Sarah Chen</div>
+              <div style="font-size:0.75rem; color:#64748b;">Backend Architect</div>
+            </div>
+          </div>
+          <span style="font-size:0.75rem; color:#94a3b8;"><span class="status-dot status-offline"></span>Offline</span>
+        </div>
+      </div>
+
+      <!-- Timeline List -->
+      <div class="list-card">
+        <div class="list-title">⏱️ Activity Timeline</div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div style="font-weight:600; font-size:0.875rem;">Merged PR #42 to Production</div>
+          <div style="font-size:0.75rem; color:#64748b; margin-top:0.15rem;">12 minutes ago by @alex</div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:#10b981;"></div>
+          <div style="font-weight:600; font-size:0.875rem;">DB Schema Migration Successful</div>
+          <div style="font-size:0.75rem; color:#64748b; margin-top:0.15rem;">1 hour ago</div>
+        </div>
+      </div>
+
+      <!-- Feature Checkmark List -->
+      <div class="list-card">
+        <div class="list-title">✅ Included Features Checklist</div>
+        <ul class="check-list">
+          <li class="check-item"><span class="check-icon">✓</span> Unlimited seat invitations for your team</li>
+          <li class="check-item"><span class="check-icon">✓</span> 99.99% guaranteed SLA uptime</li>
+          <li class="check-item"><span class="check-icon">✓</span> 24/7 Priority Discord support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

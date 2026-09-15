@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaaS Purchase Detail & Checkout</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #f8fafc; color: #0f172a; padding: 4rem 0; }
+    .checkout-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+      position: sticky;
+      top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="grid grid-cols-3 lg:grid-cols-1 gap-8">
+      <!-- Left Feature Overview -->
+      <div style="grid-column: span 2;">
+        <span class="badge badge-primary">SaaS License</span>
+        <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0.5rem 0 1rem;">ApexFlow Unlimited Team Pass</h1>
+        <p style="color: #64748b; font-size: 1.1rem; line-height: 1.6;">
+          Unlock full access to automated workflow builders, global edge deployments, and dedicated customer success.
+        </p>
+
+        <div style="margin: 2rem 0; background: #e0e7ff; border-radius: 16px; height: 320px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+          🎬 Video Showcase
+        </div>
+
+        <h3 style="font-weight: 700; margin-bottom: 1rem;">Included Features:</h3>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; color: #475569;">
+          <li>✓ Unlimited seat invitations for your team</li>
+          <li>✓ 99.99% guaranteed SLA uptime</li>
+          <li>✓ 30-day money-back refund policy</li>
+        </ul>
+      </div>
+
+      <!-- Right Checkout Card -->
+      <div>
+        <div class="checkout-card">
+          <div style="font-size: 0.875rem; color: #64748b;">Annual Plan</div>
+          <div style="font-size: 2.5rem; font-weight: 800; margin: 0.25rem 0 1.5rem;">$299.00 <span style="font-size: 0.9rem; color: #64748b;">/year</span></div>
+
+          <form onsubmit="event.preventDefault(); Toast.show({title:'Payment Authorized!', message:'Order ID: #SAAS-9982', type:'success'});">
+            <div class="form-group">
+              <label class="form-label">Cardholder Name</label>
+              <input type="text" class="form-input" placeholder="Alex Morgan" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Credit Card Number</label>
+              <input type="text" class="form-input" placeholder="4532 •••• •••• 8892" required>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="form-group">
+                <label class="form-label">Expiry</label>
+                <input type="text" class="form-input" placeholder="MM/YY" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">CVC</label>
+                <input type="password" class="form-input" placeholder="123" required maxLength="4">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top: 1rem;">Complete Purchase ($299)</button>
+          </form>
+
+          <div style="text-align: center; margin-top: 1rem; font-size: 0.775rem; color: #94a3b8;">
+            🔒 256-bit SSL Encrypted Checkout
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

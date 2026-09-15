@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings Split Profile</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #f8fafc; color: #0f172a; padding: 3rem 0; }
+    .settings-container {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    .settings-sidebar {
+      background: #f1f5f9;
+      padding: 1.5rem 1rem;
+      border-right: 1px solid #e2e8f0;
+    }
+    .settings-nav-item {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      color: #64748b;
+      cursor: pointer;
+      margin-bottom: 0.25rem;
+    }
+    .settings-nav-item.active { background: #ffffff; color: var(--primary); font-weight: 600; box-shadow: var(--shadow-sm); }
+  </style>
+</head>
+<body>
+
+  <div class="container" style="max-width: 960px;">
+    <div class="settings-container grid grid-cols-3 md:grid-cols-1">
+      <!-- Left Sidebar Nav -->
+      <div class="settings-sidebar">
+        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; padding: 0 0.5rem;">Account Settings</div>
+        <div class="settings-nav-item active">👤 General Info</div>
+        <div class="settings-nav-item">🔒 Security & Auth</div>
+        <div class="settings-nav-item">🔔 Notifications</div>
+        <div class="settings-nav-item">⚡ Connected Apps</div>
+      </div>
+
+      <!-- Right Form Content -->
+      <div style="grid-column: span 2; padding: 2rem;">
+        <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 1.5rem;">Security & Password</h2>
+
+        <form onsubmit="event.preventDefault(); Toast.show({title:'Password Updated', type:'success'});">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-input" placeholder="••••••••">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-input" placeholder="••••••••">
+          </div>
+
+          <div class="form-group" style="margin-top: 1.5rem;">
+            <div class="flex justify-between items-center">
+              <div>
+                <div style="font-weight: 600; font-size: 0.95rem;">Two-Factor Authentication (2FA)</div>
+                <div style="color: #64748b; font-size: 0.8rem;">Add an extra layer of security using Google Authenticator</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Update Security Preferences</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

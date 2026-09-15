@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Dark Futuristic Landing Page</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body {
+      background: #030712;
+      color: #f9fafb;
+    }
+    .ai-hero {
+      padding: 7rem 0 5rem;
+      text-align: center;
+      position: relative;
+    }
+    .glow-bg {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.2) 50%, transparent 80%);
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .prompt-box {
+      max-width: 680px;
+      margin: 3rem auto 0;
+      background: rgba(17, 24, 39, 0.8);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-xl);
+      padding: 0.75rem 0.75rem 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+    }
+    .prompt-input {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      flex: 1;
+      outline: none;
+    }
+    .prompt-input::placeholder { color: #6b7280; }
+  </style>
+</head>
+<body>
+
+  <div class="glow-bg"></div>
+
+  <nav class="container flex justify-between items-center" style="padding: 1.5rem 0;">
+    <div class="flex items-center gap-2">
+      <div style="width:36px; height:36px; background:linear-gradient(135deg, #a855f7, #3b82f6); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff;">⚡</div>
+      <span style="font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em;">Synapse AI</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="btn btn-ghost" style="color:#9ca3af;">Docs</button>
+      <button class="btn btn-primary" style="background: linear-gradient(135deg, #a855f7, #3b82f6); border:none;">Launch App</button>
+    </div>
+  </nav>
+
+  <section class="container ai-hero">
+    <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border:1px solid rgba(168, 85, 247, 0.3); padding:0.4rem 1rem;">
+      ✨ Introducing Synapse LLM-4 Omni
+    </span>
+
+    <h1 style="font-size: 4rem; font-weight: 800; line-height: 1.1; margin-top: 1.5rem; letter-spacing: -0.03em;">
+      Think bigger. <br>
+      <span style="background: linear-gradient(135deg, #c084fc 0%, #60a5fa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Build autonomous workflows.</span>
+    </h1>
+
+    <p style="color: #9ca3af; font-size: 1.25rem; max-width: 600px; margin: 1.5rem auto 0;">
+      Turn multi-step prompts into full-stack web applications in under 60 seconds.
+    </p>
+
+    <div class="prompt-box">
+      <input type="text" class="prompt-input" placeholder="Ask Synapse: Create a full SaaS landing page with dark theme..." value="Build a crypto dashboard with live chart preview">
+      <button class="btn btn-primary" style="background: linear-gradient(135deg, #a855f7, #3b82f6); border:none; padding: 0.75rem 1.5rem;" onclick="Toast.show({title:'Generating App UI...', type:'primary'})">
+        Generate ✨
+      </button>
+    </div>
+  </section>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

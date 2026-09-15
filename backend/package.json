@@ -1,0 +1,17 @@
+{
+  "name": "hackathon-backend-suite",
+  "version": "1.0.0",
+  "description": "Zero-dependency, plug-and-play Express backend suite for hackathons",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["hackathon", "express", "backend", "quickstart"],
+  "author": "Antigravity UI",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

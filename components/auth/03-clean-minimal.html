@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean Minimal Auth</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body {
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .minimal-card {
+      width: 100%;
+      max-width: 400px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="minimal-card">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div style="width: 44px; height: 44px; background: #0f172a; color: #fff; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">M</div>
+      <h2 style="font-size: 1.35rem; font-weight: 700; color: #0f172a;">Sign in to Minimal</h2>
+      <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">Simple, clean workflow management</p>
+    </div>
+
+    <form onsubmit="event.preventDefault(); Toast.show({title:'Signed In', type:'success'});">
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" class="form-input" placeholder="you@domain.com" required>
+      </div>
+
+      <div class="form-group">
+        <div class="flex justify-between items-center">
+          <label class="form-label">Password</label>
+          <a href="#" style="font-size: 0.775rem;">Forgot?</a>
+        </div>
+        <input type="password" class="form-input" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full" style="background:#0f172a; margin-top:0.5rem;">Continue</button>
+    </form>
+
+    <div style="margin-top: 1.75rem; text-align: center; font-size: 0.85rem; color: #64748b;">
+      New user? <a href="#" style="color: #0f172a; font-weight: 600;">Create account</a>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

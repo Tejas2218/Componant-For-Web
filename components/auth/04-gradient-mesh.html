@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibrant Gradient Mesh Glass Auth</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                  radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                  radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%), 
+                  radial-gradient(at 100% 100%, hsla(242,44%,20%,1) 0, transparent 50%), 
+                  radial-gradient(at 0% 100%, hsla(200,60%,20%,1) 0, transparent 50%);
+      background-color: #0b0f19;
+    }
+    .mesh-glass-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem 2rem;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mesh-glass-card">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h2 style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em;">Welcome to Prism</h2>
+      <p style="font-size: 0.875rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Next-generation generative studio</p>
+    </div>
+
+    <form onsubmit="event.preventDefault(); Toast.show({title:'Prism Access Granted', type:'success'});">
+      <div class="form-group">
+        <label class="form-label" style="color:rgba(255,255,255,0.9);">Email</label>
+        <input type="email" class="form-input" style="background:rgba(0,0,0,0.25); border-color:rgba(255,255,255,0.15); color:#fff;" placeholder="creator@prism.ai" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="color:rgba(255,255,255,0.9);">Password</label>
+        <input type="password" class="form-input" style="background:rgba(0,0,0,0.25); border-color:rgba(255,255,255,0.15); color:#fff;" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-full btn-lg" style="background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); color:#fff; border:none; font-weight:600; margin-top:1rem;">
+        Enter Studio
+      </button>
+    </form>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

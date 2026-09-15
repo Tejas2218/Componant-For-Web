@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaaS Pricing Catalog</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #f8fafc; color: #0f172a; padding: 4rem 0; }
+    .pricing-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-xl);
+      padding: 2.25rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s;
+    }
+    .pricing-card.popular {
+      border: 2px solid var(--primary);
+      box-shadow: 0 20px 40px var(--primary-glow);
+      position: relative;
+    }
+    .popular-tag {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: #fff;
+      padding: 0.25rem 1rem;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div style="text-align: center; max-width: 600px; margin: 0 auto 3rem;">
+      <h1 style="font-size: 2.5rem; font-weight: 800;">Simple, transparent pricing</h1>
+      <p style="color: #64748b; margin-top: 0.5rem;">Choose the plan that fits your growth. Cancel anytime.</p>
+
+      <!-- Billing Toggle -->
+      <div class="flex items-center justify-center gap-3" style="margin-top: 1.5rem;">
+        <span style="font-weight: 600;">Monthly</span>
+        <label class="switch">
+          <input type="checkbox" id="billing-toggle" onchange="togglePricing(this)">
+          <span class="slider"></span>
+        </label>
+        <span style="font-weight: 600;">Yearly</span>
+        <span class="badge badge-success">Save 20%</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 md:grid-cols-1 gap-8">
+      <!-- Starter Tier -->
+      <div class="pricing-card">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 700;">Starter</h3>
+          <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.25rem;">Ideal for hobby projects & hackathons</p>
+          <div style="margin: 1.5rem 0;">
+            <span class="price-val" style="font-size: 2.75rem; font-weight: 800;">$0</span>
+            <span style="color: #64748b;">/month</span>
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem; color: #475569;">
+            <li>✓ Up to 3 projects</li>
+            <li>✓ Community support</li>
+            <li>✓ 5GB cloud storage</li>
+          </ul>
+        </div>
+        <button class="btn btn-outline btn-full" style="margin-top: 2rem;" onclick="Toast.show({title:'Free Starter Active', type:'info'})">Get Started Free</button>
+      </div>
+
+      <!-- Pro Tier (Popular) -->
+      <div class="pricing-card popular">
+        <div class="popular-tag">Most Popular</div>
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 700;">Pro SaaS</h3>
+          <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.25rem;">For scaling startups and active teams</p>
+          <div style="margin: 1.5rem 0;">
+            <span class="price-val" id="pro-price" style="font-size: 2.75rem; font-weight: 800;">$29</span>
+            <span style="color: #64748b;">/month</span>
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem; color: #475569;">
+            <li>✓ Unlimited active projects</li>
+            <li>✓ Priority 24/7 SLA support</li>
+            <li>✓ 100GB cloud storage</li>
+            <li>✓ Custom domain SSL</li>
+          </ul>
+        </div>
+        <button class="btn btn-primary btn-full" style="margin-top: 2rem;" onclick="Toast.show({title:'Pro Trial Started', type:'success'})">Start 14-Day Free Trial</button>
+      </div>
+
+      <!-- Enterprise Tier -->
+      <div class="pricing-card">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 700;">Enterprise</h3>
+          <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.25rem;">Dedicated infrastructure & compliance</p>
+          <div style="margin: 1.5rem 0;">
+            <span class="price-val" id="ent-price" style="font-size: 2.75rem; font-weight: 800;">$99</span>
+            <span style="color: #64748b;">/month</span>
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem; color: #475569;">
+            <li>✓ Dedicated VPC nodes</li>
+            <li>✓ Custom SOC2 audit logs</li>
+            <li>✓ Dedicated account manager</li>
+          </ul>
+        </div>
+        <button class="btn btn-outline btn-full" style="margin-top: 2rem;" onclick="Toast.show({title:'Sales Contacted', type:'info'})">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+  <script>
+    function togglePricing(checkbox) {
+      document.getElementById('pro-price').textContent = checkbox.checked ? '$23' : '$29';
+      document.getElementById('ent-price').textContent = checkbox.checked ? '$79' : '$99';
+    }
+  </script>
+</body>
+</html>

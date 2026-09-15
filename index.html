@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hackathon UI Components - Zero-Dependency Showcase Catalog</title>
+  <link rel="stylesheet" href="css/hackathon-ui.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: var(--font-sans);
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Left Sidebar Navigation */
+    .catalog-sidebar {
+      width: 320px;
+      background: #1e293b;
+      border-right: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    
+    .catalog-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #334155;
+    }
+
+    .catalog-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .category-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 1.25rem 0 0.5rem 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-md);
+      color: #cbd5e1;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: #334155;
+      color: #6366f1;
+    }
+
+    /* Main Preview Stage */
+    .catalog-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #090d16;
+      min-width: 0;
+    }
+
+    .stage-bar {
+      height: 64px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+    }
+
+    .stage-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+      transition: max-width 0.3s;
+    }
+
+    .viewport-btn {
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .viewport-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Nav -->
+  <aside class="catalog-sidebar">
+    <div class="catalog-header">
+      <div class="flex items-center gap-2">
+        <div style="width:36px; height:36px; background:var(--accent-gradient); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff;">⚡</div>
+        <div>
+          <div style="font-weight:800; font-size:1.15rem; color:#fff;">Hackathon UI</div>
+          <div style="font-size:0.75rem; color:#94a3b8;">Standalone Self-Contained Components</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="catalog-nav">
+      <!-- 1. AUTH -->
+      <div class="category-title">1. Login & Registration</div>
+      <div class="nav-item active" onclick="loadComponent('components/auth/01-dark-saas.html', this)">
+        <span>Dark SaaS Auth</span>
+        <span class="badge badge-primary">Dark</span>
+      </div>
+      <div class="nav-item" onclick="loadComponent('components/auth/02-split-screen.html', this)">
+        <span>Split Screen Auth</span>
+        <span class="badge badge-neutral">Split</span>
+      </div>
+      <div class="nav-item" onclick="loadComponent('components/auth/03-clean-minimal.html', this)">
+        <span>Clean Minimal Auth</span>
+        <span class="badge badge-neutral">Minimal</span>
+      </div>
+      <div class="nav-item" onclick="loadComponent('components/auth/04-gradient-mesh.html', this)">
+        <span>Vibrant Gradient Mesh</span>
+        <span class="badge badge-warning">Glass</span>
+      </div>
+      <div class="nav-item" onclick="loadComponent('components/auth/05-neumorphic-soft.html', this)">
+        <span>Neumorphic Soft UI</span>
+        <span class="badge badge-success">Soft</span>
+      </div>
+
+      <!-- 2. LANDING -->
+      <div class="category-title">2. Home & Landing Pages</div>
+      <div class="nav-item" onclick="loadComponent('components/landing/01-saas-tech.html', this)">Modern SaaS Tech</div>
+      <div class="nav-item" onclick="loadComponent('components/landing/02-ai-dark-futuristic.html', this)">AI Dark Futuristic</div>
+      <div class="nav-item" onclick="loadComponent('components/landing/03-ecommerce-consumer.html', this)">E-Commerce Consumer</div>
+      <div class="nav-item" onclick="loadComponent('components/landing/04-developer-tooling.html', this)">Developer & API Tooling</div>
+      <div class="nav-item" onclick="loadComponent('components/landing/05-b2b-corporate.html', this)">B2B Corporate Clean</div>
+
+      <!-- 3. DASHBOARDS -->
+      <div class="category-title">3. Dashboard UI</div>
+      <div class="nav-item" onclick="loadComponent('components/dashboard/01-analytics-dark.html', this)">SaaS Analytics Dark</div>
+      <div class="nav-item" onclick="loadComponent('components/dashboard/02-fintech-glass.html', this)">Fintech Glassmorphism</div>
+      <div class="nav-item" onclick="loadComponent('components/dashboard/03-kanban-project.html', this)">Kanban Project Board</div>
+      <div class="nav-item" onclick="loadComponent('components/dashboard/04-creative-minimal.html', this)">Creative Studio Admin</div>
+      <div class="nav-item" onclick="loadComponent('components/dashboard/05-vendor-store.html', this)">Vendor Store Admin</div>
+
+      <!-- 4. PROFILES -->
+      <div class="category-title">4. Profile Pages</div>
+      <div class="nav-item" onclick="loadComponent('components/profile/01-modern-saas-user.html', this)">Modern SaaS User</div>
+      <div class="nav-item" onclick="loadComponent('components/profile/02-developer-creator.html', this)">Developer / Creator Tech</div>
+      <div class="nav-item" onclick="loadComponent('components/profile/03-settings-split.html', this)">Settings Split Profile</div>
+      <div class="nav-item" onclick="loadComponent('components/profile/04-glass-floating.html', this)">Glass Floating Profile</div>
+      <div class="nav-item" onclick="loadComponent('components/profile/05-neumorphic-profile.html', this)">Neumorphic Soft Profile</div>
+
+      <!-- 5. PRODUCT LISTS -->
+      <div class="category-title">5. Product & Service Lists</div>
+      <div class="nav-item" onclick="loadComponent('components/product-list/01-ecommerce-grid.html', this)">E-Commerce Grid</div>
+      <div class="nav-item" onclick="loadComponent('components/product-list/02-saas-pricing-catalog.html', this)">SaaS 3-Tier Pricing</div>
+      <div class="nav-item" onclick="loadComponent('components/product-list/03-directory-tool-list.html', this)">Product Hunt Directory</div>
+      <div class="nav-item" onclick="loadComponent('components/product-list/04-dark-nft-crypto.html', this)">Web3 NFT Marketplace</div>
+      <div class="nav-item" onclick="loadComponent('components/product-list/05-minimal-card-grid.html', this)">Minimal Object Grid</div>
+
+      <!-- 6. PRODUCT DETAILS -->
+      <div class="category-title">6. Product Detail Pages</div>
+      <div class="nav-item" onclick="loadComponent('components/product-detail/01-ecommerce-detail.html', this)">E-Commerce Detail</div>
+      <div class="nav-item" onclick="loadComponent('components/product-detail/02-saas-checkout-detail.html', this)">SaaS Purchase & Checkout</div>
+      <div class="nav-item" onclick="loadComponent('components/product-detail/03-dark-tech-specs.html', this)">Dark Tech Hardware Specs</div>
+      <div class="nav-item" onclick="loadComponent('components/product-detail/04-minimal-clean-detail.html', this)">Minimal Clean Detail</div>
+      <div class="nav-item" onclick="loadComponent('components/product-detail/05-glass-showcase-detail.html', this)">Glassmorphic Showcase Detail</div>
+
+      <!-- 7. EXTRA COMPONENTS -->
+      <div class="category-title">7. Extra Components Variety Pack</div>
+      <div class="nav-item" onclick="loadComponent('components/extra/buttons.html', this)">Buttons & Color Schemes</div>
+      <div class="nav-item" onclick="loadComponent('components/extra/cards.html', this)">Cards Variety Pack</div>
+      <div class="nav-item" onclick="loadComponent('components/extra/loaders.html', this)">Loaders & Spinners</div>
+      <div class="nav-item" onclick="loadComponent('components/extra/lists.html', this)">Lists & Timelines</div>
+      <div class="nav-item" onclick="loadComponent('components/extra/forms.html', this)">Forms & Color Palettes</div>
+      <div class="nav-item" onclick="loadComponent('components/extra/badges.html', this)">Badges & Status Dots</div>
+      <div class="nav-item" onclick="loadComponent('components/extra/modals.html', this)">Modals (3 Styles)</div>
+      <div class="nav-item" onclick="loadComponent('components/extra/toasts.html', this)">Toasts Engine</div>
+    </nav>
+  </aside>
+
+  <!-- Stage -->
+  <main class="catalog-main">
+    <div class="stage-bar">
+      <div class="flex items-center gap-3">
+        <span id="current-comp-name" style="font-weight: 700; font-size: 1.1rem; color: #fff;">Dark SaaS Auth</span>
+        <a id="open-new-tab" href="components/auth/01-dark-saas.html" target="_blank" class="btn btn-sm btn-outline" style="border-color:#334155; color:#cbd5e1;">🔗 Open Standalone</a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button class="viewport-btn active" onclick="setViewport('100%', this)">🖥️ Desktop</button>
+        <button class="viewport-btn" onclick="setViewport('768px', this)">📱 Tablet</button>
+        <button class="viewport-btn" onclick="setViewport('375px', this)">📱 Mobile</button>
+        <button class="btn btn-sm btn-primary" onclick="copyComponentPath()">📋 Copy File Path</button>
+      </div>
+    </div>
+
+    <div style="flex:1; display:flex; justify-content:center; align-items:center; overflow:hidden;">
+      <iframe id="stage-frame" class="stage-iframe" src="components/auth/01-dark-saas.html"></iframe>
+    </div>
+  </main>
+
+  <script src="js/hackathon-ui.js"></script>
+  <script>
+    let activePath = 'components/auth/01-dark-saas.html';
+
+    function loadComponent(path, element) {
+      activePath = path;
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      
+      const frame = document.getElementById('stage-frame');
+      frame.src = path;
+      
+      const compName = element.querySelector('span') ? element.querySelector('span').textContent : element.textContent;
+      document.getElementById('current-comp-name').textContent = compName;
+      document.getElementById('open-new-tab').href = path;
+    }
+
+    function setViewport(width, btn) {
+      document.querySelectorAll('.viewport-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const frame = document.getElementById('stage-frame');
+      frame.style.maxWidth = width;
+      frame.style.margin = width === '100%' ? '0' : '0 auto';
+    }
+
+    function copyComponentPath() {
+      navigator.clipboard.writeText(activePath);
+      Toast.show({
+        title: 'File Path Copied!',
+        message: activePath,
+        type: 'success'
+      });
+    }
+  </script>
+</body>
+</html>

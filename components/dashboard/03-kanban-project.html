@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Project Management Dashboard</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #f1f5f9; color: #0f172a; min-height: 100vh; }
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 900px) {
+      .kanban-board { grid-template-columns: 1fr; }
+    }
+    .column {
+      background: #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      min-height: 500px;
+    }
+    .column-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    .task-card {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 0.85rem;
+      box-shadow: var(--shadow-sm);
+      cursor: grab;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .task-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+    <!-- Top Header -->
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 style="font-size: 1.75rem; font-weight: 800;">Sprint #42 - Hackathon MVP</h1>
+          <span class="badge badge-primary">Active Sprint</span>
+        </div>
+        <p style="color: #64748b; font-size: 0.9rem;">Target completion: 24 hours</p>
+      </div>
+      <button class="btn btn-primary" onclick="Toast.show({title:'New Task Added', type:'success'})">+ Add Task</button>
+    </div>
+
+    <!-- Kanban Board Columns -->
+    <div class="kanban-board">
+      <!-- To Do Column -->
+      <div class="column">
+        <div class="column-header">
+          <span>📋 To Do (2)</span>
+          <span class="badge badge-neutral">2</span>
+        </div>
+        <div class="task-card">
+          <span class="badge badge-warning" style="margin-bottom: 0.5rem;">Frontend</span>
+          <h4 style="font-weight: 600; font-size: 0.95rem;">Design Glassmorphism Login</h4>
+          <p style="color: #64748b; font-size: 0.8rem; margin-top: 0.25rem;">Create modern dark mode auth card with validation.</p>
+        </div>
+        <div class="task-card">
+          <span class="badge badge-danger" style="margin-bottom: 0.5rem;">High Priority</span>
+          <h4 style="font-weight: 600; font-size: 0.95rem;">Integrate Stripe Checkout API</h4>
+          <p style="color: #64748b; font-size: 0.8rem; margin-top: 0.25rem;">Wire webhook endpoints for subscription upgrades.</p>
+        </div>
+      </div>
+
+      <!-- In Progress Column -->
+      <div class="column">
+        <div class="column-header">
+          <span>⚡ In Progress (1)</span>
+          <span class="badge badge-primary">1</span>
+        </div>
+        <div class="task-card" style="border-left: 4px solid var(--primary);">
+          <span class="badge badge-primary" style="margin-bottom: 0.5rem;">Core Architecture</span>
+          <h4 style="font-weight: 600; font-size: 0.95rem;">Build Hackathon Component Library</h4>
+          <p style="color: #64748b; font-size: 0.8rem; margin-top: 0.25rem;">Assemble zero-dependency HTML/CSS/JS snippets.</p>
+        </div>
+      </div>
+
+      <!-- Completed Column -->
+      <div class="column">
+        <div class="column-header">
+          <span>✅ Completed (2)</span>
+          <span class="badge badge-success">2</span>
+        </div>
+        <div class="task-card">
+          <span class="badge badge-success" style="margin-bottom: 0.5rem;">Done</span>
+          <h4 style="font-weight: 600; font-size: 0.95rem;">Set up Git Repository</h4>
+          <p style="color: #64748b; font-size: 0.8rem; margin-top: 0.25rem;">Configured CI/CD deployment pipeline.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

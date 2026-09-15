@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glassmorphic Showcase Detail Page</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #4c1d95 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .glass-detail-box {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-xl);
+      padding: 3rem;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glass-detail-box grid grid-cols-2 lg:grid-cols-1 gap-8 items-center">
+    <div style="background: rgba(255,255,255,0.1); border-radius: 20px; height: 300px; display: flex; align-items: center; justify-content: center; font-size: 5rem;">
+      💎
+    </div>
+
+    <div>
+      <span class="badge" style="background: rgba(168,85,247,0.25); color: #c084fc;">Exclusive Edition</span>
+      <h1 style="font-size: 2.25rem; font-weight: 800; margin: 0.5rem 0 1rem;">Prism Glass Keycap Set</h1>
+      <p style="opacity: 0.8; line-height: 1.6; margin-bottom: 1.5rem;">Custom artisan polycarbonate keycaps with dynamic light diffusion for mechanical keyboards.</p>
+      
+      <div style="font-size: 2rem; font-weight: 800; color: #a855f7; margin-bottom: 1.5rem;">$89.00 ETH</div>
+
+      <button class="btn btn-lg btn-full" style="background: linear-gradient(135deg, #a855f7, #3b82f6); border:none; color:#fff;" onclick="Toast.show({title:'Pre-order Reserved!', type:'success'})">Reserve Pre-Order</button>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+{
+  "users": [
+    {
+      "id": "usr_101",
+      "name": "Alex Rivera",
+      "email": "alex@company.com",
+      "password": "password123",
+      "role": "Admin",
+      "bio": "Building open source UI frameworks & scaling high-performance web apps.",
+      "avatar": "AR",
+      "company": "TechCorp",
+      "createdAt": "2026-09-15T17:05:35.793Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod_1",
+      "name": "Wireless ANC Headphones",
+      "description": "60-hour battery life with studio spatial sound.",
+      "price": 199,
+      "originalPrice": 249,
+      "rating": 4.9,
+      "reviewsCount": 128,
+      "category": "Audio",
+      "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80",
+      "inStock": true
+    },
+    {
+      "id": "prod_2",
+      "name": "Smartwatch Ultra v2",
+      "description": "Titanium chassis, ECG sensor, 50m water resistant.",
+      "price": 349,
+      "rating": 4.8,
+      "reviewsCount": 94,
+      "category": "Wearables",
+      "image": "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500&auto=format&fit=crop&q=80",
+      "inStock": true
+    },
+    {
+      "id": "prod_3",
+      "name": "Developer Mechanical Keyboard",
+      "description": "Hot-swappable tactile switches & RGB backlit.",
+      "price": 149,
+      "rating": 5,
+      "reviewsCount": 42,
+      "category": "Peripherals",
+      "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500&auto=format&fit=crop&q=80",
+      "inStock": true
+    }
+  ],
+  "cart": [],
+  "kanbanTasks": [
+    {
+      "id": "task_1",
+      "title": "Design Glassmorphism Login",
+      "description": "Create dark mode auth card with validation.",
+      "column": "todo",
+      "priority": "High"
+    },
+    {
+      "id": "task_2",
+      "title": "Integrate Stripe Checkout API",
+      "description": "Wire webhook endpoints for upgrades.",
+      "column": "todo",
+      "priority": "Critical"
+    },
+    {
+      "id": "task_3",
+      "title": "Build Hackathon Component Suite",
+      "description": "Assemble zero-dependency HTML/CSS/JS snippets.",
+      "column": "in_progress",
+      "priority": "Medium"
+    },
+    {
+      "id": "task_4",
+      "title": "Set up Git Repository",
+      "description": "Configured CI/CD deployment pipeline.",
+      "column": "done",
+      "priority": "Normal"
+    }
+  ],
+  "dashboardStats": {
+    "totalRevenue": "$124,500",
+    "activeUsers": "45,210",
+    "conversionRate": "3.84%",
+    "churnRate": "1.12%",
+    "revenueChange": "+18.4%"
+  },
+  "tools": [
+    {
+      "id": "tool_1",
+      "name": "AutoCode AI",
+      "category": "Developer Tools",
+      "description": "Generate production React/Vue code from Figma.",
+      "upvotes": 482
+    },
+    {
+      "id": "tool_2",
+      "name": "MindMap Flow",
+      "category": "Productivity",
+      "description": "Infinite canvas brainstorming tool for teams.",
+      "upvotes": 319
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Commerce Grid with Category Filters</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #f8fafc; color: #0f172a; padding-bottom: 4rem; }
+    .product-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+    .product-img {
+      height: 200px;
+      width: 100%;
+      object-fit: cover;
+      background: #f1f5f9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" style="padding-top: 3rem;">
+    <div class="flex justify-between items-center" style="margin-bottom: 2rem;">
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 800;">Featured Electronics</h1>
+        <p style="color: #64748b; font-size: 0.95rem;">Showing 24 products for Hackathon Gear</p>
+      </div>
+      <input type="text" class="form-input" style="width: 260px;" placeholder="Search products...">
+    </div>
+
+    <div class="grid grid-cols-3 md:grid-cols-1 gap-6">
+      <!-- Product Card 1 -->
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80" class="product-img" alt="Product">
+        <div style="padding: 1.25rem;">
+          <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+            <span class="badge badge-primary">Best Seller</span>
+            <span style="font-weight: 700; color: #10b981;">★ 4.9 (128)</span>
+          </div>
+          <h3 style="font-weight: 700; font-size: 1.1rem;">Wireless ANC Headphones</h3>
+          <p style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem;">60-hour battery life with studio spatial sound.</p>
+          <div class="flex justify-between items-center" style="margin-top: 1.25rem;">
+            <div style="font-size: 1.35rem; font-weight: 800;">$199.00</div>
+            <button class="btn btn-primary btn-sm" onclick="Toast.show({title:'Added to Cart', type:'success'})">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 2 -->
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500&auto=format&fit=crop&q=80" class="product-img" alt="Product">
+        <div style="padding: 1.25rem;">
+          <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+            <span class="badge badge-success">New</span>
+            <span style="font-weight: 700; color: #10b981;">★ 4.8 (94)</span>
+          </div>
+          <h3 style="font-weight: 700; font-size: 1.1rem;">Smartwatch Ultra v2</h3>
+          <p style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem;">Titanium chassis, ECG sensor, 50m water resistant.</p>
+          <div class="flex justify-between items-center" style="margin-top: 1.25rem;">
+            <div style="font-size: 1.35rem; font-weight: 800;">$349.00</div>
+            <button class="btn btn-primary btn-sm" onclick="Toast.show({title:'Added to Cart', type:'success'})">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 3 -->
+      <div class="product-card">
+        <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500&auto=format&fit=crop&q=80" class="product-img" alt="Product">
+        <div style="padding: 1.25rem;">
+          <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+            <span class="badge badge-neutral">Limited</span>
+            <span style="font-weight: 700; color: #10b981;">★ 5.0 (42)</span>
+          </div>
+          <h3 style="font-weight: 700; font-size: 1.1rem;">Developer Mechanical Keyboard</h3>
+          <p style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem;">Hot-swappable tactile switches & RGB backlit.</p>
+          <div class="flex justify-between items-center" style="margin-top: 1.25rem;">
+            <div style="font-size: 1.35rem; font-weight: 800;">$149.00</div>
+            <button class="btn btn-primary btn-sm" onclick="Toast.show({title:'Added to Cart', type:'success'})">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

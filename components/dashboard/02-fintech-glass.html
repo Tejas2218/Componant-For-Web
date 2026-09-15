@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fintech Glassmorphism Dashboard</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0284c7 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .credit-card {
+      background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+      border-radius: 16px;
+      padding: 1.5rem;
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(236, 72, 153, 0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 180px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="flex justify-between items-center" style="margin-bottom: 2rem;">
+      <div>
+        <h1 style="font-size: 1.8rem; font-weight: 800;">My Wallet & Banking</h1>
+        <p style="opacity: 0.8; font-size: 0.9rem;">Overview of active accounts and transfers</p>
+      </div>
+      <button class="btn btn-glass" onclick="Modal.open('transfer-modal')">+ Send Money</button>
+    </div>
+
+    <div class="grid grid-cols-3 md:grid-cols-1 gap-6">
+      <!-- Digital Card Widget -->
+      <div class="credit-card">
+        <div class="flex justify-between items-center">
+          <span style="font-weight: 700; letter-spacing: 0.05em;">FINTECH PLATINUM</span>
+          <span style="font-weight: 800; font-size: 1.1rem;">VISA</span>
+        </div>
+        <div style="font-size: 1.25rem; font-family: var(--font-mono); letter-spacing: 0.1em;">
+          •••• •••• •••• 8842
+        </div>
+        <div class="flex justify-between items-center" style="font-size: 0.85rem;">
+          <div>
+            <div style="opacity: 0.7; font-size: 0.7rem;">CARD HOLDER</div>
+            <div>ALEX RIVERA</div>
+          </div>
+          <div>
+            <div style="opacity: 0.7; font-size: 0.7rem;">EXPIRES</div>
+            <div>08/29</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Balance Card -->
+      <div class="glass-card">
+        <div style="opacity: 0.8; font-size: 0.85rem;">Total Portfolio Value</div>
+        <div style="font-size: 2.25rem; font-weight: 800; margin-top: 0.5rem;">$84,290.50</div>
+        <div class="flex gap-2" style="margin-top: 1rem;">
+          <span class="badge badge-success">+14.2% Growth</span>
+          <span class="badge badge-neutral" style="background:rgba(255,255,255,0.15); color:#fff;">USD Balance</span>
+        </div>
+      </div>
+
+      <!-- Quick Transfer Action -->
+      <div class="glass-card flex flex-col justify-between">
+        <div>
+          <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Quick Pay</h3>
+          <p style="opacity: 0.7; font-size: 0.85rem;">Send money to frequent contacts</p>
+        </div>
+        <div class="flex gap-3" style="margin-top: 1rem;">
+          <div style="text-align: center; cursor: pointer;" onclick="Toast.show({title:'Sending to Sarah...', type:'primary'})">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: 700;">SC</div>
+            <span style="font-size: 0.75rem; opacity: 0.8;">Sarah</span>
+          </div>
+          <div style="text-align: center; cursor: pointer;" onclick="Toast.show({title:'Sending to Michael...', type:'primary'})">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #10b981; display: flex; align-items: center; justify-content: center; font-weight: 700;">MK</div>
+            <span style="font-size: 0.75rem; opacity: 0.8;">Michael</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

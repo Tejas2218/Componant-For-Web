@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toast Notifications Variety Pack (3 Styles)</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #f8fafc; padding: 4rem 0; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 2rem;">Toast Notifications Engine</h1>
+
+    <div class="flex justify-center gap-4">
+      <button class="btn btn-primary" onclick="Toast.show({title:'Action Successful!', message:'Your settings have been saved.', type:'success'})">
+        Show Success Toast
+      </button>
+
+      <button class="btn btn-danger" onclick="Toast.show({title:'Connection Failed', message:'Unable to reach server database.', type:'danger'})">
+        Show Error Toast
+      </button>
+
+      <button class="btn btn-secondary" onclick="Toast.show({title:'New Message from Sarah', message:'Hey, checked out the hackathon design!', type:'info'})">
+        Show Interactive Toast
+      </button>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

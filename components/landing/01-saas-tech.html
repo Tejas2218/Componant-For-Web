@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern SaaS Tech Landing Page</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    /* Navbar Glass Sticky */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 0;
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .nav-link:hover { color: var(--primary); }
+
+    /* Hero Section */
+    .hero {
+      padding: 6rem 0 4rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      max-width: 850px;
+      margin: 0 auto 1.5rem;
+      letter-spacing: -0.03em;
+    }
+    .hero-desc {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero-cta {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    /* App Preview Mockup */
+    .preview-window {
+      margin-top: 4rem;
+      background: #1e293b;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      border: 1px solid #334155;
+      overflow: hidden;
+    }
+    .window-header {
+      padding: 0.75rem 1rem;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    /* Feature Grid */
+    .features-section {
+      padding: 6rem 0;
+      background: var(--bg-surface);
+    }
+    .feature-card {
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <div class="flex items-center gap-2">
+        <div style="width:32px; height:32px; background:var(--primary); color:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:800;">N</div>
+        <span style="font-weight: 700; font-size: 1.2rem;">NexusCloud</span>
+      </div>
+      <ul class="nav-links md:flex-col" style="display: flex;">
+        <li><a href="#features" class="nav-link">Features</a></li>
+        <li><a href="#solutions" class="nav-link">Solutions</a></li>
+        <li><a href="#pricing" class="nav-link">Pricing</a></li>
+      </ul>
+      <div class="flex items-center gap-3">
+        <a href="#" class="btn btn-ghost">Sign In</a>
+        <a href="#" class="btn btn-primary">Start Free Trial</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero container">
+    <div class="hero-badge">
+      <span>🚀 Announcing Nexus v3.0</span>
+    </div>
+    <h1 class="hero-title">
+      Accelerate your workflow with <span class="gradient-text">AI Automation</span>
+    </h1>
+    <p class="hero-desc">
+      The all-in-one developer platform to monitor, deploy, and scale modern applications in seconds.
+    </p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" onclick="Toast.show({title:'Trial Started!', type:'success'})">
+        Deploy Free Now
+      </button>
+      <button class="btn btn-outline btn-lg">Watch 2-min Demo</button>
+    </div>
+
+    <!-- UI Mockup Preview -->
+    <div class="preview-window">
+      <div class="window-header">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <span style="color:#64748b; font-size:0.75rem; margin-left:0.5rem;">nexus-cloud-dashboard.app</span>
+      </div>
+      <div style="padding: 3rem; color: #fff; text-align: left;">
+        <div class="grid grid-cols-3 gap-6">
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px;">
+            <div style="color:#94a3b8; font-size:0.8rem;">Active Deploys</div>
+            <div style="font-size:1.8rem; font-weight:700; margin-top:0.25rem;">1,429</div>
+            <span class="badge badge-success" style="margin-top:0.5rem;">+14.2%</span>
+          </div>
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px;">
+            <div style="color:#94a3b8; font-size:0.8rem;">Avg Response Time</div>
+            <div style="font-size:1.8rem; font-weight:700; margin-top:0.25rem;">18ms</div>
+            <span class="badge badge-primary" style="margin-top:0.5rem;">Optimal</span>
+          </div>
+          <div style="background:#0f172a; padding:1.5rem; border-radius:12px;">
+            <div style="color:#94a3b8; font-size:0.8rem;">Global Edge Nodes</div>
+            <div style="font-size:1.8rem; font-weight:700; margin-top:0.25rem;">240+</div>
+            <span class="badge badge-success" style="margin-top:0.5rem;">99.99% Uptime</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div style="text-align: center; max-width: 600px; margin: 0 auto 4rem;">
+        <h2 style="font-size: 2.25rem; font-weight: 700;">Everything you need to ship fast</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Eliminate infrastructure friction and focus on building features.</p>
+      </div>
+
+      <div class="grid grid-cols-3 gap-8">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Instant Deploys</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Git push to deploy in seconds. Global CDN edge distribution built right in.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Enterprise Security</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">SOC2 Type II certified with automatic SSL, DDoS protection, and encrypted vaults.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Real-time Telemetry</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Monitor error spikes, latency distribution, and user sessions instantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

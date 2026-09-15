@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Tooling & API Landing Page</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #0d1117; color: #c9d1d9; font-family: var(--font-sans); }
+    .dev-hero { padding: 6rem 0 4rem; }
+    .terminal-box {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .terminal-header {
+      background: #21262d;
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #30363d;
+    }
+    .code-body {
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #79c0ff;
+    }
+    .keyword { color: #ff7b72; }
+    .string { color: #a5d6ff; }
+    .comment { color: #8b949e; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="container flex justify-between items-center" style="padding: 1.5rem 0; border-bottom:1px solid #21262d;">
+    <div class="flex items-center gap-2">
+      <div style="font-family:var(--font-mono); font-weight:700; color:#58a6ff; font-size:1.3rem;">>_ CLIkit</div>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="#" style="color:#8b949e;">Documentation</a>
+      <a href="#" style="color:#8b949e;">GitHub ⭐ 12.4k</a>
+      <button class="btn btn-sm btn-outline" style="border-color:#30363d; color:#c9d1d9;">npm i clikit-core</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="container dev-hero">
+    <div class="grid grid-cols-2 lg:grid-cols-1 gap-8 items-center">
+      <div>
+        <span class="badge" style="background: rgba(56, 139, 253, 0.15); color: #58a6ff; border: 1px solid rgba(56, 139, 253, 0.4); margin-bottom: 1rem;">
+          v2.4.0 Released - Zero Config DB Migration
+        </span>
+        <h1 style="font-size: 3.25rem; font-weight: 800; color: #f0f6fc; line-height: 1.15; margin-bottom: 1rem;">
+          Infrastructure as Pure Code.
+        </h1>
+        <p style="font-size: 1.1rem; color: #8b949e; margin-bottom: 2rem;">
+          Declarative cloud orchestration tool built for developer happiness. Typesafe, lightning fast, zero boilerplate.
+        </p>
+        <div class="flex gap-3">
+          <button class="btn btn-primary btn-lg" style="background:#238636; border:none;" onclick="Toast.show({title:'CLI Command Copied!', message:'npm install -g clikit', type:'success'})">
+            Get Started in 30s
+          </button>
+          <button class="btn btn-outline btn-lg" style="border-color:#30363d; color:#c9d1d9;">
+            Read Specs
+          </button>
+        </div>
+      </div>
+
+      <!-- Terminal Preview -->
+      <div class="terminal-box">
+        <div class="terminal-header">
+          <div class="flex items-center gap-2">
+            <span style="width:10px; height:10px; background:#ff5f56; border-radius:50%; display:inline-block;"></span>
+            <span style="width:10px; height:10px; background:#ffbd2e; border-radius:50%; display:inline-block;"></span>
+            <span style="width:10px; height:10px; background:#27c93f; border-radius:50%; display:inline-block;"></span>
+            <span style="color:#8b949e; font-size:0.75rem; margin-left:0.5rem; font-family:var(--font-mono);">deploy.config.ts</span>
+          </div>
+          <button class="btn btn-sm btn-ghost" style="color:#8b949e;" onclick="Toast.show({title:'Snippet Copied', type:'primary'})">Copy</button>
+        </div>
+        <div class="code-body">
+          <span class="keyword">import</span> { defineCluster, PostgresDB } <span class="keyword">from</span> <span class="string">'@clikit/sdk'</span>;<br><br>
+          <span class="comment">// Define global serverless database</span><br>
+          <span class="keyword">export const</span> db = <span class="keyword">new</span> PostgresDB({<br>
+          &nbsp;&nbsp;name: <span class="string">'hackathon-prod-db'</span>,<br>
+          &nbsp;&nbsp;region: <span class="string">'us-east-1'</span>,<br>
+          &nbsp;&nbsp;autoScale: <span class="keyword">true</span>,<br>
+          });<br><br>
+          <span class="comment">// Deploy cluster automatically</span><br>
+          <span class="keyword">await</span> defineCluster({ db });
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

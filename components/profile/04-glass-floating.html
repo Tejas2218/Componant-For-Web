@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glassmorphic Floating Profile</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .glass-profile-box {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glass-profile-box">
+    <div style="width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #ec4899); margin: 0 auto 1.25rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; border: 3px solid rgba(255,255,255,0.4);">
+      SK
+    </div>
+
+    <h2 style="font-size: 1.5rem; font-weight: 800;">Sophia Chen</h2>
+    <p style="opacity: 0.8; font-size: 0.875rem; margin-top: 0.25rem;">Lead Product Designer @ Visionary AI</p>
+
+    <div class="grid grid-cols-3 gap-4" style="margin: 1.75rem 0; padding: 1rem 0; border-top: 1px solid rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.15);">
+      <div>
+        <div style="font-size: 1.35rem; font-weight: 800;">48</div>
+        <div style="font-size: 0.75rem; opacity: 0.7;">Projects</div>
+      </div>
+      <div>
+        <div style="font-size: 1.35rem; font-weight: 800;">12.4k</div>
+        <div style="font-size: 0.75rem; opacity: 0.7;">Followers</div>
+      </div>
+      <div>
+        <div style="font-size: 1.35rem; font-weight: 800;">1,290</div>
+        <div style="font-size: 0.75rem; opacity: 0.7;">Appreciations</div>
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <button class="btn btn-full" style="background: #fff; color: #0f172a; font-weight: 700; border: none;" onclick="Toast.show({title:'Following Sophia!', type:'success'})">Follow</button>
+      <button class="btn btn-full btn-glass" style="color: #fff;">Message</button>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

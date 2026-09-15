@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split Screen Auth - Modern UI</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      margin: 0;
+      background: #fff;
+    }
+    .split-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+    }
+    .brand-side {
+      flex: 1;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c026d3 100%);
+      color: #fff;
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .brand-side::after {
+      content: '';
+      position: absolute;
+      bottom: -10%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      filter: blur(40px);
+    }
+    .form-side {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      background: #ffffff;
+    }
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+    }
+    .testimonial-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    @media (max-width: 900px) {
+      .brand-side { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="split-container">
+    <!-- Left Hero Side -->
+    <div class="brand-side">
+      <div class="flex items-center gap-2">
+        <div style="width:36px; height:36px; background:#fff; color:#4f46e5; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:800;">A</div>
+        <span style="font-size: 1.25rem; font-weight: 700;">ApexFlow</span>
+      </div>
+
+      <div>
+        <h1 style="font-size: 2.75rem; font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem;">
+          Build faster with intelligent automation.
+        </h1>
+        <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem;">
+          Join 50,000+ creators scaling their ideas effortlessly.
+        </p>
+
+        <div class="testimonial-card">
+          <p>"ApexFlow cut our deployment time by 80%. It's the ultimate hackathon cheat code."</p>
+          <div class="flex items-center gap-3" style="margin-top: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #fff; color:#4f46e5; font-weight:700; display:flex; align-items:center; justify-content:center;">SK</div>
+            <div>
+              <div style="font-weight: 600;">Sarah Chen</div>
+              <div style="font-size: 0.775rem; opacity: 0.8;">CTO @ TechPulse</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size: 0.85rem; opacity: 0.7;">
+        © 2026 ApexFlow Inc. All rights reserved.
+      </div>
+    </div>
+
+    <!-- Right Form Side -->
+    <div class="form-side">
+      <div class="auth-box">
+        <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a;">Create your account</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 2rem;">Start your 14-day free trial. No credit card required.</p>
+
+        <form id="split-signup-form" onsubmit="handleSplitSignup(event)">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" placeholder="Alex Morgan" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Work Email</label>
+            <input type="email" id="split-email" class="form-input" placeholder="alex@company.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" placeholder="Minimum 8 characters" required minlength="8">
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-custom">
+              <input type="checkbox" required>
+              <span class="checkmark"></span>
+              <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top: 1rem;">
+            Get Started Free
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 2rem; font-size: 0.875rem; color: #64748b;">
+          Already have an account? <a href="#" style="font-weight: 600;">Log in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+  <script>
+    function handleSplitSignup(e) {
+      e.preventDefault();
+      Toast.show({
+        title: 'Account Created!',
+        message: 'Welcome to ApexFlow. Redirecting to workspace...',
+        type: 'success'
+      });
+    }
+  </script>
+</body>
+</html>

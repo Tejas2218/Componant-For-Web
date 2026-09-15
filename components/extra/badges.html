@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Badges & Status Indicators Pack</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc; color: #0f172a; padding: 3rem 1.5rem; line-height: 1.5;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.75rem; margin-top: 1.5rem; }
+    .badge-group { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-top: 1rem; }
+
+    /* Badge Base */
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.75rem;
+      font-size: 0.75rem; font-weight: 700; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-indigo { background: #e0e7ff; color: #4338ca; }
+    .badge-emerald { background: #d1fae5; color: #047857; }
+    .badge-rose { background: #ffe4e6; color: #be123c; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-dark { background: #0f172a; color: #fff; }
+
+    /* Glowing Dots Status */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem;
+      border-radius: 99px; font-size: 0.8rem; font-weight: 600; background: #f1f5f9; color: #334155;
+    }
+    .dot-glow { width: 8px; height: 8px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; }
+    .dot-green { background: #10b981; color: #10b981; }
+    .dot-red { background: #ef4444; color: #ef4444; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 style="font-size: 2rem; font-weight: 800;">Badges & Status Indicators Pack</h1>
+    <p style="color: #64748b; margin-top: 0.25rem;">Status pills, alert tags, and glowing indicators.</p>
+
+    <!-- 1. Color Pill Badges -->
+    <div class="card">
+      <h3 style="font-weight: 700;">🏷️ Color Pill Badges</h3>
+      <div class="badge-group">
+        <span class="badge badge-indigo">Feature</span>
+        <span class="badge badge-emerald">Active</span>
+        <span class="badge badge-rose">High Priority</span>
+        <span class="badge badge-amber">Pending</span>
+        <span class="badge badge-dark">v2.4.0</span>
+      </div>
+    </div>
+
+    <!-- 2. Glowing Status Indicators -->
+    <div class="card">
+      <h3 style="font-weight: 700;">🟢 Live Status Indicators</h3>
+      <div class="badge-group">
+        <span class="status-badge"><span class="dot-glow dot-green"></span> 99.99% Uptime</span>
+        <span class="status-badge"><span class="dot-glow dot-red"></span> Server Incident</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

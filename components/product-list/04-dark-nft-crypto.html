@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Web3 Digital Asset Marketplace</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #090d16; color: #f8fafc; padding: 3rem 0; }
+    .nft-card {
+      background: #131b2e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      padding: 1rem;
+      transition: all 0.3s;
+    }
+    .nft-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+    .nft-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="flex justify-between items-center" style="margin-bottom: 2rem;">
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 800;">Digital Collectibles Marketplace</h1>
+        <p style="color: #94a3b8; font-size: 0.9rem;">Explore curated 3D digital assets & artwork</p>
+      </div>
+      <button class="btn btn-primary" style="background: linear-gradient(135deg, #a855f7, #3b82f6); border:none;" onclick="Toast.show({title:'Wallet Connected (MetaMask)', type:'success'})">Connect Wallet</button>
+    </div>
+
+    <div class="grid grid-cols-3 md:grid-cols-1 gap-6">
+      <div class="nft-card">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=80" class="nft-img" alt="NFT Art">
+        <div style="margin-top: 1rem;">
+          <div class="flex justify-between items-center">
+            <h3 style="font-weight: 700;">Cyberpunk Avatar #802</h3>
+            <span class="badge" style="background:rgba(168,85,247,0.2); color:#c084fc;">Highest Bid</span>
+          </div>
+          <div class="flex justify-between items-center" style="margin-top: 1rem;">
+            <div>
+              <div style="font-size: 0.75rem; color: #94a3b8;">Current Price</div>
+              <div style="font-weight: 800; font-size: 1.1rem; color: #60a5fa;">2.45 ETH</div>
+            </div>
+            <button class="btn btn-sm btn-primary" style="background: linear-gradient(135deg, #a855f7, #3b82f6); border:none;" onclick="Toast.show({title:'Bid Placed: 2.45 ETH', type:'success'})">Place Bid</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

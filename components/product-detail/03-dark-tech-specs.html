@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Tech Specs Detail Page</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #090d16; color: #f8fafc; padding: 4rem 0; }
+    .spec-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .spec-table td { padding: 0.85rem 1rem; border-bottom: 1px solid #1f2937; }
+    .spec-table td:first-child { color: #9ca3af; font-weight: 500; width: 35%; }
+  </style>
+</head>
+<body>
+
+  <div class="container" style="max-width: 900px;">
+    <div class="flex justify-between items-center" style="margin-bottom: 2rem;">
+      <div>
+        <span class="badge" style="background:rgba(99,102,241,0.2); color:#818cf8;">Hardware Specs</span>
+        <h1 style="font-size: 2.25rem; font-weight: 800; margin-top: 0.5rem;">Quantum Core Workstation v4</h1>
+      </div>
+      <button class="btn btn-primary" style="background:linear-gradient(135deg,#6366f1,#a855f7); border:none;" onclick="Toast.show({title:'Config Saved!', type:'success'})">Order Custom Build</button>
+    </div>
+
+    <!-- Spec Tabs -->
+    <div class="flex gap-4" style="border-bottom: 1px solid #1f2937; padding-bottom: 0.75rem; margin-bottom: 1.5rem;" data-tab-group="spec-tabs">
+      <button class="btn btn-ghost active" data-tab="tab-specs">Technical Specifications</button>
+      <button class="btn btn-ghost" data-tab="tab-benchmarks">Performance Benchmarks</button>
+    </div>
+
+    <div id="tab-specs" data-tab-content="spec-tabs">
+      <table class="spec-table">
+        <tbody>
+          <tr>
+            <td>Processor Architecture</td>
+            <td>64-Core ARM Neoverse N2 @ 3.8GHz</td>
+          </tr>
+          <tr>
+            <td>Unified Memory</td>
+            <td>128GB LPDDR5X (800GB/s bandwidth)</td>
+          </tr>
+          <tr>
+            <td>Neural Engine</td>
+            <td>38-Core AI Accelerator (120 TOPS)</td>
+          </tr>
+          <tr>
+            <td>Storage Interface</td>
+            <td>4TB PCIe 5.0 NVMe SSD (7,500 MB/s Read)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

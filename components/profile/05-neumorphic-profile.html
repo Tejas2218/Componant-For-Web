@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neumorphic Soft Profile</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body {
+      background: #e0e5ec;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .neu-profile-box {
+      width: 100%;
+      max-width: 440px;
+      background: #e0e5ec;
+      box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.6);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+    .neu-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: #e0e5ec;
+      box-shadow: inset 4px 4px 8px rgb(163,177,198,0.7), inset -4px -4px 8px rgba(255,255,255, 0.8);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-size: 1.8rem; font-weight: 800; color: #4f46e5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="neu-profile-box">
+    <div class="neu-avatar">JD</div>
+    <h2 style="font-size: 1.4rem; font-weight: 700; color: #1e293b;">Jane Doe</h2>
+    <p style="font-size: 0.85rem; color: #64748b;">Product Manager • San Francisco</p>
+
+    <div style="margin-top: 2rem; text-align: left;">
+      <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem;">Connected Accounts</div>
+      <div class="flex justify-between items-center" style="margin-bottom: 0.75rem; padding: 0.5rem 0;">
+        <span>Google Account</span>
+        <span class="badge badge-success">Connected</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span>GitHub Account</span>
+        <button class="btn btn-sm btn-neu" onclick="Toast.show({title:'Linking GitHub...', type:'info'})">Link</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>

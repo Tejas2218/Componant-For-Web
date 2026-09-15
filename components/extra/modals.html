@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modals Variety Pack (3 Styles)</title>
+  <link rel="stylesheet" href="../../css/hackathon-ui.css">
+  <style>
+    body { background: #f8fafc; padding: 4rem 0; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 2rem;">Modal Dialogs Variety Pack</h1>
+
+    <div class="flex justify-center gap-4">
+      <button class="btn btn-primary" onclick="Modal.open('confirm-modal')">1. Standard Confirmation Modal</button>
+      <button class="btn btn-secondary" onclick="Modal.open('form-modal')">2. Form Input Modal</button>
+      <button class="btn btn-danger" onclick="Modal.open('alert-modal')">3. Danger Action Modal</button>
+    </div>
+  </div>
+
+  <!-- 1. Confirmation Modal -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Confirm Subscription Upgrade</h3>
+        <button style="background:none; border:none; font-size:1.2rem; cursor:pointer;" onclick="Modal.close('confirm-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: left;">
+        <p style="color: #64748b;">Are you sure you want to upgrade your plan to Pro SaaS ($29/mo)? Your account will be charged immediately.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="Modal.close('confirm-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="Modal.close('confirm-modal'); Toast.show({title:'Upgraded to Pro Plan', type:'success'})">Confirm Upgrade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Form Input Modal -->
+  <div class="modal-overlay" id="form-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Create New Workspace</h3>
+        <button style="background:none; border:none; font-size:1.2rem; cursor:pointer;" onclick="Modal.close('form-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: left;">
+        <div class="form-group">
+          <label class="form-label">Workspace Name</label>
+          <input type="text" class="form-input" placeholder="e.g. Hackathon Team Alpha">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="Modal.close('form-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="Modal.close('form-modal'); Toast.show({title:'Workspace Created', type:'success'})">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Danger Action Modal -->
+  <div class="modal-overlay" id="alert-modal">
+    <div class="modal-dialog">
+      <div class="modal-header" style="background:#fee2e2;">
+        <h3 class="modal-title" style="color:#dc2626;">⚠️ Delete Repository?</h3>
+        <button style="background:none; border:none; font-size:1.2rem; cursor:pointer;" onclick="Modal.close('alert-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: left;">
+        <p style="color: #475569;">This action cannot be undone. This will permanently delete the repository and remove all collaborators.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="Modal.close('alert-modal')">Cancel</button>
+        <button class="btn btn-danger" onclick="Modal.close('alert-modal'); Toast.show({title:'Repository Deleted', type:'danger'})">Permanently Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/hackathon-ui.js"></script>
+</body>
+</html>
