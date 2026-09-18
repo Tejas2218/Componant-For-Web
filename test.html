@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Full-Stack Verification & CRUD Demo Studio</title>
+  <link rel="stylesheet" href="css/hackathon-ui.css">
+  <style>
+    body {
+      background: #0b0f19;
+      color: #f1f5f9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 4rem;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .dot-red { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+    .dot-yellow { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+
+    .card-panel {
+      background: #131b2e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .item-row {
+      background: #182238;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: all 0.2s;
+    }
+    .item-row:hover {
+      border-color: #6366f1;
+      transform: translateY(-2px);
+    }
+    .raw-json-box {
+      background: #070a10;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.8rem;
+      color: #38bdf8;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header style="background: #101626; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 1rem 2rem;">
+    <div class="container flex justify-between items-center" style="max-width: 1200px;">
+      <div class="flex items-center gap-3">
+        <a href="index.html" style="text-decoration:none; color:#94a3b8; font-size: 0.9rem;">← Back to Catalog</a>
+        <span style="color:#475569;">|</span>
+        <div style="font-weight: 800; font-size: 1.2rem; color: #fff;">⚡ Full-Stack Verification Studio</div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="btn btn-sm btn-outline" style="border-color:#334155; color:#cbd5e1;" onclick="checkSystemHealth()">🔄 Test Connection</button>
+        <button class="btn btn-sm btn-primary" onclick="seedDemoItems()">⚡ Seed Sample Data</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 1200px; padding-top: 2rem;">
+
+    <!-- 1. System Health & Telemetry Banners -->
+    <div class="grid grid-cols-4 md:grid-cols-2 gap-4" style="margin-bottom: 2rem;">
+      <!-- Server Health -->
+      <div class="card-panel">
+        <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">Express Server</div>
+        <div class="flex items-center gap-2" style="margin-top: 0.5rem;">
+          <span id="server-dot" class="dot dot-yellow"></span>
+          <span id="server-status" style="font-weight: 700; font-size: 1.1rem;">Checking...</span>
+        </div>
+        <div id="server-detail" style="font-size: 0.78rem; color: #64748b; margin-top: 0.25rem;">Port: 5000</div>
+      </div>
+
+      <!-- MongoDB Health -->
+      <div class="card-panel">
+        <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">MongoDB Database</div>
+        <div class="flex items-center gap-2" style="margin-top: 0.5rem;">
+          <span id="mongo-dot" class="dot dot-yellow"></span>
+          <span id="mongo-status" style="font-weight: 700; font-size: 1.1rem;">Checking...</span>
+        </div>
+        <div id="mongo-detail" style="font-size: 0.78rem; color: #64748b; margin-top: 0.25rem;">codeathon_db</div>
+      </div>
+
+      <!-- Total Items -->
+      <div class="card-panel">
+        <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">MongoDB Items</div>
+        <div id="stat-total-items" style="font-size: 1.8rem; font-weight: 800; color: #6366f1; margin-top: 0.25rem;">-</div>
+        <div style="font-size: 0.78rem; color: #64748b;">Live collection count</div>
+      </div>
+
+      <!-- Total Users -->
+      <div class="card-panel">
+        <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">MongoDB Users</div>
+        <div id="stat-total-users" style="font-size: 1.8rem; font-weight: 800; color: #10b981; margin-top: 0.25rem;">-</div>
+        <div style="font-size: 0.78rem; color: #64748b;">Live registered users</div>
+      </div>
+    </div>
+
+    <!-- 2. Main Two-Column Layout (CRUD Form + Live Data List) -->
+    <div class="grid grid-cols-3 md:grid-cols-1 gap-6">
+
+      <!-- LEFT: CREATE NEW ITEM FORM -->
+      <div class="card-panel" style="height: fit-content;">
+        <div class="flex justify-between items-center" style="margin-bottom: 1.25rem;">
+          <h2 style="font-size: 1.15rem; font-weight: 700;">➕ Create Generic Item</h2>
+          <span class="badge badge-primary">MongoDB POST</span>
+        </div>
+
+        <form id="create-item-form" onsubmit="handleCreateItem(event)">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Item Title *</label>
+            <input type="text" id="form-title" class="form-input" placeholder="e.g. Smart Air Quality Sensor" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Category</label>
+            <input type="text" id="form-category" class="form-input" placeholder="e.g. Hardware, AI, Service" value="General">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Status</label>
+            <select id="form-status" class="form-input" style="background:#0f172a; color:#fff;">
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Description</label>
+            <textarea id="form-description" class="form-input" rows="3" placeholder="Brief description of the item or resource..."></textarea>
+          </div>
+
+          <button type="submit" id="btn-submit-item" class="btn btn-primary" style="width: 100%;">
+            Create in MongoDB
+          </button>
+        </form>
+
+        <!-- Quick Auth Box -->
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.08); margin: 1.5rem 0;">
+        <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; color:#94a3b8;">
+          🔑 Quick Auth Pipeline Test
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-sm btn-outline" style="flex:1; border-color:#334155; color:#cbd5e1;" onclick="testRegister()">Test Register</button>
+          <button class="btn btn-sm btn-outline" style="flex:1; border-color:#334155; color:#cbd5e1;" onclick="testLogin()">Test Login</button>
+        </div>
+        <div id="auth-status-box" style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.5rem; word-break: break-all;">
+          Not logged in
+        </div>
+      </div>
+
+      <!-- RIGHT: LIVE ITEMS LIST & SEARCH (READ / UPDATE / DELETE) -->
+      <div style="grid-column: span 2;">
+        <div class="card-panel">
+          
+          <!-- Filter Bar -->
+          <div class="flex justify-between items-center" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 700;">📦 Live MongoDB Items</h2>
+              <p style="color: #64748b; font-size: 0.85rem;">Pipeline: Browser fetch() → Express → MongoDB → DOM</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <input type="text" id="search-input" class="form-input" style="width: 200px; padding: 0.4rem 0.75rem;" placeholder="Search items..." oninput="handleSearch()">
+              <button class="btn btn-sm btn-outline" style="border-color:#334155; color:#cbd5e1;" onclick="loadItems()">Refresh</button>
+            </div>
+          </div>
+
+          <!-- Loading Indicator -->
+          <div id="loading-spinner" style="text-align:center; padding: 3rem 0; display:none;">
+            <div class="spinner" style="margin: 0 auto 1rem auto; width: 32px; height: 32px;"></div>
+            <div style="color: #94a3b8; font-size: 0.9rem;">Fetching live data from MongoDB...</div>
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-state" style="text-align:center; padding: 3rem 0; display:none;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📭</div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: #fff;">No Items Found in MongoDB</div>
+            <p style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem;">Create your first item using the form on the left, or seed starter data.</p>
+            <button class="btn btn-sm btn-primary" style="margin-top: 1rem;" onclick="seedDemoItems()">⚡ Seed Starter Items</button>
+          </div>
+
+          <!-- Items Container -->
+          <div id="items-list" class="flex flex-col gap-3">
+            <!-- Dynamically populated rows -->
+          </div>
+
+          <!-- Raw MongoDB JSON Inspector -->
+          <div style="margin-top: 2rem;">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">
+                🍃 Real-Time MongoDB JSON Response
+              </span>
+              <span id="json-count" class="badge badge-neutral">0 records</span>
+            </div>
+            <div id="raw-json" class="raw-json-box">
+              // Live MongoDB JSON will appear here after fetch...
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 3. EDIT ITEM MODAL -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal-dialog" style="background:#131b2e; border:1px solid rgba(255,255,255,0.1); color:#fff; max-width: 500px;">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <h3 class="modal-title" style="color:#fff;">✏️ Update Item in MongoDB</h3>
+        <button style="background:none; border:none; font-size:1.4rem; color:#94a3b8; cursor:pointer;" onclick="Modal.close('edit-modal')">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.5rem; text-align:left;">
+        <input type="hidden" id="edit-id">
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label">Title *</label>
+          <input type="text" id="edit-title" class="form-input" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label">Category</label>
+          <input type="text" id="edit-category" class="form-input">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label">Status</label>
+          <select id="edit-status" class="form-input" style="background:#0f172a; color:#fff;">
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label">Description</label>
+          <textarea id="edit-description" class="form-input" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.08);">
+        <button class="btn btn-outline" style="border-color:#334155; color:#cbd5e1;" onclick="Modal.close('edit-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="handleSaveEdit()">Save Changes (PUT)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="js/hackathon-ui.js"></script>
+  <script src="js/api.js"></script>
+
+  <!-- Interactive Logic -->
+  <script>
+    let currentItems = [];
+
+    // 1. Check System Health & Telemetry
+    async function checkSystemHealth() {
+      try {
+        // Express Check
+        const health = await api.get('/health');
+        if (health.status === 'ONLINE') {
+          document.getElementById('server-dot').className = 'dot dot-green';
+          document.getElementById('server-status').textContent = 'Online';
+          document.getElementById('server-detail').textContent = `Port: ${health.port || 5000}`;
+        }
+
+        // Mongo Test
+        const mongo = await api.get('/mongo-test');
+        if (mongo.success) {
+          document.getElementById('mongo-dot').className = 'dot dot-green';
+          document.getElementById('mongo-status').textContent = 'Connected';
+          document.getElementById('mongo-detail').textContent = `${mongo.databaseName} (OK)`;
+        } else {
+          document.getElementById('mongo-dot').className = 'dot dot-red';
+          document.getElementById('mongo-status').textContent = 'Disconnected';
+        }
+
+        // Dashboard Stats
+        const dash = await api.get('/dashboard/stats');
+        if (dash.success) {
+          document.getElementById('stat-total-items').textContent = dash.stats.totalItems;
+          document.getElementById('stat-total-users').textContent = dash.stats.totalUsers;
+        }
+
+        Toast.show({ title: 'Connection Checked', message: 'Express & MongoDB are responding smoothly!', type: 'success' });
+      } catch (err) {
+        document.getElementById('server-dot').className = 'dot dot-red';
+        document.getElementById('server-status').textContent = 'Offline';
+        document.getElementById('mongo-dot').className = 'dot dot-red';
+        document.getElementById('mongo-status').textContent = 'Offline';
+        Toast.show({ title: 'Connection Issue', message: err.message, type: 'danger' });
+      }
+    }
+
+    // 2. Read Items from MongoDB (GET /api/items)
+    async function loadItems(search = '') {
+      const spinner = document.getElementById('loading-spinner');
+      const emptyState = document.getElementById('empty-state');
+      const listContainer = document.getElementById('items-list');
+
+      spinner.style.display = 'block';
+      listContainer.innerHTML = '';
+      emptyState.style.display = 'none';
+
+      try {
+        const query = search ? `?search=${encodeURIComponent(search)}` : '';
+        const res = await api.get(`/items${query}`);
+        currentItems = res.items || [];
+
+        spinner.style.display = 'none';
+        document.getElementById('json-count').textContent = `${currentItems.length} records`;
+        document.getElementById('raw-json').textContent = JSON.stringify(res, null, 2);
+
+        if (currentItems.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        currentItems.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'item-row flex justify-between items-center';
+          row.id = `item-row-${item._id}`;
+
+          const statusBadge = item.status === 'completed'
+            ? '<span class="badge badge-success">Completed</span>'
+            : item.status === 'pending'
+            ? '<span class="badge badge-warning">Pending</span>'
+            : '<span class="badge badge-primary">Active</span>';
+
+          row.innerHTML = `
+            <div style="flex:1; padding-right:1rem;">
+              <div class="flex items-center gap-2" style="margin-bottom: 0.35rem;">
+                <span style="font-weight: 700; font-size: 1.05rem; color:#fff;">${escapeHtml(item.title)}</span>
+                <span class="badge badge-neutral" style="font-size:0.7rem;">${escapeHtml(item.category || 'General')}</span>
+                ${statusBadge}
+              </div>
+              <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">${escapeHtml(item.description || 'No description provided.')}</p>
+              <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.4rem;">
+                MongoDB ID: <code>${item._id}</code> • Created: ${new Date(item.createdAt).toLocaleTimeString()}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button class="btn btn-sm btn-outline" style="border-color:#334155; color:#cbd5e1;" onclick="openEditModal('${item._id}')">✏️ Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="handleDeleteItem('${item._id}')">🗑️ Delete</button>
+            </div>
+          `;
+          listContainer.appendChild(row);
+        });
+
+        // Update count badge in telemetry
+        document.getElementById('stat-total-items').textContent = currentItems.length;
+
+      } catch (err) {
+        spinner.style.display = 'none';
+        Toast.show({ title: 'Failed to load items', message: err.message, type: 'danger' });
+      }
+    }
+
+    // 3. Create Item (POST /api/items)
+    async function handleCreateItem(e) {
+      e.preventDefault();
+      const title = document.getElementById('form-title').value.trim();
+      const category = document.getElementById('form-category').value.trim();
+      const status = document.getElementById('form-status').value;
+      const description = document.getElementById('form-description').value.trim();
+
+      const btn = document.getElementById('btn-submit-item');
+      btn.disabled = true;
+      btn.textContent = 'Saving to MongoDB...';
+
+      try {
+        const res = await api.post('/items', { title, category, status, description });
+        Toast.show({ title: 'Created in MongoDB!', message: `"${title}" has been saved.`, type: 'success' });
+        
+        // Reset form
+        document.getElementById('create-item-form').reset();
+        document.getElementById('form-category').value = 'General';
+        
+        // Refresh list
+        loadItems();
+      } catch (err) {
+        Toast.show({ title: 'Creation Failed', message: err.message, type: 'danger' });
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create in MongoDB';
+      }
+    }
+
+    // 4. Edit Item Modal (PUT /api/items/:id)
+    function openEditModal(id) {
+      const item = currentItems.find(i => i._id === id);
+      if (!item) return;
+
+      document.getElementById('edit-id').value = item._id;
+      document.getElementById('edit-title').value = item.title;
+      document.getElementById('edit-category').value = item.category || 'General';
+      document.getElementById('edit-status').value = item.status || 'active';
+      document.getElementById('edit-description').value = item.description || '';
+
+      Modal.open('edit-modal');
+    }
+
+    async function handleSaveEdit() {
+      const id = document.getElementById('edit-id').value;
+      const title = document.getElementById('edit-title').value.trim();
+      const category = document.getElementById('edit-category').value.trim();
+      const status = document.getElementById('edit-status').value;
+      const description = document.getElementById('edit-description').value.trim();
+
+      if (!title) {
+        Toast.show({ title: 'Validation Error', message: 'Title cannot be empty.', type: 'warning' });
+        return;
+      }
+
+      try {
+        await api.put(`/items/${id}`, { title, category, status, description });
+        Modal.close('edit-modal');
+        Toast.show({ title: 'Item Updated', message: 'Changes saved to MongoDB.', type: 'success' });
+        loadItems();
+      } catch (err) {
+        Toast.show({ title: 'Update Failed', message: err.message, type: 'danger' });
+      }
+    }
+
+    // 5. Delete Item (DELETE /api/items/:id)
+    async function handleDeleteItem(id) {
+      if (!confirm('Are you sure you want to delete this record from MongoDB?')) return;
+
+      try {
+        await api.delete(`/items/${id}`);
+        Toast.show({ title: 'Record Deleted', message: 'Item removed from MongoDB.', type: 'success' });
+        loadItems();
+      } catch (err) {
+        Toast.show({ title: 'Delete Failed', message: err.message, type: 'danger' });
+      }
+    }
+
+    // 6. Seed Demo Items
+    async function seedDemoItems() {
+      try {
+        const res = await api.post('/items/seed');
+        Toast.show({ title: 'Starter Data Seeded', message: res.message, type: 'success' });
+        loadItems();
+      } catch (err) {
+        Toast.show({ title: 'Seed Failed', message: err.message, type: 'danger' });
+      }
+    }
+
+    // 7. Search Filter
+    let searchDebounce = null;
+    function handleSearch() {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        const q = document.getElementById('search-input').value;
+        loadItems(q);
+      }, 300);
+    }
+
+    // 8. Auth Quick Test
+    async function testRegister() {
+      const randomNum = Math.floor(100 + Math.random() * 900);
+      const testEmail = `student${randomNum}@codeathon.edu`;
+      try {
+        const res = await api.post('/auth/register', {
+          name: `Student Hacker ${randomNum}`,
+          email: testEmail,
+          password: 'password123'
+        });
+        api.setToken(res.token);
+        document.getElementById('auth-status-box').innerHTML = `
+          <span style="color:#10b981;">✓ Registered:</span> ${res.user.name} (${res.user.email})
+        `;
+        Toast.show({ title: 'User Registered', message: res.message, type: 'success' });
+        checkSystemHealth();
+      } catch (err) {
+        Toast.show({ title: 'Register Failed', message: err.message, type: 'danger' });
+      }
+    }
+
+    async function testLogin() {
+      try {
+        const me = await api.get('/auth/me');
+        if (me.user && me.user.email) {
+          const res = await api.post('/auth/login', {
+            email: me.user.email,
+            password: 'password123'
+          });
+          api.setToken(res.token);
+          document.getElementById('auth-status-box').innerHTML = `
+            <span style="color:#10b981;">✓ Logged In:</span> ${res.user.name} (${res.user.role})
+          `;
+          Toast.show({ title: 'Login Successful', message: `Welcome back, ${res.user.name}!`, type: 'success' });
+        } else {
+          testRegister();
+        }
+      } catch (err) {
+        Toast.show({ title: 'Login Failed', message: err.message, type: 'danger' });
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Auto-boot on load
+    document.addEventListener('DOMContentLoaded', () => {
+      checkSystemHealth();
+      loadItems();
+    });
+  </script>
+</body>
+</html>

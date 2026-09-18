@@ -1,87 +1,177 @@
 /* ==========================================================================
    AUTHENTICATION ROUTES (routes/auth.js)
-   Copy-paste ready auth endpoints for Signup, Login, Logout, Session Me
+   --------------------------------------------------------------------------
+   Simple, Student-Friendly MongoDB Auth with Zero-Dependency Password Hashing
+   Collections: users (codeathon_db)
    ========================================================================== */
 
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const crypto = require('crypto');
+const { getCollection, ObjectId } = require('../mongodb');
 
-// POST /api/auth/signup
-router.post('/signup', (req, res) => {
-  const { name, email, password } = req.body;
+function usersCol() {
+  return getCollection('users');
+}
 
-  if (!email || !password) {
-    return res.status(400).json({ success: false, message: 'Email and password are required.' });
-  }
+// Simple & safe zero-dependency password hash helper
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password.trim()).digest('hex');
+}
 
-  const existingUser = db.findOne('users', u => u.email === email);
-  if (existingUser) {
-    return res.status(400).json({ success: false, message: 'User with this email already exists.' });
-  }
+// 1. POST /api/auth/register (and alias /signup for backwards compatibility)
+async function handleRegister(req, res, next) {
+  try {
+    const { name, email, password, role } = req.body;
 
-  const newUser = db.create('users', {
-    name: name || email.split('@')[0],
-    email,
-    password,
-    role: 'Member',
-    avatar: (name || email).substring(0, 2).toUpperCase()
-  });
-
-  // Mock Session Token
-  const token = `token_${Date.now()}_${newUser.id}`;
-
-  return res.status(201).json({
-    success: true,
-    message: 'Account created successfully!',
-    token,
-    user: {
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-      role: newUser.role,
-      avatar: newUser.avatar
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide both email and password.'
+      });
     }
-  });
-});
 
-// POST /api/auth/login
-router.post('/login', (req, res) => {
-  const { email, password } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
+    const existing = await usersCol().findOne({ email: normalizedEmail });
 
-  if (!email || !password) {
-    return res.status(400).json({ success: false, message: 'Please provide both email and password.' });
-  }
-
-  const user = db.findOne('users', u => u.email === email && u.password === password);
-
-  if (!user) {
-    return res.status(401).json({ success: false, message: 'Invalid credentials. Please check your email and password.' });
-  }
-
-  const token = `token_${Date.now()}_${user.id}`;
-
-  return res.json({
-    success: true,
-    message: 'Welcome back!',
-    token,
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      avatar: user.avatar
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: 'An account with this email already exists.'
+      });
     }
-  });
+
+    const newUser = {
+      name: name ? name.trim() : normalizedEmail.split('@')[0],
+      email: normalizedEmail,
+      password: hashPassword(password),
+      role: role || 'user',
+      createdAt: new Date()
+    };
+
+    const result = await usersCol().insertOne(newUser);
+    const token = `token_${Date.now()}_${result.insertedId.toString()}`;
+
+    return res.status(201).json({
+      success: true,
+      message: 'Account registered successfully in MongoDB!',
+      token,
+      user: {
+        id: result.insertedId,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+        createdAt: newUser.createdAt
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+router.post('/register', handleRegister);
+router.post('/signup', handleRegister); // Alias for existing components
+
+// 2. POST /api/auth/login
+router.post('/login', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide both email and password.'
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await usersCol().findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials. No user found with this email.'
+      });
+    }
+
+    const passwordHash = hashPassword(password);
+    if (user.password !== passwordHash) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials. Incorrect password.'
+      });
+    }
+
+    const token = `token_${Date.now()}_${user._id.toString()}`;
+
+    return res.json({
+      success: true,
+      message: 'Logged in successfully!',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
-// GET /api/auth/me (Active User Profile)
-router.get('/me', (req, res) => {
-  const user = db.get('users')[0]; // Default mock active user
-  return res.json({ success: true, user });
+// 3. GET /api/auth/me - Active User Profile
+router.get('/me', async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = null;
+
+    if (authHeader && authHeader.startsWith('Bearer token_')) {
+      const parts = authHeader.split('_');
+      if (parts.length >= 3) {
+        userId = parts[2];
+      }
+    }
+
+    let user = null;
+    if (userId && ObjectId.isValid(userId)) {
+      user = await usersCol().findOne({ _id: new ObjectId(userId) });
+    }
+
+    // Fallback to the latest registered user if no token provided
+    if (!user) {
+      user = await usersCol().find({}).sort({ createdAt: -1 }).limit(1).next();
+    }
+
+    if (!user) {
+      return res.json({
+        success: true,
+        user: {
+          id: 'guest',
+          name: 'Guest Developer',
+          email: 'guest@codeathon.local',
+          role: 'guest'
+        }
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
-// POST /api/auth/logout
+// 4. POST /api/auth/logout
 router.post('/logout', (req, res) => {
   return res.json({ success: true, message: 'Logged out successfully.' });
 });

@@ -120,3 +120,53 @@ async function apiUpvoteTool(toolId) {
     console.error('Upvote error:', err);
   }
 }
+
+// 6. GENERIC ITEM / RESOURCE CRUD FETCH HELPERS (MongoDB)
+async function apiGetItems(search = '') {
+  try {
+    const url = search ? `${API_BASE_URL}/items?search=${encodeURIComponent(search)}` : `${API_BASE_URL}/items`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.items || [];
+  } catch (err) {
+    console.error('Get items error:', err);
+  }
+}
+
+async function apiCreateItem(itemData) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/items`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(itemData)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('Create item error:', err);
+  }
+}
+
+async function apiUpdateItem(id, itemData) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/items/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(itemData)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('Update item error:', err);
+  }
+}
+
+async function apiDeleteItem(id) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/items/${id}`, {
+      method: 'DELETE'
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('Delete item error:', err);
+  }
+}
+
