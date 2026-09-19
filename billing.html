@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
@@ -413,7 +413,63 @@
         display: none !important;
       }
     }
+
+    /* ====== COMPACT LAYOUT & DASHBOARD SPACING FIXES ====== */
+
+    /* Tighten main view container */
+    .view-container {
+      padding: 1rem 1.25rem;
+    }
+
+    /* App subview sections — remove excess top margin */
+    .app-subview {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+
+    /* Compact section headings */
+    .section-heading {
+      margin-bottom: 0.75rem !important;
+      padding-bottom: 0.5rem !important;
+    }
+
+    /* Compact card panels */
+    .card-panel {
+      padding: 1rem 1.25rem;
+    }
+
+    /* Compact grid gaps */
+    .grid {
+      gap: 0.75rem !important;
+    }
+
+    /* Make dashboard summary cards compact */
+    #view-dashboard .card-panel,
+    #view-reports .card-panel {
+      padding: 0.85rem 1rem;
+    }
+
+    /* Reduce margin between cards */
+    .gap-4 {
+      gap: 0.75rem !important;
+    }
+
+    /* Reports section — no extra top space */
+    #view-reports {
+      padding-top: 0.5rem;
+    }
+
+    /* Keep nav scrollable on small screens */
+    .nav-tabs-bar {
+      scrollbar-width: thin;
+    }
+
+    /* Remove body/page gap at top of main content */
+    main.view-container {
+      padding-top: 0.75rem;
+    }
   </style>
+
 </head>
 <body>
 
@@ -423,7 +479,7 @@
       
       <!-- Brand & Shop GSTIN Info -->
       <div class="brand-box">
-        <div class="brand-icon">ðŸ§¾</div>
+        <div class="brand-icon">🧾</div>
         <div>
           <div class="brand-title" id="header-shop-name">Darshan SuperMart & Electronics</div>
           <div class="brand-sub">
@@ -443,19 +499,19 @@
             <div id="user-role-badge" class="role-badge role-badge-staff">STAFF / CASHIER</div>
           </div>
           <button class="btn btn-sm btn-outline" style="border-color:var(--border-color);" onclick="handleLogout()" title="Logout from session">
-            ðŸšª Logout
+            🚪 Logout
           </button>
         </div>
 
         <!-- Language Selector -->
         <select id="lang-selector" class="form-input" style="width:auto; padding:0.3rem 0.6rem; font-size:0.8rem; border-color:var(--border-color); background:var(--bg-surface); color:var(--text-main); cursor:pointer;" onchange="applyLanguage(this.value)" title="Select Language">
-          <option value="en">ðŸŒ English</option>
-          <option value="hi">ðŸ‡®ðŸ‡³ à¤¹à¤¿à¤‚à¤¦à¥€</option>
+          <option value="en">🌐 English</option>
+          <option value="hi">🇮🇳 हिंदी</option>
         </select>
 
         <!-- Theme Toggle -->
         <button class="btn btn-sm btn-outline" style="border-color:var(--border-color);" onclick="ThemeManager.toggle()" title="Toggle Light/Dark Theme">
-          ðŸŒ“
+          🌓
         </button>
       </div>
 
@@ -465,22 +521,22 @@
   <!-- 2. NAVIGATION TABS (Visible when authenticated) -->
   <nav id="app-nav-bar" class="nav-tabs-bar no-print" style="display:none;">
     <button id="tab-billing-btn" class="nav-tab-btn active" onclick="switchView('billing')">
-      âš¡ Smart Billing Counter
+      ⚡ Smart Billing Counter
     </button>
     <button id="tab-bills-btn" class="nav-tab-btn" onclick="switchView('bills')">
-      ðŸ“œ Bill History
+      📜 Bill History
     </button>
     <button id="tab-dashboard-btn" class="nav-tab-btn admin-only" onclick="switchView('dashboard')">
-      ðŸ“Š Admin Dashboard
+      📊 Admin Dashboard
     </button>
     <button id="tab-customers-btn" class="nav-tab-btn admin-only" onclick="switchView('customers')">
-      ðŸ‘¥ Customers (Parties)
+      👥 Customers (Parties)
     </button>
     <button id="tab-products-btn" class="nav-tab-btn admin-only" onclick="switchView('products')">
-      ðŸ“¦ Products & Barcodes
+      📦 Products & Barcodes
     </button>
     <button id="tab-reports-btn" class="nav-tab-btn admin-only" onclick="switchView('reports')">
-      ðŸ“ˆ Reports & Analytics
+      📈 Reports & Analytics
     </button>
   </nav>
 
@@ -491,7 +547,7 @@
     <div class="auth-card">
       <div style="text-align:center; margin-bottom:1.5rem;">
         <div style="width:48px; height:48px; background:var(--accent-gradient); border-radius:14px; display:inline-flex; align-items:center; justify-content:center; font-size:1.6rem; color:#fff; margin-bottom:0.75rem; box-shadow:var(--shadow-glow);">
-          âš¡
+          ⚡
         </div>
         <h1 style="font-size:1.4rem; font-weight:800; margin-bottom:0.25rem;">GST Billing Portal</h1>
         <p style="color:var(--text-muted); font-size:0.85rem;">Sign in with your assigned business role</p>
@@ -508,7 +564,7 @@
           <div class="flex justify-between items-center" style="margin-bottom:0.35rem;">
             <label class="form-label" style="margin-bottom:0;">Password</label>
           </div>
-          <input type="password" id="login-password" class="form-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required value="staff123">
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required value="staff123">
         </div>
 
         <button type="submit" id="btn-login" class="btn btn-primary btn-full btn-lg" style="font-weight:700;">
@@ -519,22 +575,22 @@
       <!-- Quick Demo Login Buttons (University & Hackathon Evaluators) -->
       <div class="demo-login-box">
         <div class="demo-login-title">
-          <span>âš¡ One-Click Hackathon Demo Logins</span>
+          <span>⚡ One-Click Hackathon Demo Logins</span>
         </div>
         <div class="demo-btn-grid">
           <button type="button" class="demo-btn" onclick="quickLogin('admin@shop.com', 'admin123')">
-            <div style="font-weight:700; color:#818cf8;">ðŸ‘‘ Admin Login</div>
+            <div style="font-weight:700; color:#818cf8;">👑 Admin Login</div>
             <div style="font-size:0.7rem; color:var(--text-muted);">Shop Owner Control</div>
           </button>
           <button type="button" class="demo-btn" onclick="quickLogin('staff@shop.com', 'staff123')">
-            <div style="font-weight:700; color:#34d399;">âš¡ Staff Login</div>
+            <div style="font-weight:700; color:#34d399;">⚡ Staff Login</div>
             <div style="font-size:0.7rem; color:var(--text-muted);">Fast Billing Counter</div>
           </button>
         </div>
       </div>
 
       <div style="text-align:center; margin-top:1.25rem; font-size:0.75rem; color:var(--text-muted);">
-        Darshan University â€¢ Web & Mobile Application Practical
+        Darshan University • Web & Mobile Application Practical
       </div>
     </div>
   </div>
@@ -551,12 +607,12 @@
       <div class="card-panel" style="margin-bottom: 1.25rem; padding: 1rem 1.5rem;">
         <div class="flex justify-between items-center flex-wrap gap-3">
           <div class="flex items-center gap-3">
-            <span style="font-size: 1.6rem;">âš¡</span>
+            <span style="font-size: 1.6rem;">⚡</span>
             <div>
               <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2;">Smart Billing Counter</h2>
               <div style="font-size: 0.78rem; color: var(--text-muted);">
-                <span id="counter-cashier-name">Cashier: Sunil (Staff)</span> â€¢ 
-                <span class="badge badge-success" style="font-size: 0.68rem;">POS Terminal #01</span> â€¢ 
+                <span id="counter-cashier-name">Cashier: Sunil (Staff)</span> • 
+                <span class="badge badge-success" style="font-size: 0.68rem;">POS Terminal #01</span> • 
                 <span id="counter-invoice-preview" style="font-family: var(--font-mono); color: var(--primary);">Sequential Invoicing Active</span>
               </div>
             </div>
@@ -564,10 +620,10 @@
           
           <div class="flex items-center gap-2">
             <button type="button" class="btn btn-sm btn-outline" onclick="resetBillingCounter()">
-              âž• New Bill
+              ➕ New Bill
             </button>
             <button type="button" class="btn btn-sm btn-outline" onclick="reseedDatabase()">
-              ðŸ”„ Re-Sync Database
+              🔄 Re-Sync Database
             </button>
           </div>
         </div>
@@ -592,7 +648,7 @@
 
             <div class="flex gap-2">
               <div style="flex: 1; position: relative;">
-                <input type="text" id="billing-customer-search" class="form-input" placeholder="ðŸ” Search customer by Name or Mobile (e.g., Amit, Rahul)..." oninput="handleCustomerSearchInput(this.value)" autocomplete="off">
+                <input type="text" id="billing-customer-search" class="form-input" placeholder="🔍 Search customer by Name or Mobile (e.g., Amit, Rahul)..." oninput="handleCustomerSearchInput(this.value)" autocomplete="off">
                 <div id="customer-autocomplete-list" class="autocomplete-box"></div>
               </div>
               <button type="button" class="btn btn-outline" style="white-space: nowrap;" onclick="openQuickAddCustomerModal()">
@@ -603,12 +659,12 @@
             <!-- Active Selected Customer Card -->
             <div id="selected-customer-pill" style="margin-top: 0.75rem; background: var(--bg-surface-hover); padding: 0.6rem 0.85rem; border-radius: var(--radius-md); font-size: 0.82rem; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
               <div>
-                <span style="font-weight: 700;" id="sel-cust-name">Amit Patel</span> â€¢ 
-                <span id="sel-cust-mobile" style="color: var(--text-muted);">9898012345</span> â€¢ 
+                <span style="font-weight: 700;" id="sel-cust-name">Amit Patel</span> • 
+                <span id="sel-cust-mobile" style="color: var(--text-muted);">9898012345</span> • 
                 <span id="sel-cust-state" class="badge badge-neutral" style="font-size:0.7rem;">Gujarat (24)</span>
                 <span id="sel-cust-gstin" class="code-pill" style="margin-left: 4px;">GSTIN: 24AABCP4321F1ZX</span>
               </div>
-              <span style="color: var(--success); font-weight: 600; font-size: 0.75rem;">âœ“ Active Customer</span>
+              <span style="color: var(--success); font-weight: 600; font-size: 0.75rem;">✓ Active Customer</span>
             </div>
           </div>
 
@@ -619,19 +675,19 @@
                 2. Add Products to Bill
               </span>
               <span class="badge badge-success" style="font-size: 0.72rem;">
-                ðŸ“· Camera Barcode Active
+                📷 Camera Barcode Active
               </span>
             </div>
 
             <div class="flex gap-2 flex-wrap">
               <!-- Camera Barcode Scan Trigger -->
               <button type="button" class="btn btn-success" style="display: flex; align-items: center; gap: 0.4rem; font-weight: 700;" onclick="openScannerModal()">
-                ðŸ“· Scan Barcode
+                📷 Scan Barcode
               </button>
 
               <!-- Search Bar -->
               <div style="flex: 1; min-width: 220px; position: relative;">
-                <input type="text" id="billing-product-search" class="form-input" placeholder="ðŸ” Search product by name or enter barcode (e.g. 8901262010014)..." oninput="handleProductSearchInput(this.value)" onkeydown="if(event.key==='Enter'){handleBarcodeEnter(this.value);}" autocomplete="off">
+                <input type="text" id="billing-product-search" class="form-input" placeholder="🔍 Search product by name or enter barcode (e.g. 8901262010014)..." oninput="handleProductSearchInput(this.value)" onkeydown="if(event.key==='Enter'){handleBarcodeEnter(this.value);}" autocomplete="off">
                 <div id="product-autocomplete-list" class="autocomplete-box"></div>
               </div>
 
@@ -645,7 +701,7 @@
           <div class="card-panel" style="padding: 0; overflow: hidden;">
             <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
               <div style="font-weight: 700; font-size: 0.95rem;">
-                ðŸ›’ Items in Bill (<span id="cart-item-count">0</span> items)
+                🛒 Items in Bill (<span id="cart-item-count">0</span> items)
               </div>
               <span id="cart-tax-split-label" style="font-size: 0.8rem; color: var(--text-muted);">
                 Tax Split: <strong style="color: var(--primary);">CGST + SGST (Intra-State)</strong>
@@ -660,23 +716,23 @@
                     <th style="padding: 0.75rem;">Item Description</th>
                     <th style="padding: 0.75rem;">HSN</th>
                     <th style="padding: 0.75rem;">Barcode</th>
-                    <th style="padding: 0.75rem;">Rate (â‚¹)</th>
+                    <th style="padding: 0.75rem;">Rate (₹)</th>
                     <th style="padding: 0.75rem;">GST %</th>
                     <th style="padding: 0.75rem; text-align: center; width: 100px;">Qty</th>
-                    <th style="padding: 0.75rem; text-align: right;">Taxable (â‚¹)</th>
-                    <th style="padding: 0.75rem; text-align: right;">Total (â‚¹)</th>
+                    <th style="padding: 0.75rem; text-align: right;">Taxable (₹)</th>
+                    <th style="padding: 0.75rem; text-align: right;">Total (₹)</th>
                     <th style="padding: 0.75rem 1rem; text-align: center;">Action</th>
                   </tr>
                 </thead>
                 <tbody id="billing-cart-tbody">
                   <tr>
                     <td colspan="10" style="padding: 3rem 1rem; text-align: center; color: var(--text-muted);">
-                      <div style="font-size: 2rem; margin-bottom: 0.5rem;">ðŸ“¦</div>
+                      <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
                       <div style="font-weight: 700; font-size: 1rem; color: var(--text-main); margin-bottom: 0.25rem;">
                         Billing Counter is Empty
                       </div>
                       <div style="font-size: 0.82rem;">
-                        Click <strong>[ðŸ“· Scan Barcode]</strong> or search a product above to add items.
+                        Click <strong>[📷 Scan Barcode]</strong> or search a product above to add items.
                       </div>
                     </td>
                   </tr>
@@ -691,7 +747,7 @@
         <div>
           <div class="card-panel" style="position: sticky; top: 85px;">
             <div style="font-size: 0.95rem; font-weight: 800; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-              <span>ðŸ§¾ Bill Summary</span>
+              <span>🧾 Bill Summary</span>
               <span class="badge badge-neutral" style="font-size: 0.7rem;">Live Tax Math</span>
             </div>
 
@@ -699,23 +755,23 @@
             <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.875rem; color: var(--text-muted);">
               <div class="flex justify-between">
                 <span>Taxable Amount (Subtotal):</span>
-                <span id="sum-subtotal" style="font-weight: 700; color: var(--text-main);">â‚¹0.00</span>
+                <span id="sum-subtotal" style="font-weight: 700; color: var(--text-main);">₹0.00</span>
               </div>
               <div class="flex justify-between" id="row-cgst">
                 <span>CGST (Central Tax):</span>
-                <span id="sum-cgst" style="font-weight: 600;">â‚¹0.00</span>
+                <span id="sum-cgst" style="font-weight: 600;">₹0.00</span>
               </div>
               <div class="flex justify-between" id="row-sgst">
                 <span>SGST (State Tax):</span>
-                <span id="sum-sgst" style="font-weight: 600;">â‚¹0.00</span>
+                <span id="sum-sgst" style="font-weight: 600;">₹0.00</span>
               </div>
               <div class="flex justify-between" id="row-igst" style="display: none;">
                 <span>IGST (Integrated Tax):</span>
-                <span id="sum-igst" style="font-weight: 600;">â‚¹0.00</span>
+                <span id="sum-igst" style="font-weight: 600;">₹0.00</span>
               </div>
               <div class="flex justify-between" style="border-top: 1px dashed var(--border-color); padding-top: 0.5rem;">
                 <span style="font-weight: 700;">Total GST Amount:</span>
-                <span id="sum-totaltax" style="font-weight: 700; color: #818cf8;">â‚¹0.00</span>
+                <span id="sum-totaltax" style="font-weight: 700; color: #818cf8;">₹0.00</span>
               </div>
             </div>
 
@@ -725,17 +781,17 @@
                 Grand Total (Payable)
               </div>
               <div id="sum-grandtotal" style="font-size: 2rem; font-weight: 800; color: var(--success); line-height: 1.2; margin-top: 0.25rem;">
-                â‚¹0.00
+                ₹0.00
               </div>
             </div>
 
             <!-- Finalize Buttons -->
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
               <button type="button" class="btn btn-primary btn-full btn-lg" style="font-weight: 800;" onclick="openReviewModal()">
-                ðŸ’¾ Review & Finalize Bill
+                💾 Review & Finalize Bill
               </button>
               <button type="button" class="btn btn-outline btn-full" onclick="resetBillingCounter()">
-                ðŸ—‘ï¸ Clear Bill
+                🗑️ Clear Bill
               </button>
             </div>
           </div>
@@ -747,12 +803,12 @@
       <div class="card-panel" style="border: 1px dashed var(--border-color); background: rgba(0,0,0,0.15);">
         <div class="flex justify-between items-center" style="cursor: pointer;" onclick="toggleDiagnostics()">
           <div class="flex items-center gap-2">
-            <span style="font-size: 1rem;">ðŸ”</span>
+            <span style="font-size: 1rem;">🔍</span>
             <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
               System Verification & Live Database Diagnostics
             </span>
           </div>
-          <span id="diag-toggle-icon" class="badge badge-neutral">Hide â–²</span>
+          <span id="diag-toggle-icon" class="badge badge-neutral">Hide ▲</span>
         </div>
 
         <div id="diag-content-box" style="margin-top: 1rem; display: block;">
@@ -766,7 +822,7 @@
             <div style="background: var(--bg-surface); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Database Status</div>
               <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.25rem;">
-                <span id="tel-db-status" class="badge badge-success">ðŸƒ MongoDB Online</span>
+                <span id="tel-db-status" class="badge badge-success">🍃 MongoDB Online</span>
               </div>
               <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">codeathon_db</div>
             </div>
@@ -785,7 +841,7 @@
           </div>
           <div style="margin-top: 0.85rem; display: flex; justify-content: flex-end; gap: 0.5rem; border-top: 1px dashed var(--border-color); padding-top: 0.65rem;">
             <button type="button" class="btn btn-sm btn-outline" style="border-color: var(--primary); color: var(--primary); font-weight: 700;" onclick="runPhase2Tests()">
-              ðŸ§ª Run 12 Automated Verification Tests
+              🧪 Run 12 Automated Verification Tests
             </button>
           </div>
         </div>
@@ -798,20 +854,20 @@
       <div class="card-panel" style="margin-bottom: 1.25rem;">
         <div class="flex justify-between items-center flex-wrap gap-3">
           <div>
-            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">ðŸ“œ Generated GST Invoices & Bill History</h2>
+            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">📜 Generated GST Invoices & Bill History</h2>
             <p style="color:var(--text-muted); font-size:0.875rem;">
               Audit trail of finalized bills saved in MongoDB. Invoices are permanent snapshots and cannot be altered.
             </p>
           </div>
           <button type="button" class="btn btn-primary btn-sm" onclick="loadBillsList()">
-            ðŸ”„ Refresh Bills
+            🔄 Refresh Bills
           </button>
         </div>
       </div>
 
       <!-- Filter / Search Bar -->
       <div class="card-panel" style="margin-bottom: 1.25rem; padding: 1rem 1.25rem;">
-        <input type="text" id="bill-filter-search" class="form-input" placeholder="ðŸ” Search invoices by Invoice Number, Customer Name, or Mobile..." oninput="loadBillsList()">
+        <input type="text" id="bill-filter-search" class="form-input" placeholder="🔍 Search invoices by Invoice Number, Customer Name, or Mobile..." oninput="loadBillsList()">
       </div>
 
       <!-- Bills Table -->
@@ -845,7 +901,7 @@
     <!-- (C) ADMIN DASHBOARD VIEW (Admin Only) -->
     <section id="view-dashboard" class="app-subview" style="display:none;">
       <div class="card-panel" style="border-left: 4px solid var(--primary); margin-bottom: 1.5rem;">
-        <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">ðŸ“Š Admin Executive Dashboard</h2>
+        <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">📊 Admin Executive Dashboard</h2>
         <p style="color:var(--text-muted); font-size:0.875rem;">
           Business analytics, GST collection metrics, customer sales volume, and product performance.
         </p>
@@ -858,8 +914,8 @@
           <span class="badge badge-neutral" style="margin-top:0.35rem;">MongoDB Bills</span>
         </div>
         <div class="card-panel">
-          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total Revenue (â‚¹)</div>
-          <div id="dash-total-revenue" style="font-size:1.75rem; font-weight:800; margin-top:0.25rem; color:var(--success);">â‚¹0.00</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total Revenue (₹)</div>
+          <div id="dash-total-revenue" style="font-size:1.75rem; font-weight:800; margin-top:0.25rem; color:var(--success);">₹0.00</div>
           <span class="badge badge-success" style="margin-top:0.35rem;">Live Sales</span>
         </div>
         <div class="card-panel">
@@ -880,7 +936,7 @@
       <div class="card-panel" style="margin-bottom: 1.25rem;">
         <div class="flex justify-between items-center flex-wrap gap-3">
           <div>
-            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">ðŸ‘¥ Customers (Parties) Management</h2>
+            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">👥 Customers (Parties) Management</h2>
             <p style="color:var(--text-muted); font-size:0.875rem;">
               Manage registered business parties and retail consumers in MongoDB.
             </p>
@@ -894,7 +950,7 @@
       <div class="card-panel" style="margin-bottom: 1.25rem; padding: 1rem 1.25rem;">
         <div class="flex gap-3 flex-wrap">
           <div style="flex: 1; min-width: 250px;">
-            <input type="text" id="cust-filter-search" class="form-input" placeholder="ðŸ” Search customers by Name or Mobile..." oninput="loadCustomersList()">
+            <input type="text" id="cust-filter-search" class="form-input" placeholder="🔍 Search customers by Name or Mobile..." oninput="loadCustomersList()">
           </div>
           <div style="width: 200px;">
             <select id="cust-filter-state" class="form-input" onchange="loadCustomersList()">
@@ -934,7 +990,7 @@
       <div class="card-panel" style="margin-bottom: 1.25rem;">
         <div class="flex justify-between items-center flex-wrap gap-3">
           <div>
-            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">ðŸ“¦ Products & Barcodes Catalog</h2>
+            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">📦 Products & Barcodes Catalog</h2>
             <p style="color:var(--text-muted); font-size:0.875rem;">
               Manage reusable products with statutory GST slabs, HSN/SAC codes, and barcodes in MongoDB.
             </p>
@@ -948,7 +1004,7 @@
       <div class="card-panel" style="margin-bottom: 1.25rem; padding: 1rem 1.25rem;">
         <div class="flex gap-3 flex-wrap">
           <div style="flex: 1; min-width: 250px;">
-            <input type="text" id="prod-filter-search" class="form-input" placeholder="ðŸ” Search products by Name, Barcode, or HSN code..." oninput="loadProductsList()">
+            <input type="text" id="prod-filter-search" class="form-input" placeholder="🔍 Search products by Name, Barcode, or HSN code..." oninput="loadProductsList()">
           </div>
           <div style="width: 180px;">
             <select id="prod-filter-gst" class="form-input" onchange="loadProductsList()">
@@ -971,7 +1027,7 @@
                 <th style="padding: 0.75rem 1rem;">Product Name</th>
                 <th style="padding: 0.75rem;">HSN/SAC</th>
                 <th style="padding: 0.75rem;">Barcode / QR</th>
-                <th style="padding: 0.75rem;">Unit Price (â‚¹)</th>
+                <th style="padding: 0.75rem;">Unit Price (₹)</th>
                 <th style="padding: 0.75rem;">GST Slab</th>
                 <th style="padding: 0.75rem;">Unit</th>
                 <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
@@ -996,15 +1052,15 @@
         </div>
         <div class="card-panel" style="text-align:center;">
           <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;" data-lang-key="rep_total_sales">Total Sales</div>
-          <div id="rep-total-sales" style="font-size:2rem;font-weight:800;color:var(--success);margin-top:0.25rem;">â‚¹0</div>
+          <div id="rep-total-sales" style="font-size:2rem;font-weight:800;color:var(--success);margin-top:0.25rem;">₹0</div>
         </div>
         <div class="card-panel" style="text-align:center;">
           <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;" data-lang-key="rep_total_tax">Total Tax</div>
-          <div id="rep-total-tax" style="font-size:2rem;font-weight:800;color:#818cf8;margin-top:0.25rem;">â‚¹0</div>
+          <div id="rep-total-tax" style="font-size:2rem;font-weight:800;color:#818cf8;margin-top:0.25rem;">₹0</div>
         </div>
         <div class="card-panel" style="text-align:center;">
           <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;" data-lang-key="rep_avg_bill">Avg Bill Value</div>
-          <div id="rep-avg-bill" style="font-size:2rem;font-weight:800;color:#f59e0b;margin-top:0.25rem;">â‚¹0</div>
+          <div id="rep-avg-bill" style="font-size:2rem;font-weight:800;color:#f59e0b;margin-top:0.25rem;">₹0</div>
         </div>
       </div>
 
@@ -1018,17 +1074,17 @@
             <button class="btn btn-sm btn-outline" id="rep-filter-month" onclick="setReportFilter('month',this)">This Month</button>
             <button class="btn btn-sm btn-outline" id="rep-filter-all" onclick="setReportFilter('all',this)">All Time</button>
           </div>
-          <button class="btn btn-sm btn-success" onclick="exportReportsCSV()" style="margin-left:auto;" data-lang-key="rep_export_csv">ðŸ“¥ Export CSV</button>
+          <button class="btn btn-sm btn-success" onclick="exportReportsCSV()" style="margin-left:auto;" data-lang-key="rep_export_csv">📥 Export CSV</button>
         </div>
       </div>
 
       <!-- Sales Chart -->
       <div class="card-panel" style="margin-bottom:1.25rem;padding:1.25rem;">
-        <div style="font-weight:700;font-size:1rem;margin-bottom:1rem;" data-lang-key="rep_sales_chart">ðŸ“Š Sales Trend</div>
+        <div style="font-weight:700;font-size:1rem;margin-bottom:1rem;" data-lang-key="rep_sales_chart">📊 Sales Trend</div>
         <div style="position:relative;height:220px;">
           <canvas id="rep-sales-chart"></canvas>
           <div id="rep-chart-empty" style="display:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;color:var(--text-muted);">
-            <span style="font-size:2rem;">ðŸ“­</span>
+            <span style="font-size:2rem;">📭</span>
             <span style="font-size:0.875rem;">No bill data for this period</span>
           </div>
         </div>
@@ -1037,7 +1093,7 @@
       <!-- Transaction Table -->
       <div class="card-panel" style="padding:0;overflow:hidden;">
         <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;">
-          <div style="font-weight:700;font-size:0.95rem;" data-lang-key="rep_transactions">ðŸ“‹ Transaction History</div>
+          <div style="font-weight:700;font-size:0.95rem;" data-lang-key="rep_transactions">📋 Transaction History</div>
           <span id="rep-txn-count" class="badge badge-neutral">0 records</span>
         </div>
         <div style="overflow-x:auto;">
@@ -1047,12 +1103,12 @@
                 <th style="padding:0.65rem 1rem;">Invoice No</th>
                 <th style="padding:0.65rem;">Date</th>
                 <th style="padding:0.65rem;">Customer</th>
-                <th style="padding:0.65rem;text-align:right;">Taxable (â‚¹)</th>
-                <th style="padding:0.65rem;text-align:right;">CGST (â‚¹)</th>
-                <th style="padding:0.65rem;text-align:right;">SGST (â‚¹)</th>
-                <th style="padding:0.65rem;text-align:right;">IGST (â‚¹)</th>
-                <th style="padding:0.65rem;text-align:right;">Total Tax (â‚¹)</th>
-                <th style="padding:0.65rem;text-align:right;">Grand Total (â‚¹)</th>
+                <th style="padding:0.65rem;text-align:right;">Taxable (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">CGST (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">SGST (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">IGST (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">Total Tax (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">Grand Total (₹)</th>
                 <th style="padding:0.65rem;text-align:center;">Action</th>
               </tr>
             </thead>
@@ -1075,7 +1131,7 @@
     <div class="modal-container" style="max-width: 540px;">
       <div class="modal-header">
         <div class="flex items-center gap-2">
-          <span style="font-size: 1.3rem;">ðŸ“·</span>
+          <span style="font-size: 1.3rem;">📷</span>
           <h3 style="font-weight: 800; font-size: 1.15rem; margin: 0;">Camera Barcode Scanner</h3>
         </div>
         <button class="modal-close" onclick="closeScannerModal()">&times;</button>
@@ -1090,7 +1146,7 @@
 
         <div style="margin-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
           <span id="scanner-status-indicator" class="badge badge-primary" style="font-size: 0.75rem;">
-            ðŸŸ¢ Camera Stream Active (Point barcode to lens)
+            🟢 Camera Stream Active (Point barcode to lens)
           </span>
           <label style="font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
             <input type="checkbox" id="scanner-continuous-toggle" checked>
@@ -1101,37 +1157,37 @@
         <!-- B. QUICK BARCODE SIMULATOR (Fallback for Zero-Camera Environments) -->
         <div style="margin-top: 1.25rem; background: var(--bg-surface-hover); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 0.85rem;">
           <div style="font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
-            <span>âš¡ Quick Barcode Simulator Tray (Click to Scan Instantly)</span>
+            <span>⚡ Quick Barcode Simulator Tray (Click to Scan Instantly)</span>
             <span style="color: var(--success);">MongoDB Linked</span>
           </div>
 
           <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901262010014')">
-              ðŸ¥› Amul Milk (8901262010014)
+              🥛 Amul Milk (8901262010014)
             </button>
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901063012480')">
-              ðŸž Bread (8901063012480)
+              🍞 Bread (8901063012480)
             </button>
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901058852273')">
-              ðŸœ Maggi (8901058852273)
+              🍜 Maggi (8901058852273)
             </button>
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901058000421')">
-              ðŸ§‚ Salt (8901058000421)
+              🧂 Salt (8901058000421)
             </button>
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8906007280014')">
-              ðŸŒ» Fortune Oil (8906007280014)
+              🌻 Fortune Oil (8906007280014)
             </button>
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901396316129')">
-              ðŸ§´ Dettol (8901396316129)
+              🧴 Dettol (8901396316129)
             </button>
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901233024873')">
-              ðŸ« Dairy Milk (8901233024873)
+              🍫 Dairy Milk (8901233024873)
             </button>
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8904330900125')">
-              ðŸŽ§ Earphones (8904330900125)
+              🎧 Earphones (8904330900125)
             </button>
             <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px; border-color: rgba(239,68,68,0.4); color: var(--danger);" onclick="handleBarcodeScanned('9999999999999')">
-              âŒ Invalid (9999999999999)
+              ❌ Invalid (9999999999999)
             </button>
           </div>
         </div>
@@ -1148,7 +1204,7 @@
   <div id="modal-review" class="modal-overlay no-print">
     <div class="modal-container" style="max-width: 650px;">
       <div class="modal-header">
-        <h3 style="font-weight: 800; font-size: 1.15rem;">ðŸ“‹ Review Bill Before Finalizing</h3>
+        <h3 style="font-weight: 800; font-size: 1.15rem;">📋 Review Bill Before Finalizing</h3>
         <button class="modal-close" onclick="Modal.close('modal-review')">&times;</button>
       </div>
       <div class="modal-body">
@@ -1157,7 +1213,7 @@
         <div style="background: var(--bg-surface-hover); padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; font-size: 0.85rem; border: 1px solid var(--border-color);">
           <div class="flex justify-between items-center">
             <div>
-              <span style="font-weight: 700;" id="rev-cust-name">Amit Patel</span> â€¢ 
+              <span style="font-weight: 700;" id="rev-cust-name">Amit Patel</span> • 
               <span id="rev-cust-mobile" style="color: var(--text-muted);">9898012345</span>
               <div id="rev-cust-address" style="font-size: 0.75rem; color: var(--text-muted);">Rajkot, Gujarat</div>
             </div>
@@ -1184,32 +1240,32 @@
         <div style="background: var(--bg-surface-hover); padding: 1rem; border-radius: var(--radius-md); font-size: 0.85rem; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.4rem;">
           <div class="flex justify-between">
             <span>Subtotal (Taxable):</span>
-            <span id="rev-subtotal" style="font-weight: 700;">â‚¹0.00</span>
+            <span id="rev-subtotal" style="font-weight: 700;">₹0.00</span>
           </div>
           <div class="flex justify-between" id="rev-row-cgst">
             <span>CGST Amount:</span>
-            <span id="rev-cgst" style="font-weight: 600;">â‚¹0.00</span>
+            <span id="rev-cgst" style="font-weight: 600;">₹0.00</span>
           </div>
           <div class="flex justify-between" id="rev-row-sgst">
             <span>SGST Amount:</span>
-            <span id="rev-sgst" style="font-weight: 600;">â‚¹0.00</span>
+            <span id="rev-sgst" style="font-weight: 600;">₹0.00</span>
           </div>
           <div class="flex justify-between" id="rev-row-igst" style="display: none;">
             <span>IGST Amount:</span>
-            <span id="rev-igst" style="font-weight: 600;">â‚¹0.00</span>
+            <span id="rev-igst" style="font-weight: 600;">₹0.00</span>
           </div>
           <div class="flex justify-between" style="border-top: 1px dashed var(--border-color); padding-top: 0.5rem; font-size: 1.15rem;">
             <span style="font-weight: 800;">Grand Total:</span>
-            <span id="rev-grandtotal" style="font-weight: 800; color: var(--success);">â‚¹0.00</span>
+            <span id="rev-grandtotal" style="font-weight: 800; color: var(--success);">₹0.00</span>
           </div>
         </div>
 
         <div style="margin-top: 1rem;">
           <label class="form-label">Payment Mode</label>
           <select id="rev-payment-method" class="form-input">
-            <option value="CASH" selected>ðŸ’µ Cash</option>
-            <option value="UPI">ðŸ“± UPI / QR Transfer</option>
-            <option value="CARD">ðŸ’³ Debit / Credit Card</option>
+            <option value="CASH" selected>💵 Cash</option>
+            <option value="UPI">📱 UPI / QR Transfer</option>
+            <option value="CARD">💳 Debit / Credit Card</option>
           </select>
         </div>
 
@@ -1217,7 +1273,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" onclick="Modal.close('modal-review')">Cancel</button>
         <button type="button" id="btn-confirm-finalize" class="btn btn-primary" onclick="confirmFinalizeBill()">
-          âœ“ Confirm & Finalize Invoice
+          ✓ Confirm & Finalize Invoice
         </button>
       </div>
     </div>
@@ -1227,7 +1283,7 @@
   <div id="modal-invoice" class="modal-overlay">
     <div class="modal-container" style="max-width: 860px; max-height: 90vh; overflow-y: auto;">
       <div class="modal-header no-print">
-        <h3 style="font-weight: 800; font-size: 1.15rem;">ðŸ§¾ Official GST Tax Invoice</h3>
+        <h3 style="font-weight: 800; font-size: 1.15rem;">🧾 Official GST Tax Invoice</h3>
         <button class="modal-close" onclick="Modal.close('modal-invoice')">&times;</button>
       </div>
       
@@ -1244,8 +1300,8 @@
               </h1>
               <div style="color: #475569; font-size: 0.8rem; margin-top: 3px;">
                 Opp. Crystal Mall, Kalawad Road, Rajkot - 360005, Gujarat<br>
-                Phone: +91 98765 43210 â€¢ Email: admin@darshanshop.com<br>
-                <strong>GSTIN: 24AAACD1234E1Z5</strong> â€¢ State Code: 24 (Gujarat)
+                Phone: +91 98765 43210 • Email: admin@darshanshop.com<br>
+                <strong>GSTIN: 24AAACD1234E1Z5</strong> • State Code: 24 (Gujarat)
               </div>
             </div>
 
@@ -1293,13 +1349,13 @@
                 <th>Item Description</th>
                 <th style="width: 60px; text-align: center;">HSN</th>
                 <th style="width: 45px; text-align: center;">Qty</th>
-                <th style="width: 65px; text-align: right;">Rate (â‚¹)</th>
-                <th style="width: 80px; text-align: right;">Taxable (â‚¹)</th>
+                <th style="width: 65px; text-align: right;">Rate (₹)</th>
+                <th style="width: 80px; text-align: right;">Taxable (₹)</th>
                 <th style="width: 50px; text-align: center;">GST %</th>
-                <th style="width: 70px; text-align: right;" id="inv-th-cgst">CGST (â‚¹)</th>
-                <th style="width: 70px; text-align: right;" id="inv-th-sgst">SGST (â‚¹)</th>
-                <th style="width: 70px; text-align: right; display:none;" id="inv-th-igst">IGST (â‚¹)</th>
-                <th style="width: 85px; text-align: right;">Total (â‚¹)</th>
+                <th style="width: 70px; text-align: right;" id="inv-th-cgst">CGST (₹)</th>
+                <th style="width: 70px; text-align: right;" id="inv-th-sgst">SGST (₹)</th>
+                <th style="width: 70px; text-align: right; display:none;" id="inv-th-igst">IGST (₹)</th>
+                <th style="width: 85px; text-align: right;">Total (₹)</th>
               </tr>
             </thead>
             <tbody id="inv-items-tbody"></tbody>
@@ -1324,23 +1380,23 @@
               <table style="width: 100%; font-size: 0.82rem; border-collapse: collapse;">
                 <tr>
                   <td style="padding: 3px 0; color: #475569;">Total Taxable Amount:</td>
-                  <td style="padding: 3px 0; text-align: right; font-weight: 700;" id="inv-subtotal">â‚¹0.00</td>
+                  <td style="padding: 3px 0; text-align: right; font-weight: 700;" id="inv-subtotal">₹0.00</td>
                 </tr>
                 <tr id="inv-summary-row-cgst">
                   <td style="padding: 3px 0; color: #475569;">Central GST (CGST):</td>
-                  <td style="padding: 3px 0; text-align: right;" id="inv-cgst">â‚¹0.00</td>
+                  <td style="padding: 3px 0; text-align: right;" id="inv-cgst">₹0.00</td>
                 </tr>
                 <tr id="inv-summary-row-sgst">
                   <td style="padding: 3px 0; color: #475569;">State GST (SGST):</td>
-                  <td style="padding: 3px 0; text-align: right;" id="inv-sgst">â‚¹0.00</td>
+                  <td style="padding: 3px 0; text-align: right;" id="inv-sgst">₹0.00</td>
                 </tr>
                 <tr id="inv-summary-row-igst" style="display: none;">
                   <td style="padding: 3px 0; color: #475569;">Integrated GST (IGST):</td>
-                  <td style="padding: 3px 0; text-align: right;" id="inv-igst">â‚¹0.00</td>
+                  <td style="padding: 3px 0; text-align: right;" id="inv-igst">₹0.00</td>
                 </tr>
                 <tr style="border-top: 2px solid #0f172a; font-size: 1.15rem;">
                   <td style="padding: 6px 0; font-weight: 800; color: #0f172a;">Grand Total:</td>
-                  <td style="padding: 6px 0; text-align: right; font-weight: 800; color: #0f172a;" id="inv-grandtotal">â‚¹0.00</td>
+                  <td style="padding: 6px 0; text-align: right; font-weight: 800; color: #0f172a;" id="inv-grandtotal">₹0.00</td>
                 </tr>
               </table>
 
@@ -1358,9 +1414,9 @@
 
       <div class="modal-footer no-print">
         <button type="button" class="btn btn-outline" onclick="Modal.close('modal-invoice')">Close Preview</button>
-        <button type="button" class="btn btn-outline" onclick="printInvoice()">ðŸ–¨ï¸ Print Invoice</button>
-        <button type="button" class="btn btn-success" onclick="downloadInvoicePDF()">ðŸ“¥ Download PDF</button>
-        <button type="button" class="btn btn-primary" onclick="startNewBillFromInvoice()">âž• Next Bill</button>
+        <button type="button" class="btn btn-outline" onclick="printInvoice()">🖨️ Print Invoice</button>
+        <button type="button" class="btn btn-success" onclick="downloadInvoicePDF()">📥 Download PDF</button>
+        <button type="button" class="btn btn-primary" onclick="startNewBillFromInvoice()">➕ Next Bill</button>
       </div>
     </div>
   </div>
@@ -1369,7 +1425,7 @@
   <div id="modal-customer" class="modal-overlay no-print">
     <div class="modal-container" style="max-width: 500px;">
       <div class="modal-header">
-        <h3 id="modal-customer-title" style="font-weight: 800; font-size: 1.15rem;">âž• Add Customer</h3>
+        <h3 id="modal-customer-title" style="font-weight: 800; font-size: 1.15rem;">➕ Add Customer</h3>
         <button class="modal-close" onclick="Modal.close('modal-customer')">&times;</button>
       </div>
       <form id="form-customer" onsubmit="handleCustomerSubmit(event)">
@@ -1431,7 +1487,7 @@
   <div id="modal-product" class="modal-overlay no-print">
     <div class="modal-container" style="max-width: 520px;">
       <div class="modal-header">
-        <h3 id="modal-product-title" style="font-weight: 800; font-size: 1.15rem;">âž• Add Product</h3>
+        <h3 id="modal-product-title" style="font-weight: 800; font-size: 1.15rem;">➕ Add Product</h3>
         <button class="modal-close" onclick="Modal.close('modal-product')">&times;</button>
       </div>
       <form id="form-product" onsubmit="handleProductSubmit(event)">
@@ -1444,7 +1500,7 @@
 
           <div class="grid grid-cols-2 gap-3">
             <div class="form-group">
-              <label class="form-label">Unit Price (â‚¹) *</label>
+              <label class="form-label">Unit Price (₹) *</label>
               <input type="number" step="0.01" min="0" id="prod-price" class="form-input" placeholder="34.00" required>
             </div>
             <div class="form-group">
@@ -1675,10 +1731,10 @@
         const health = await api.get('/health');
         const dbStatusEl = document.getElementById('tel-db-status');
         if (health.databaseConnected) {
-          dbStatusEl.textContent = 'ðŸƒ MongoDB Online';
+          dbStatusEl.textContent = '🍃 MongoDB Online';
           dbStatusEl.className = 'badge badge-success';
         } else {
-          dbStatusEl.textContent = 'ðŸ›¡ï¸ Safe Fallback Active';
+          dbStatusEl.textContent = '🛡️ Safe Fallback Active';
           dbStatusEl.className = 'badge badge-warning';
         }
 
@@ -1712,7 +1768,7 @@
           if (invCountEl) invCountEl.textContent = bCount;
           const totalRev = billsRes.bills.reduce((acc, b) => acc + (parseFloat(b.grandTotal) || 0), 0);
           const revEl = document.getElementById('dash-total-revenue');
-          if (revEl) revEl.textContent = `â‚¹${totalRev.toFixed(2)}`;
+          if (revEl) revEl.textContent = `₹${totalRev.toFixed(2)}`;
         }
       } catch (err) {
         console.warn('Telemetry load notice:', err.message);
@@ -1738,10 +1794,10 @@
       const icon = document.getElementById('diag-toggle-icon');
       if (box.style.display === 'none') {
         box.style.display = 'block';
-        icon.textContent = 'Hide â–²';
+        icon.textContent = 'Hide ▲';
       } else {
         box.style.display = 'none';
-        icon.textContent = 'Show â–¼';
+        icon.textContent = 'Show ▼';
       }
     }
 
@@ -1799,8 +1855,8 @@
             <td style="padding: 0.75rem;">${gstinBadge}</td>
             <td style="padding: 0.75rem; color: var(--text-muted);">${escapeHtml(p.city || '-')}</td>
             <td style="padding: 0.75rem 1rem; text-align: right;">
-              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; margin-right: 4px;" onclick="editCustomer('${p._id}')">âœï¸ Edit</button>
-              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteCustomer('${p._id}', '${escapeHtml(p.name)}')">ðŸ—‘ï¸ Delete</button>
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; margin-right: 4px;" onclick="editCustomer('${p._id}')">✏️ Edit</button>
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteCustomer('${p._id}', '${escapeHtml(p.name)}')">🗑️ Delete</button>
             </td>
           </tr>
         `;
@@ -1810,7 +1866,7 @@
     async function openCustomerModal(id = null) {
       document.getElementById('form-customer').reset();
       document.getElementById('cust-form-id').value = id || '';
-      document.getElementById('modal-customer-title').textContent = id ? 'âœï¸ Edit Customer' : 'âž• Add New Customer';
+      document.getElementById('modal-customer-title').textContent = id ? '✏️ Edit Customer' : '➕ Add New Customer';
       document.getElementById('cust-state').value = 'Gujarat';
 
       if (id) {
@@ -1972,7 +2028,7 @@
         <div class="autocomplete-item" onclick='selectCustomerForBilling(${JSON.stringify(c).replace(/'/g, "&apos;")})'>
           <div>
             <div style="font-weight:700;">${escapeHtml(c.name)}</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">${c.mobile} â€¢ ${c.state}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">${c.mobile} • ${c.state}</div>
           </div>
           <span class="badge ${c.state.toLowerCase()==='gujarat'?'badge-success':'badge-warning'}">${c.state}</span>
         </div>
@@ -2027,12 +2083,12 @@
             <td style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-main);">${escapeHtml(p.name)}</td>
             <td style="padding: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">${p.hsnCode || '-'}</td>
             <td style="padding: 0.75rem;">${barcodeDisplay}</td>
-            <td style="padding: 0.75rem; font-weight: 700;">â‚¹${parseFloat(p.price).toFixed(2)}</td>
+            <td style="padding: 0.75rem; font-weight: 700;">₹${parseFloat(p.price).toFixed(2)}</td>
             <td style="padding: 0.75rem;">${gstBadge}</td>
             <td style="padding: 0.75rem; color: var(--text-muted);">${escapeHtml(p.unit || 'pcs')}</td>
             <td style="padding: 0.75rem 1rem; text-align: right;">
-              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; margin-right: 4px;" onclick="editProduct('${p._id}')">âœï¸ Edit</button>
-              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteProduct('${p._id}', '${escapeHtml(p.name)}')">ðŸ—‘ï¸ Delete</button>
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; margin-right: 4px;" onclick="editProduct('${p._id}')">✏️ Edit</button>
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteProduct('${p._id}', '${escapeHtml(p.name)}')">🗑️ Delete</button>
             </td>
           </tr>
         `;
@@ -2042,7 +2098,7 @@
     async function openProductModal(id = null) {
       document.getElementById('form-product').reset();
       document.getElementById('prod-form-id').value = id || '';
-      document.getElementById('modal-product-title').textContent = id ? 'âœï¸ Edit Product' : 'âž• Add New Product';
+      document.getElementById('modal-product-title').textContent = id ? '✏️ Edit Product' : '➕ Add New Product';
       document.getElementById('prod-gst').value = '5';
       document.getElementById('prod-unit').value = 'pcs';
 
@@ -2163,7 +2219,7 @@
     // Open camera scanner modal
     function openScannerModal() {
       Modal.open('modal-scanner');
-      document.getElementById('scanner-status-indicator').textContent = 'ðŸŸ¡ Starting Camera Stream...';
+      document.getElementById('scanner-status-indicator').textContent = '🟡 Starting Camera Stream...';
       document.getElementById('scanner-status-indicator').className = 'badge badge-neutral';
 
       if (window.Html5Qrcode) {
@@ -2207,21 +2263,21 @@
                 // Frame non-detection (silent)
               }
             ).then(() => {
-              document.getElementById('scanner-status-indicator').textContent = 'ðŸŸ¢ Camera Active: Align Barcode in Box';
+              document.getElementById('scanner-status-indicator').textContent = '🟢 Camera Active: Align Barcode in Box';
               document.getElementById('scanner-status-indicator').className = 'badge badge-success';
             }).catch(err => {
               console.warn('Webcam permission note:', err);
-              document.getElementById('scanner-status-indicator').textContent = 'âš ï¸ Webcam unavailable - Use Barcode Simulator below';
+              document.getElementById('scanner-status-indicator').textContent = '⚠️ Webcam unavailable - Use Barcode Simulator below';
               document.getElementById('scanner-status-indicator').className = 'badge badge-warning';
             });
           }
         } catch (e) {
           console.warn('Scanner init error:', e);
-          document.getElementById('scanner-status-indicator').textContent = 'â„¹ï¸ Quick Barcode Simulator Active';
+          document.getElementById('scanner-status-indicator').textContent = 'ℹ️ Quick Barcode Simulator Active';
           document.getElementById('scanner-status-indicator').className = 'badge badge-primary';
         }
       } else {
-        document.getElementById('scanner-status-indicator').textContent = 'â„¹ï¸ Quick Barcode Simulator Active';
+        document.getElementById('scanner-status-indicator').textContent = 'ℹ️ Quick Barcode Simulator Active';
         document.getElementById('scanner-status-indicator').className = 'badge badge-primary';
       }
     }
@@ -2251,7 +2307,7 @@
 
       const scanBadge = document.getElementById('scanner-status-indicator');
       if (scanBadge) {
-        scanBadge.textContent = `âš¡ Detected: ${cleanCode}`;
+        scanBadge.textContent = `⚡ Detected: ${cleanCode}`;
         scanBadge.className = 'badge badge-success';
       }
 
@@ -2265,7 +2321,7 @@
 
           Toast.show({
             title: 'Barcode Matched!',
-            message: `"${res.product.name}" added to cart (â‚¹${res.product.price})`,
+            message: `"${res.product.name}" added to cart (₹${res.product.price})`,
             type: 'success'
           });
 
@@ -2320,11 +2376,11 @@
           <div>
             <div style="font-weight:700;">${escapeHtml(p.name)}</div>
             <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
-              HSN: ${p.hsnCode || '-'} â€¢ Barcode: ${p.barcode || '-'}
+              HSN: ${p.hsnCode || '-'} • Barcode: ${p.barcode || '-'}
             </div>
           </div>
           <div style="text-align:right;">
-            <div style="font-weight:700; color:var(--success);">â‚¹${parseFloat(p.price).toFixed(2)}</div>
+            <div style="font-weight:700; color:var(--success);">₹${parseFloat(p.price).toFixed(2)}</div>
             <span class="badge badge-primary" style="font-size:0.68rem;">${p.gstPercent}% GST</span>
           </div>
         </div>
@@ -2391,12 +2447,12 @@
         tbody.innerHTML = `
           <tr>
             <td colspan="10" style="padding: 3rem 1rem; text-align: center; color: var(--text-muted);">
-              <div style="font-size: 2rem; margin-bottom: 0.5rem;">ðŸ“¦</div>
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
               <div style="font-weight: 700; font-size: 1rem; color: var(--text-main); margin-bottom: 0.25rem;">
                 Billing Counter is Empty
               </div>
               <div style="font-size: 0.82rem;">
-                Click <strong>[ðŸ“· Scan Barcode]</strong> or search a product above to add items.
+                Click <strong>[📷 Scan Barcode]</strong> or search a product above to add items.
               </div>
             </td>
           </tr>
@@ -2416,7 +2472,7 @@
             <td style="padding: 0.75rem; font-weight: 700; color: var(--text-main);">${escapeHtml(item.name)}</td>
             <td style="padding: 0.75rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">${item.hsnCode}</td>
             <td style="padding: 0.75rem; font-family: var(--font-mono); font-size: 0.8rem;">${item.barcode}</td>
-            <td style="padding: 0.75rem;">â‚¹${item.price.toFixed(2)}</td>
+            <td style="padding: 0.75rem;">₹${item.price.toFixed(2)}</td>
             <td style="padding: 0.75rem;"><span class="badge badge-primary">${item.gstPercent}%</span></td>
             <td style="padding: 0.75rem; text-align: center;">
               <div style="display: inline-flex; align-items: center; gap: 4px;">
@@ -2425,10 +2481,10 @@
                 <button type="button" class="btn btn-sm btn-outline" style="padding: 2px 8px;" onclick="changeCartItemQty(${idx}, 1)">+</button>
               </div>
             </td>
-            <td style="padding: 0.75rem; text-align: right; font-weight: 600;">â‚¹${taxable.toFixed(2)}</td>
-            <td style="padding: 0.75rem; text-align: right; font-weight: 800; color: var(--success);">â‚¹${lineTotal.toFixed(2)}</td>
+            <td style="padding: 0.75rem; text-align: right; font-weight: 600;">₹${taxable.toFixed(2)}</td>
+            <td style="padding: 0.75rem; text-align: right; font-weight: 800; color: var(--success);">₹${lineTotal.toFixed(2)}</td>
             <td style="padding: 0.75rem 1rem; text-align: center;">
-              <button type="button" class="btn btn-sm btn-outline" style="color: var(--danger); border-color: rgba(239,68,68,0.3); padding: 2px 8px;" onclick="removeCartItem(${idx})">âœ•</button>
+              <button type="button" class="btn btn-sm btn-outline" style="color: var(--danger); border-color: rgba(239,68,68,0.3); padding: 2px 8px;" onclick="removeCartItem(${idx})">✕</button>
             </td>
           </tr>
         `;
@@ -2452,9 +2508,9 @@
       const grandTotal = subtotal + totalTax;
       const isGujarat = activeCustomer ? ((activeCustomer.state || '').toLowerCase() === 'gujarat') : true;
 
-      document.getElementById('sum-subtotal').textContent = `â‚¹${subtotal.toFixed(2)}`;
-      document.getElementById('sum-totaltax').textContent = `â‚¹${totalTax.toFixed(2)}`;
-      document.getElementById('sum-grandtotal').textContent = `â‚¹${grandTotal.toFixed(2)}`;
+      document.getElementById('sum-subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById('sum-totaltax').textContent = `₹${totalTax.toFixed(2)}`;
+      document.getElementById('sum-grandtotal').textContent = `₹${grandTotal.toFixed(2)}`;
 
       const cgstRow = document.getElementById('row-cgst');
       const sgstRow = document.getElementById('row-sgst');
@@ -2462,16 +2518,16 @@
 
       if (isGujarat) {
         const halfTax = totalTax / 2;
-        document.getElementById('sum-cgst').textContent = `â‚¹${halfTax.toFixed(2)}`;
-        document.getElementById('sum-sgst').textContent = `â‚¹${halfTax.toFixed(2)}`;
-        document.getElementById('sum-igst').textContent = `â‚¹0.00`;
+        document.getElementById('sum-cgst').textContent = `₹${halfTax.toFixed(2)}`;
+        document.getElementById('sum-sgst').textContent = `₹${halfTax.toFixed(2)}`;
+        document.getElementById('sum-igst').textContent = `₹0.00`;
         cgstRow.style.display = 'flex';
         sgstRow.style.display = 'flex';
         igstRow.style.display = 'none';
       } else {
-        document.getElementById('sum-cgst').textContent = `â‚¹0.00`;
-        document.getElementById('sum-sgst').textContent = `â‚¹0.00`;
-        document.getElementById('sum-igst').textContent = `â‚¹${totalTax.toFixed(2)}`;
+        document.getElementById('sum-cgst').textContent = `₹0.00`;
+        document.getElementById('sum-sgst').textContent = `₹0.00`;
+        document.getElementById('sum-igst').textContent = `₹${totalTax.toFixed(2)}`;
         cgstRow.style.display = 'none';
         sgstRow.style.display = 'none';
         igstRow.style.display = 'flex';
@@ -2497,7 +2553,7 @@
       const isGujarat = (activeCustomer.state || '').toLowerCase() === 'gujarat';
       document.getElementById('rev-cust-name').textContent = activeCustomer.name;
       document.getElementById('rev-cust-mobile').textContent = activeCustomer.mobile;
-      document.getElementById('rev-cust-address').textContent = `${activeCustomer.city || ''}, ${activeCustomer.state} ${activeCustomer.gstin ? 'â€¢ GSTIN: ' + activeCustomer.gstin : ''}`;
+      document.getElementById('rev-cust-address').textContent = `${activeCustomer.city || ''}, ${activeCustomer.state} ${activeCustomer.gstin ? '• GSTIN: ' + activeCustomer.gstin : ''}`;
       
       const badge = document.getElementById('rev-tax-badge');
       badge.textContent = isGujarat ? 'Intra-State (CGST + SGST)' : `Inter-State (IGST: ${activeCustomer.state})`;
@@ -2518,17 +2574,17 @@
           <tr style="border-bottom: 1px solid var(--border-subtle);">
             <td style="padding: 0.4rem 0.5rem; font-weight: 700;">${escapeHtml(item.name)}</td>
             <td style="padding: 0.4rem 0.5rem; text-align: center;">${item.qty}</td>
-            <td style="padding: 0.4rem 0.5rem; text-align: right;">â‚¹${item.price.toFixed(2)}</td>
-            <td style="padding: 0.4rem 0.5rem; text-align: right;">â‚¹${taxable.toFixed(2)}</td>
+            <td style="padding: 0.4rem 0.5rem; text-align: right;">₹${item.price.toFixed(2)}</td>
+            <td style="padding: 0.4rem 0.5rem; text-align: right;">₹${taxable.toFixed(2)}</td>
             <td style="padding: 0.4rem 0.5rem; text-align: right;"><span class="badge badge-primary" style="font-size:0.65rem;">${item.gstPercent}%</span></td>
-            <td style="padding: 0.4rem 0.5rem; text-align: right; font-weight: 700;">â‚¹${(taxable + tax).toFixed(2)}</td>
+            <td style="padding: 0.4rem 0.5rem; text-align: right; font-weight: 700;">₹${(taxable + tax).toFixed(2)}</td>
           </tr>
         `;
       }).join('');
 
       const grandTotal = subtotal + totalTax;
-      document.getElementById('rev-subtotal').textContent = `â‚¹${subtotal.toFixed(2)}`;
-      document.getElementById('rev-grandtotal').textContent = `â‚¹${grandTotal.toFixed(2)}`;
+      document.getElementById('rev-subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById('rev-grandtotal').textContent = `₹${grandTotal.toFixed(2)}`;
 
       const rCgst = document.getElementById('rev-row-cgst');
       const rSgst = document.getElementById('rev-row-sgst');
@@ -2536,16 +2592,16 @@
 
       if (isGujarat) {
         const half = totalTax / 2;
-        document.getElementById('rev-cgst').textContent = `â‚¹${half.toFixed(2)}`;
-        document.getElementById('rev-sgst').textContent = `â‚¹${half.toFixed(2)}`;
-        document.getElementById('rev-igst').textContent = `â‚¹0.00`;
+        document.getElementById('rev-cgst').textContent = `₹${half.toFixed(2)}`;
+        document.getElementById('rev-sgst').textContent = `₹${half.toFixed(2)}`;
+        document.getElementById('rev-igst').textContent = `₹0.00`;
         rCgst.style.display = 'flex';
         rSgst.style.display = 'flex';
         rIgst.style.display = 'none';
       } else {
-        document.getElementById('rev-cgst').textContent = `â‚¹0.00`;
-        document.getElementById('rev-sgst').textContent = `â‚¹0.00`;
-        document.getElementById('rev-igst').textContent = `â‚¹${totalTax.toFixed(2)}`;
+        document.getElementById('rev-cgst').textContent = `₹0.00`;
+        document.getElementById('rev-sgst').textContent = `₹0.00`;
+        document.getElementById('rev-igst').textContent = `₹${totalTax.toFixed(2)}`;
         rCgst.style.display = 'none';
         rSgst.style.display = 'none';
         rIgst.style.display = 'flex';
@@ -2611,7 +2667,7 @@
         Toast.show({ title: 'Finalization Failed', message: err.message, type: 'danger' });
       } finally {
         btn.disabled = false;
-        btn.textContent = 'âœ“ Confirm & Finalize Invoice';
+        btn.textContent = '✓ Confirm & Finalize Invoice';
       }
     }
 
@@ -2664,9 +2720,9 @@
       // Render Itemized Rows
       const tbody = document.getElementById('inv-items-tbody');
       tbody.innerHTML = bill.items.map((item, idx) => {
-        const cgstCol = bill.isInterState ? '' : `<td style="text-align: right;">â‚¹${item.cgst.toFixed(2)}</td>`;
-        const sgstCol = bill.isInterState ? '' : `<td style="text-align: right;">â‚¹${item.sgst.toFixed(2)}</td>`;
-        const igstCol = bill.isInterState ? `<td style="text-align: right;">â‚¹${item.igst.toFixed(2)}</td>` : '';
+        const cgstCol = bill.isInterState ? '' : `<td style="text-align: right;">₹${item.cgst.toFixed(2)}</td>`;
+        const sgstCol = bill.isInterState ? '' : `<td style="text-align: right;">₹${item.sgst.toFixed(2)}</td>`;
+        const igstCol = bill.isInterState ? `<td style="text-align: right;">₹${item.igst.toFixed(2)}</td>` : '';
 
         return `
           <tr>
@@ -2674,23 +2730,23 @@
             <td style="font-weight: 700;">${escapeHtml(item.name)}</td>
             <td style="text-align: center; font-family: var(--font-mono); font-size: 0.75rem;">${item.hsnCode}</td>
             <td style="text-align: center;">${item.qty} ${item.unit}</td>
-            <td style="text-align: right;">â‚¹${item.rate.toFixed(2)}</td>
-            <td style="text-align: right;">â‚¹${item.taxableAmount.toFixed(2)}</td>
+            <td style="text-align: right;">₹${item.rate.toFixed(2)}</td>
+            <td style="text-align: right;">₹${item.taxableAmount.toFixed(2)}</td>
             <td style="text-align: center;">${item.gstPercent}%</td>
             ${cgstCol}
             ${sgstCol}
             ${igstCol}
-            <td style="text-align: right; font-weight: 800;">â‚¹${item.lineTotal.toFixed(2)}</td>
+            <td style="text-align: right; font-weight: 800;">₹${item.lineTotal.toFixed(2)}</td>
           </tr>
         `;
       }).join('');
 
       // Summary Totals
-      document.getElementById('inv-subtotal').textContent = `â‚¹${bill.subtotal.toFixed(2)}`;
-      document.getElementById('inv-cgst').textContent = `â‚¹${bill.cgstTotal.toFixed(2)}`;
-      document.getElementById('inv-sgst').textContent = `â‚¹${bill.sgstTotal.toFixed(2)}`;
-      document.getElementById('inv-igst').textContent = `â‚¹${bill.igstTotal.toFixed(2)}`;
-      document.getElementById('inv-grandtotal').textContent = `â‚¹${bill.grandTotal.toFixed(2)}`;
+      document.getElementById('inv-subtotal').textContent = `₹${bill.subtotal.toFixed(2)}`;
+      document.getElementById('inv-cgst').textContent = `₹${bill.cgstTotal.toFixed(2)}`;
+      document.getElementById('inv-sgst').textContent = `₹${bill.sgstTotal.toFixed(2)}`;
+      document.getElementById('inv-igst').textContent = `₹${bill.igstTotal.toFixed(2)}`;
+      document.getElementById('inv-grandtotal').textContent = `₹${bill.grandTotal.toFixed(2)}`;
       document.getElementById('inv-amount-words').textContent = bill.amountInWords || 'Zero Rupees Only';
 
       Modal.open('modal-invoice');
@@ -2778,11 +2834,11 @@
             </td>
             <td style="padding: 0.75rem;">${taxBadge}</td>
             <td style="padding: 0.75rem;">${itemCount} items</td>
-            <td style="padding: 0.75rem; text-align: right; font-weight: 800; color: var(--success);">â‚¹${parseFloat(b.grandTotal).toFixed(2)}</td>
+            <td style="padding: 0.75rem; text-align: right; font-weight: 800; color: var(--success);">₹${parseFloat(b.grandTotal).toFixed(2)}</td>
             <td style="padding: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(b.createdBy ? b.createdBy.name : 'Staff')}</td>
             <td style="padding: 0.75rem 1rem; text-align: right;">
               <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.65rem;" onclick='showInvoiceModal(${JSON.stringify(b).replace(/'/g, "&apos;")})'>
-                ðŸ” View Invoice
+                🔍 View Invoice
               </button>
             </td>
           </tr>
@@ -2882,9 +2938,9 @@
       const avgBill = total > 0 ? totalSales / total : 0;
 
       document.getElementById('rep-total-bills').textContent = total;
-      document.getElementById('rep-total-sales').textContent = 'â‚¹' + totalSales.toFixed(2);
-      document.getElementById('rep-total-tax').textContent = 'â‚¹' + totalTax.toFixed(2);
-      document.getElementById('rep-avg-bill').textContent = 'â‚¹' + avgBill.toFixed(2);
+      document.getElementById('rep-total-sales').textContent = '₹' + totalSales.toFixed(2);
+      document.getElementById('rep-total-tax').textContent = '₹' + totalTax.toFixed(2);
+      document.getElementById('rep-avg-bill').textContent = '₹' + avgBill.toFixed(2);
     }
 
     function renderReportChart() {
@@ -2921,7 +2977,7 @@
         data: {
           labels,
           datasets: [{
-            label: 'Sales (â‚¹)',
+            label: 'Sales (₹)',
             data,
             backgroundColor: 'rgba(99,102,241,0.7)',
             borderColor: 'rgba(99,102,241,1)',
@@ -2936,7 +2992,7 @@
           scales: {
             y: {
               beginAtZero: true,
-              ticks: { color: '#94a3b8', callback: v => 'â‚¹' + v },
+              ticks: { color: '#94a3b8', callback: v => '₹' + v },
               grid: { color: 'rgba(148,163,184,0.15)' }
             },
             x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
@@ -2972,14 +3028,14 @@
             <td style="padding:0.6rem 1rem;font-family:var(--font-mono);font-size:0.78rem;color:var(--primary);">${escapeHtml(b.invoiceNo || b._id)}</td>
             <td style="padding:0.6rem;font-size:0.78rem;">${date}</td>
             <td style="padding:0.6rem;font-weight:600;">${custName}</td>
-            <td style="padding:0.6rem;text-align:right;">â‚¹${taxable}</td>
-            <td style="padding:0.6rem;text-align:right;">â‚¹${cgst}</td>
-            <td style="padding:0.6rem;text-align:right;">â‚¹${sgst}</td>
-            <td style="padding:0.6rem;text-align:right;">â‚¹${igst}</td>
-            <td style="padding:0.6rem;text-align:right;color:#818cf8;">â‚¹${totalTax}</td>
-            <td style="padding:0.6rem;text-align:right;font-weight:700;color:var(--success);">â‚¹${grand}</td>
+            <td style="padding:0.6rem;text-align:right;">₹${taxable}</td>
+            <td style="padding:0.6rem;text-align:right;">₹${cgst}</td>
+            <td style="padding:0.6rem;text-align:right;">₹${sgst}</td>
+            <td style="padding:0.6rem;text-align:right;">₹${igst}</td>
+            <td style="padding:0.6rem;text-align:right;color:#818cf8;">₹${totalTax}</td>
+            <td style="padding:0.6rem;text-align:right;font-weight:700;color:var(--success);">₹${grand}</td>
             <td style="padding:0.6rem;text-align:center;">
-              <button class="btn btn-sm btn-outline" style="padding:0.2rem 0.5rem;font-size:0.72rem;" onclick='showInvoiceModal(${JSON.stringify(b).replace(/'/g, "&apos;")})'>ðŸ§¾ View</button>
+              <button class="btn btn-sm btn-outline" style="padding:0.2rem 0.5rem;font-size:0.72rem;" onclick='showInvoiceModal(${JSON.stringify(b).replace(/'/g, "&apos;")})'>🧾 View</button>
             </td>
           </tr>
         `;
@@ -3029,36 +3085,36 @@
        ========================================================================= */
     const LANG = {
       en: {
-        tab_billing: 'âš¡ Smart Billing Counter',
-        tab_bills: 'ðŸ“œ Bill History',
-        tab_dashboard: 'ðŸ“Š Admin Dashboard',
-        tab_customers: 'ðŸ‘¥ Customers (Parties)',
-        tab_products: 'ðŸ“¦ Products & Barcodes',
-        tab_reports: 'ðŸ“ˆ Reports & Analytics',
+        tab_billing: '⚡ Smart Billing Counter',
+        tab_bills: '📜 Bill History',
+        tab_dashboard: '📊 Admin Dashboard',
+        tab_customers: '👥 Customers (Parties)',
+        tab_products: '📦 Products & Barcodes',
+        tab_reports: '📈 Reports & Analytics',
         rep_total_bills: 'Total Bills',
         rep_total_sales: 'Total Sales',
         rep_total_tax: 'Total Tax',
         rep_avg_bill: 'Avg Bill Value',
         rep_filter: 'Filter:',
-        rep_export_csv: 'ðŸ“¥ Export CSV',
-        rep_sales_chart: 'ðŸ“Š Sales Trend',
-        rep_transactions: 'ðŸ“‹ Transaction History',
+        rep_export_csv: '📥 Export CSV',
+        rep_sales_chart: '📊 Sales Trend',
+        rep_transactions: '📋 Transaction History',
       },
       hi: {
-        tab_billing: 'âš¡ à¤¬à¤¿à¤²à¤¿à¤‚à¤— à¤•à¤¾à¤‰à¤‚à¤Ÿà¤°',
-        tab_bills: 'ðŸ“œ à¤¬à¤¿à¤² à¤‡à¤¤à¤¿à¤¹à¤¾à¤¸',
-        tab_dashboard: 'ðŸ“Š à¤¡à¥ˆà¤¶à¤¬à¥‹à¤°à¥à¤¡',
-        tab_customers: 'ðŸ‘¥ à¤—à¥à¤°à¤¾à¤¹à¤•',
-        tab_products: 'ðŸ“¦ à¤‰à¤¤à¥à¤ªà¤¾à¤¦',
-        tab_reports: 'ðŸ“ˆ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤”à¤° à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£',
-        rep_total_bills: 'à¤•à¥à¤² à¤¬à¤¿à¤²',
-        rep_total_sales: 'à¤•à¥à¤² à¤¬à¤¿à¤•à¥à¤°à¥€',
-        rep_total_tax: 'à¤•à¥à¤² à¤•à¤°',
-        rep_avg_bill: 'à¤”à¤¸à¤¤ à¤¬à¤¿à¤²',
-        rep_filter: 'à¤«à¤¼à¤¿à¤²à¥à¤Ÿà¤°:',
-        rep_export_csv: 'ðŸ“¥ CSV à¤¨à¤¿à¤°à¥à¤¯à¤¾à¤¤ à¤•à¤°à¥‡à¤‚',
-        rep_sales_chart: 'ðŸ“Š à¤¬à¤¿à¤•à¥à¤°à¥€ à¤Ÿà¥à¤°à¥‡à¤‚à¤¡',
-        rep_transactions: 'ðŸ“‹ à¤²à¥‡à¤¨à¤¦à¥‡à¤¨ à¤‡à¤¤à¤¿à¤¹à¤¾à¤¸',
+        tab_billing: '⚡ बिलिंग काउंटर',
+        tab_bills: '📜 बिल इतिहास',
+        tab_dashboard: '📊 डैशबोर्ड',
+        tab_customers: '👥 ग्राहक',
+        tab_products: '📦 उत्पाद',
+        tab_reports: '📈 रिपोर्ट और विश्लेषण',
+        rep_total_bills: 'कुल बिल',
+        rep_total_sales: 'कुल बिक्री',
+        rep_total_tax: 'कुल कर',
+        rep_avg_bill: 'औसत बिल',
+        rep_filter: 'फ़िल्टर:',
+        rep_export_csv: '📥 CSV निर्यात करें',
+        rep_sales_chart: '📊 बिक्री ट्रेंड',
+        rep_transactions: '📋 लेनदेन इतिहास',
       }
     };
 
@@ -3093,4 +3149,3 @@
   </script>
 </body>
 </html>
-
