@@ -1,43 +1,52 @@
 /* ==========================================================================
-   GENERIC RESOURCE / ITEM CRUD ROUTES (routes/items.js)
+   PRODUCT / ITEM CATALOG ROUTES (routes/items.js)
    --------------------------------------------------------------------------
-   ⚡ HACKATHON QUICK-RENAME GUIDE:
-   If your hackathon topic is Events, Patients, Tasks, Courses, or Bookings:
-   Simply change COLLECTION_NAME below (e.g. 'events', 'tasks', etc.)!
+   Manages Products in MongoDB with statutory GST slabs, HSN, and Barcodes.
+   Permissions:
+   - ADMIN: Full CRUD (List, Search, Add, Edit, Delete)
+   - STAFF: Read and Search only (No Add/Edit/Delete)
+   Collection: items (codeathon_db)
    ========================================================================== */
 
 const express = require('express');
 const router = express.Router();
 const { getCollection, ObjectId } = require('../mongodb');
+const { authenticate, requireRole } = require('../middleware/auth');
 
-// ⚡ TARGET COLLECTION NAME (Change this on competition day if needed)
 const COLLECTION_NAME = 'items';
+const ALLOWED_GST_SLABS = [0, 5, 12, 18, 28];
 
 function col() {
   return getCollection(COLLECTION_NAME);
 }
 
-// 1. GET /api/items - Fetch all items (with optional search, category, status filter)
-router.get('/', async (req, res, next) => {
+// 1. GET /api/items - Fetch all products with search across Name, Barcode & HSN
+// Permissions: ADMIN and STAFF
+router.get('/', authenticate, async (req, res, next) => {
   try {
-    const { search, category, status } = req.query;
+    const { search, category, gst } = req.query;
     const query = {};
 
-    if (search) {
-      const regex = new RegExp(search, 'i');
+    if (search && search.trim()) {
+      const regex = new RegExp(search.trim(), 'i');
       query.$or = [
+        { name: regex },
         { title: regex },
-        { description: regex },
+        { barcode: regex },
+        { hsnCode: regex },
         { category: regex }
       ];
     }
 
     if (category && category !== 'All') {
-      query.category = new RegExp(`^${category}$`, 'i');
+      query.category = new RegExp(`^${category.trim()}$`, 'i');
     }
 
-    if (status && status !== 'All') {
-      query.status = status;
+    if (gst && gst !== 'All') {
+      const parsedGst = parseFloat(gst);
+      if (!isNaN(parsedGst)) {
+        query.gstPercent = parsedGst;
+      }
     }
 
     const items = await col().find(query).sort({ createdAt: -1 }).toArray();
@@ -53,8 +62,38 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// 2. GET /api/items/:id - Fetch single item by MongoDB _id
-router.get('/:id', async (req, res, next) => {
+// 2. GET /api/items/barcode/:code - Fast Barcode/QR Lookup for Scanner
+// Returns 200 with product if found, 404 if not found
+// Permissions: ADMIN and STAFF
+router.get('/barcode/:code', authenticate, async (req, res, next) => {
+  try {
+    const { code } = req.params;
+    if (!code || !code.trim()) {
+      return res.status(400).json({ success: false, message: 'Barcode parameter is required.' });
+    }
+
+    const cleanCode = code.trim();
+    const product = await col().findOne({ barcode: cleanCode });
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: `Product with barcode "${cleanCode}" not found in MongoDB catalog.`
+      });
+    }
+
+    return res.json({
+      success: true,
+      product
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// 3. GET /api/items/:id - Fetch single product by MongoDB _id
+// Permissions: ADMIN and STAFF
+router.get('/:id', authenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -64,7 +103,7 @@ router.get('/:id', async (req, res, next) => {
 
     const item = await col().findOne({ _id: new ObjectId(id) });
     if (!item) {
-      return res.status(404).json({ success: false, message: 'Item not found in database.' });
+      return res.status(404).json({ success: false, message: 'Product not found in catalog.' });
     }
 
     return res.json({ success: true, item });
@@ -73,34 +112,66 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-// 3. POST /api/items - Create a new item
-router.post('/', async (req, res, next) => {
+// 4. POST /api/items - Add new product to catalog
+// Permissions: ADMIN ONLY (Staff gets 403 Forbidden)
+router.post('/', authenticate, requireRole(['ADMIN']), async (req, res, next) => {
   try {
-    const { title, description, category, image, status, ...rest } = req.body;
+    const { name, title, hsnCode, price, gstPercent, barcode, unit, category, description } = req.body;
+    const itemName = (name || title || '').trim();
 
-    if (!title || !title.trim()) {
+    // 1. Name validation
+    if (!itemName) {
+      return res.status(400).json({ success: false, message: 'Product item name is required.' });
+    }
+
+    // 2. Price validation
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice < 0) {
       return res.status(400).json({
         success: false,
-        message: 'Title is required to create an item.'
+        message: 'Unit price must be a valid non-negative number (>= 0).'
       });
     }
 
+    // 3. GST slab validation
+    const parsedGST = parseFloat(gstPercent);
+    if (isNaN(parsedGST) || !ALLOWED_GST_SLABS.includes(parsedGST)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid GST rate (${gstPercent}%). Must be one of standard slabs: ${ALLOWED_GST_SLABS.join('%, ')}%.`
+      });
+    }
+
+    // 4. Barcode uniqueness validation
+    const cleanBarcode = barcode ? String(barcode).trim() : '';
+    if (cleanBarcode) {
+      const existingBarcode = await col().findOne({ barcode: cleanBarcode });
+      if (existingBarcode) {
+        return res.status(400).json({
+          success: false,
+          message: `Barcode "${cleanBarcode}" is already assigned to "${existingBarcode.name}".`
+        });
+      }
+    }
+
     const newItem = {
-      title: title.trim(),
-      description: description ? description.trim() : '',
+      name: itemName,
+      title: itemName,
+      hsnCode: hsnCode ? String(hsnCode).trim() : '',
+      price: parsedPrice,
+      gstPercent: parsedGST,
+      barcode: cleanBarcode,
+      unit: unit ? unit.trim() : 'pcs',
       category: category ? category.trim() : 'General',
-      image: image ? image.trim() : 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=80',
-      status: status || 'active',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      ...rest // Allows any extra custom fields added during Code-A-Thon
+      description: description ? description.trim() : '',
+      createdAt: new Date()
     };
 
     const result = await col().insertOne(newItem);
 
     return res.status(201).json({
       success: true,
-      message: 'Item created successfully in MongoDB!',
+      message: `Product "${itemName}" added to catalog in MongoDB!`,
       item: { _id: result.insertedId, ...newItem }
     });
   } catch (err) {
@@ -108,18 +179,62 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// 4. PUT /api/items/:id - Update existing item by _id
-router.put('/:id', async (req, res, next) => {
+// 5. PUT /api/items/:id - Update product
+// Permissions: ADMIN ONLY (Staff gets 403 Forbidden)
+router.put('/:id', authenticate, requireRole(['ADMIN']), async (req, res, next) => {
   try {
     const { id } = req.params;
 
     if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: 'Invalid MongoDB ObjectId format.' });
+      return res.status(400).json({ success: false, message: 'Invalid product ID format.' });
     }
 
-    const updatePayload = { ...req.body, updatedAt: new Date() };
-    delete updatePayload._id; // Prevent updating MongoDB immutable _id
-    delete updatePayload.createdAt; // Preserve original creation timestamp
+    const { name, title, hsnCode, price, gstPercent, barcode, unit, category, description } = req.body;
+    const itemName = (name || title || '').trim();
+
+    if (!itemName) {
+      return res.status(400).json({ success: false, message: 'Product item name is required.' });
+    }
+
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice < 0) {
+      return res.status(400).json({ success: false, message: 'Unit price must be a non-negative number (>= 0).' });
+    }
+
+    const parsedGST = parseFloat(gstPercent);
+    if (isNaN(parsedGST) || !ALLOWED_GST_SLABS.includes(parsedGST)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid GST rate (${gstPercent}%). Must be one of standard slabs: ${ALLOWED_GST_SLABS.join('%, ')}%.`
+      });
+    }
+
+    const cleanBarcode = barcode ? String(barcode).trim() : '';
+    if (cleanBarcode) {
+      const existingBarcode = await col().findOne({
+        barcode: cleanBarcode,
+        _id: { $ne: new ObjectId(id) }
+      });
+      if (existingBarcode) {
+        return res.status(400).json({
+          success: false,
+          message: `Barcode "${cleanBarcode}" is already assigned to "${existingBarcode.name}".`
+        });
+      }
+    }
+
+    const updatePayload = {
+      name: itemName,
+      title: itemName,
+      hsnCode: hsnCode ? String(hsnCode).trim() : '',
+      price: parsedPrice,
+      gstPercent: parsedGST,
+      barcode: cleanBarcode,
+      unit: unit ? unit.trim() : 'pcs',
+      category: category ? category.trim() : 'General',
+      description: description ? description.trim() : '',
+      updatedAt: new Date()
+    };
 
     const result = await col().updateOne(
       { _id: new ObjectId(id) },
@@ -127,85 +242,36 @@ router.put('/:id', async (req, res, next) => {
     );
 
     if (result.matchedCount === 0) {
-      return res.status(404).json({ success: false, message: 'Item not found to update.' });
+      return res.status(404).json({ success: false, message: 'Product not found in catalog.' });
     }
-
-    const updatedItem = await col().findOne({ _id: new ObjectId(id) });
 
     return res.json({
       success: true,
-      message: 'Item updated successfully!',
-      item: updatedItem
+      message: `Product "${itemName}" updated successfully in MongoDB!`
     });
   } catch (err) {
     next(err);
   }
 });
 
-// 5. DELETE /api/items/:id - Delete item by _id
-router.delete('/:id', async (req, res, next) => {
+// 6. DELETE /api/items/:id - Delete product
+// Permissions: ADMIN ONLY (Staff gets 403 Forbidden)
+router.delete('/:id', authenticate, requireRole(['ADMIN']), async (req, res, next) => {
   try {
     const { id } = req.params;
 
     if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: 'Invalid MongoDB ObjectId format.' });
+      return res.status(400).json({ success: false, message: 'Invalid product ID format.' });
     }
 
     const result = await col().deleteOne({ _id: new ObjectId(id) });
-
     if (result.deletedCount === 0) {
-      return res.status(404).json({ success: false, message: 'Item not found or already deleted.' });
+      return res.status(404).json({ success: false, message: 'Product not found or already deleted.' });
     }
 
     return res.json({
       success: true,
-      message: 'Item deleted successfully from MongoDB!'
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ⚡ BONUS: POST /api/items/seed - Insert sample records for instant live demo
-router.post('/seed', async (req, res, next) => {
-  try {
-    const sampleItems = [
-      {
-        title: "Smart Air Quality Monitor",
-        description: "IoT indoor environmental sensor with real-time telemetry.",
-        category: "Hardware",
-        image: "https://images.unsplash.com/photo-1558002038-1055907df827?w=500&auto=format&fit=crop&q=80",
-        status: "active",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        title: "Autonomous Fleet Dispatcher",
-        description: "Routing optimization engine with predictive AI delivery ETA.",
-        category: "Software",
-        image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=80",
-        status: "active",
-        createdAt: new Date(Date.now() - 3600000),
-        updatedAt: new Date()
-      },
-      {
-        title: "Neural Audio Denoising API",
-        description: "Real-time background noise suppression model for live streams.",
-        category: "AI / ML",
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80",
-        status: "completed",
-        createdAt: new Date(Date.now() - 7200000),
-        updatedAt: new Date()
-      }
-    ];
-
-    await col().insertMany(sampleItems);
-    const all = await col().find({}).toArray();
-
-    return res.json({
-      success: true,
-      message: `Seeded ${sampleItems.length} starter records into MongoDB '${COLLECTION_NAME}' collection!`,
-      items: all
+      message: 'Product deleted successfully from MongoDB!'
     });
   } catch (err) {
     next(err);

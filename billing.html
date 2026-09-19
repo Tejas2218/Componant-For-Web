@@ -1,0 +1,2736 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart GST Billing System - Darshan SuperMart</title>
+  <link rel="stylesheet" href="css/hackathon-ui.css">
+  
+  <!-- External Libraries: html5-qrcode for Camera Scanning & html2pdf for PDF Invoicing -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    /* Application Custom Refinements */
+    html {
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    /* Top App Navigation Bar */
+    .app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent-gradient);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: #fff;
+      font-weight: 800;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    /* Role Badges */
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .role-badge-admin {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .role-badge-staff {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Navigation Tabs Bar */
+    .nav-tabs-bar {
+      display: flex;
+      gap: 0.5rem;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 1.5rem;
+      overflow-x: auto;
+    }
+
+    .nav-tab-btn {
+      padding: 0.85rem 1.1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--primary);
+    }
+
+    .nav-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Main Container Views */
+    .view-container {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Auth Page Overlay Container */
+    #auth-view {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 120px);
+      padding: 1.5rem;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2.25rem;
+      box-shadow: var(--shadow-xl);
+    }
+
+    /* Quick Demo Login Buttons Tray */
+    .demo-login-box {
+      background: var(--bg-surface-hover);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .demo-login-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .demo-btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .demo-btn {
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.15rem;
+      transition: all var(--transition-fast);
+      text-align: left;
+    }
+
+    .demo-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    /* Search Dropdown styling */
+    .autocomplete-box {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 50;
+      box-shadow: var(--shadow-lg);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .autocomplete-item {
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.85rem;
+      transition: background var(--transition-fast);
+    }
+
+    .autocomplete-item:hover {
+      background: var(--bg-surface-hover);
+    }
+
+    .code-pill {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Modal Overlay, Container & Scrolling Architecture */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9900;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+    }
+
+    .modal-container {
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-color);
+      width: 100%;
+      max-height: calc(100vh - 3rem);
+      display: flex;
+      flex-direction: column;
+      margin: 1.5rem auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ensure forms inside modals are flex columns so modal-body scrolls and modal-footer stays visible */
+    .modal-container > form {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      flex-shrink: 0;
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface);
+    }
+
+    .modal-body {
+      overflow-y: auto !important;
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: calc(100vh - 12rem);
+      padding: 1.25rem 1.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-body .form-group {
+      margin-bottom: 0;
+    }
+
+    .modal-footer {
+      flex-shrink: 0;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: var(--bg-surface-hover);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.25rem 0.5rem;
+    }
+    .modal-close:hover {
+      color: var(--text-main);
+    }
+
+    /* Camera Scanner Viewfinder Box */
+    #scanner-viewfinder {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #000;
+      border: 2px solid var(--primary);
+      position: relative;
+      min-height: 220px;
+      max-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #reader video {
+      max-height: 250px;
+      object-fit: cover;
+    }
+
+    /* Printable Tax Invoice Styles */
+    .invoice-card {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-xl);
+      max-width: 820px;
+      margin: 0 auto;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+    }
+
+    .invoice-table th, .invoice-table td {
+      border: 1px solid #cbd5e1;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .invoice-table th {
+      background: #f1f5f9;
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      color: #334155;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-invoice-content, #printable-invoice-content * {
+        visibility: visible;
+      }
+      #printable-invoice-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 10mm;
+        box-shadow: none;
+        background: #fff;
+        color: #000;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. TOP GLOBAL APP HEADER -->
+  <header class="app-header no-print">
+    <div class="flex justify-between items-center">
+      
+      <!-- Brand & Shop GSTIN Info -->
+      <div class="brand-box">
+        <div class="brand-icon">🧾</div>
+        <div>
+          <div class="brand-title" id="header-shop-name">Darshan SuperMart & Electronics</div>
+          <div class="brand-sub">
+            <span id="header-shop-gstin" class="badge badge-neutral" style="font-family:var(--font-mono); font-size:0.7rem;">GSTIN: 24AAACD1234E1Z5</span>
+            <span class="badge badge-success" style="font-size:0.7rem;">Shop State: 24-Gujarat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Header Actions (Theme, User Profile, Logout) -->
+      <div class="flex items-center gap-3">
+        
+        <!-- User Status / Role Indicator (Visible when logged in) -->
+        <div id="user-profile-widget" class="flex items-center gap-2" style="display:none;">
+          <div style="text-align:right;">
+            <div id="user-display-name" style="font-weight:700; font-size:0.875rem;">Cashier Sunil</div>
+            <div id="user-role-badge" class="role-badge role-badge-staff">STAFF / CASHIER</div>
+          </div>
+          <button class="btn btn-sm btn-outline" style="border-color:var(--border-color);" onclick="handleLogout()" title="Logout from session">
+            🚪 Logout
+          </button>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button class="btn btn-sm btn-outline" style="border-color:var(--border-color);" onclick="ThemeManager.toggle()" title="Toggle Light/Dark Theme">
+          🌓
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- 2. NAVIGATION TABS (Visible when authenticated) -->
+  <nav id="app-nav-bar" class="nav-tabs-bar no-print" style="display:none;">
+    <button id="tab-billing-btn" class="nav-tab-btn active" onclick="switchView('billing')">
+      ⚡ Smart Billing Counter
+    </button>
+    <button id="tab-bills-btn" class="nav-tab-btn" onclick="switchView('bills')">
+      📜 Bill History
+    </button>
+    <button id="tab-dashboard-btn" class="nav-tab-btn admin-only" onclick="switchView('dashboard')">
+      📊 Admin Dashboard
+    </button>
+    <button id="tab-customers-btn" class="nav-tab-btn admin-only" onclick="switchView('customers')">
+      👥 Customers (Parties)
+    </button>
+    <button id="tab-products-btn" class="nav-tab-btn admin-only" onclick="switchView('products')">
+      📦 Products & Barcodes
+    </button>
+  </nav>
+
+  <!-- =========================================================================
+       3. VIEW 1: AUTHENTICATION / LOGIN (State 1)
+       ========================================================================= -->
+  <div id="auth-view" class="no-print">
+    <div class="auth-card">
+      <div style="text-align:center; margin-bottom:1.5rem;">
+        <div style="width:48px; height:48px; background:var(--accent-gradient); border-radius:14px; display:inline-flex; align-items:center; justify-content:center; font-size:1.6rem; color:#fff; margin-bottom:0.75rem; box-shadow:var(--shadow-glow);">
+          ⚡
+        </div>
+        <h1 style="font-size:1.4rem; font-weight:800; margin-bottom:0.25rem;">GST Billing Portal</h1>
+        <p style="color:var(--text-muted); font-size:0.85rem;">Sign in with your assigned business role</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" onsubmit="handleLoginForm(event)">
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="login-email" class="form-input" placeholder="admin@shop.com" required value="staff@shop.com">
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.25rem;">
+          <div class="flex justify-between items-center" style="margin-bottom:0.35rem;">
+            <label class="form-label" style="margin-bottom:0;">Password</label>
+          </div>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required value="staff123">
+        </div>
+
+        <button type="submit" id="btn-login" class="btn btn-primary btn-full btn-lg" style="font-weight:700;">
+          Sign In
+        </button>
+      </form>
+
+      <!-- Quick Demo Login Buttons (University & Hackathon Evaluators) -->
+      <div class="demo-login-box">
+        <div class="demo-login-title">
+          <span>⚡ One-Click Hackathon Demo Logins</span>
+        </div>
+        <div class="demo-btn-grid">
+          <button type="button" class="demo-btn" onclick="quickLogin('admin@shop.com', 'admin123')">
+            <div style="font-weight:700; color:#818cf8;">👑 Admin Login</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">Shop Owner Control</div>
+          </button>
+          <button type="button" class="demo-btn" onclick="quickLogin('staff@shop.com', 'staff123')">
+            <div style="font-weight:700; color:#34d399;">⚡ Staff Login</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">Fast Billing Counter</div>
+          </button>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:1.25rem; font-size:0.75rem; color:var(--text-muted);">
+        Darshan University • Web & Mobile Application Practical
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       4. VIEW 2: AUTHENTICATED WORKSPACE (State 2)
+       ========================================================================= -->
+  <main id="app-workspace" class="view-container no-print" style="display:none;">
+
+    <!-- (A) STAFF BILLING COUNTER VIEW (Hero Screen) -->
+    <section id="view-billing" class="app-subview">
+      
+      <!-- Top Billing Counter Header -->
+      <div class="card-panel" style="margin-bottom: 1.25rem; padding: 1rem 1.5rem;">
+        <div class="flex justify-between items-center flex-wrap gap-3">
+          <div class="flex items-center gap-3">
+            <span style="font-size: 1.6rem;">⚡</span>
+            <div>
+              <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2;">Smart Billing Counter</h2>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">
+                <span id="counter-cashier-name">Cashier: Sunil (Staff)</span> • 
+                <span class="badge badge-success" style="font-size: 0.68rem;">POS Terminal #01</span> • 
+                <span id="counter-invoice-preview" style="font-family: var(--font-mono); color: var(--primary);">Sequential Invoicing Active</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <button type="button" class="btn btn-sm btn-outline" onclick="resetBillingCounter()">
+              ➕ New Bill
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" onclick="reseedDatabase()">
+              🔄 Re-Sync Database
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Billing Split Grid -->
+      <div class="grid grid-cols-3 md:grid-cols-1 gap-6" style="margin-bottom: 1.5rem;">
+        
+        <!-- LEFT 2 COLUMNS: CUSTOMER SELECT + BARCODE/SEARCH + CART TABLE -->
+        <div style="grid-column: span 2; display: flex; flex-direction: column; gap: 1.25rem;">
+          
+          <!-- 1. Customer Section (Integrated with MongoDB Parties) -->
+          <div class="card-panel" style="padding: 1.25rem; position: relative;">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.75rem;">
+              <span style="font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted);">
+                1. Select Customer (Party)
+              </span>
+              <span id="active-customer-tax-badge" class="badge badge-success" style="font-size: 0.72rem;">
+                State: Gujarat (Intra-State: CGST + SGST)
+              </span>
+            </div>
+
+            <div class="flex gap-2">
+              <div style="flex: 1; position: relative;">
+                <input type="text" id="billing-customer-search" class="form-input" placeholder="🔍 Search customer by Name or Mobile (e.g., Amit, Rahul)..." oninput="handleCustomerSearchInput(this.value)" autocomplete="off">
+                <div id="customer-autocomplete-list" class="autocomplete-box"></div>
+              </div>
+              <button type="button" class="btn btn-outline" style="white-space: nowrap;" onclick="openQuickAddCustomerModal()">
+                + Quick Add
+              </button>
+            </div>
+
+            <!-- Active Selected Customer Card -->
+            <div id="selected-customer-pill" style="margin-top: 0.75rem; background: var(--bg-surface-hover); padding: 0.6rem 0.85rem; border-radius: var(--radius-md); font-size: 0.82rem; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span style="font-weight: 700;" id="sel-cust-name">Amit Patel</span> • 
+                <span id="sel-cust-mobile" style="color: var(--text-muted);">9898012345</span> • 
+                <span id="sel-cust-state" class="badge badge-neutral" style="font-size:0.7rem;">Gujarat (24)</span>
+                <span id="sel-cust-gstin" class="code-pill" style="margin-left: 4px;">GSTIN: 24AABCP4321F1ZX</span>
+              </div>
+              <span style="color: var(--success); font-weight: 600; font-size: 0.75rem;">✓ Active Customer</span>
+            </div>
+          </div>
+
+          <!-- 2. Product Entry & Camera Barcode Scanner Action Bar -->
+          <div class="card-panel" style="padding: 1.25rem; position: relative;">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.75rem;">
+              <span style="font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted);">
+                2. Add Products to Bill
+              </span>
+              <span class="badge badge-success" style="font-size: 0.72rem;">
+                📷 Camera Barcode Active
+              </span>
+            </div>
+
+            <div class="flex gap-2 flex-wrap">
+              <!-- Camera Barcode Scan Trigger -->
+              <button type="button" class="btn btn-success" style="display: flex; align-items: center; gap: 0.4rem; font-weight: 700;" onclick="openScannerModal()">
+                📷 Scan Barcode
+              </button>
+
+              <!-- Search Bar -->
+              <div style="flex: 1; min-width: 220px; position: relative;">
+                <input type="text" id="billing-product-search" class="form-input" placeholder="🔍 Search product by name or enter barcode (e.g. 8901262010014)..." oninput="handleProductSearchInput(this.value)" onkeydown="if(event.key==='Enter'){handleBarcodeEnter(this.value);}" autocomplete="off">
+                <div id="product-autocomplete-list" class="autocomplete-box"></div>
+              </div>
+
+              <button type="button" class="btn btn-primary" onclick="handleBarcodeEnter(document.getElementById('billing-product-search').value)">
+                + Add by Barcode
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Billing Cart Table -->
+          <div class="card-panel" style="padding: 0; overflow: hidden;">
+            <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-weight: 700; font-size: 0.95rem;">
+                🛒 Items in Bill (<span id="cart-item-count">0</span> items)
+              </div>
+              <span id="cart-tax-split-label" style="font-size: 0.8rem; color: var(--text-muted);">
+                Tax Split: <strong style="color: var(--primary);">CGST + SGST (Intra-State)</strong>
+              </span>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                <thead>
+                  <tr style="background: var(--bg-surface-hover); color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase;">
+                    <th style="padding: 0.75rem 1rem;">#</th>
+                    <th style="padding: 0.75rem;">Item Description</th>
+                    <th style="padding: 0.75rem;">HSN</th>
+                    <th style="padding: 0.75rem;">Barcode</th>
+                    <th style="padding: 0.75rem;">Rate (₹)</th>
+                    <th style="padding: 0.75rem;">GST %</th>
+                    <th style="padding: 0.75rem; text-align: center; width: 100px;">Qty</th>
+                    <th style="padding: 0.75rem; text-align: right;">Taxable (₹)</th>
+                    <th style="padding: 0.75rem; text-align: right;">Total (₹)</th>
+                    <th style="padding: 0.75rem 1rem; text-align: center;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="billing-cart-tbody">
+                  <tr>
+                    <td colspan="10" style="padding: 3rem 1rem; text-align: center; color: var(--text-muted);">
+                      <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
+                      <div style="font-weight: 700; font-size: 1rem; color: var(--text-main); margin-bottom: 0.25rem;">
+                        Billing Counter is Empty
+                      </div>
+                      <div style="font-size: 0.82rem;">
+                        Click <strong>[📷 Scan Barcode]</strong> or search a product above to add items.
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT 1 COLUMN: LIVE BILL SUMMARY & CHECKOUT ACTIONS -->
+        <div>
+          <div class="card-panel" style="position: sticky; top: 85px;">
+            <div style="font-size: 0.95rem; font-weight: 800; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+              <span>🧾 Bill Summary</span>
+              <span class="badge badge-neutral" style="font-size: 0.7rem;">Live Tax Math</span>
+            </div>
+
+            <!-- Tax Split Rows -->
+            <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.875rem; color: var(--text-muted);">
+              <div class="flex justify-between">
+                <span>Taxable Amount (Subtotal):</span>
+                <span id="sum-subtotal" style="font-weight: 700; color: var(--text-main);">₹0.00</span>
+              </div>
+              <div class="flex justify-between" id="row-cgst">
+                <span>CGST (Central Tax):</span>
+                <span id="sum-cgst" style="font-weight: 600;">₹0.00</span>
+              </div>
+              <div class="flex justify-between" id="row-sgst">
+                <span>SGST (State Tax):</span>
+                <span id="sum-sgst" style="font-weight: 600;">₹0.00</span>
+              </div>
+              <div class="flex justify-between" id="row-igst" style="display: none;">
+                <span>IGST (Integrated Tax):</span>
+                <span id="sum-igst" style="font-weight: 600;">₹0.00</span>
+              </div>
+              <div class="flex justify-between" style="border-top: 1px dashed var(--border-color); padding-top: 0.5rem;">
+                <span style="font-weight: 700;">Total GST Amount:</span>
+                <span id="sum-totaltax" style="font-weight: 700; color: #818cf8;">₹0.00</span>
+              </div>
+            </div>
+
+            <!-- Grand Total Display -->
+            <div style="background: var(--bg-surface-hover); border-radius: var(--radius-md); padding: 1rem; margin: 1.25rem 0; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">
+                Grand Total (Payable)
+              </div>
+              <div id="sum-grandtotal" style="font-size: 2rem; font-weight: 800; color: var(--success); line-height: 1.2; margin-top: 0.25rem;">
+                ₹0.00
+              </div>
+            </div>
+
+            <!-- Finalize Buttons -->
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <button type="button" class="btn btn-primary btn-full btn-lg" style="font-weight: 800;" onclick="openReviewModal()">
+                💾 Review & Finalize Bill
+              </button>
+              <button type="button" class="btn btn-outline btn-full" onclick="resetBillingCounter()">
+                🗑️ Clear Bill
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Diagnostics Box -->
+      <div class="card-panel" style="border: 1px dashed var(--border-color); background: rgba(0,0,0,0.15);">
+        <div class="flex justify-between items-center" style="cursor: pointer;" onclick="toggleDiagnostics()">
+          <div class="flex items-center gap-2">
+            <span style="font-size: 1rem;">🔍</span>
+            <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+              System Verification & Live Database Diagnostics
+            </span>
+          </div>
+          <span id="diag-toggle-icon" class="badge badge-neutral">Hide ▲</span>
+        </div>
+
+        <div id="diag-content-box" style="margin-top: 1rem; display: block;">
+          <div class="grid grid-cols-4 md:grid-cols-2 gap-4">
+            <div style="background: var(--bg-surface); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Active Session</div>
+              <div id="chk-user-name" style="font-weight: 700; font-size: 0.95rem; margin-top: 0.25rem;">Cashier Sunil</div>
+              <span id="chk-user-role" class="badge badge-success" style="margin-top: 0.25rem;">STAFF</span>
+            </div>
+
+            <div style="background: var(--bg-surface); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Database Status</div>
+              <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.25rem;">
+                <span id="tel-db-status" class="badge badge-success">🍃 MongoDB Online</span>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">codeathon_db</div>
+            </div>
+
+            <div style="background: var(--bg-surface); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Products in MongoDB</div>
+              <div id="tel-prod-count" style="font-weight: 800; font-size: 1.3rem; color: var(--primary); margin-top: 0.15rem;">8 Products</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">Barcode & HSN Ready</div>
+            </div>
+
+            <div style="background: var(--bg-surface); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Customers in MongoDB</div>
+              <div id="tel-party-count" style="font-weight: 800; font-size: 1.3rem; color: #f59e0b; margin-top: 0.15rem;">3 Customers</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">Gujarat & Maharashtra</div>
+            </div>
+          </div>
+          <div style="margin-top: 0.85rem; display: flex; justify-content: flex-end; gap: 0.5rem; border-top: 1px dashed var(--border-color); padding-top: 0.65rem;">
+            <button type="button" class="btn btn-sm btn-outline" style="border-color: var(--primary); color: var(--primary); font-weight: 700;" onclick="runPhase2Tests()">
+              🧪 Run 12 Automated Verification Tests
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- (B) BILL HISTORY VIEW (Immutable Saved Invoices) -->
+    <section id="view-bills" class="app-subview" style="display:none;">
+      <div class="card-panel" style="margin-bottom: 1.25rem;">
+        <div class="flex justify-between items-center flex-wrap gap-3">
+          <div>
+            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">📜 Generated GST Invoices & Bill History</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">
+              Audit trail of finalized bills saved in MongoDB. Invoices are permanent snapshots and cannot be altered.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="loadBillsList()">
+            🔄 Refresh Bills
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter / Search Bar -->
+      <div class="card-panel" style="margin-bottom: 1.25rem; padding: 1rem 1.25rem;">
+        <input type="text" id="bill-filter-search" class="form-input" placeholder="🔍 Search invoices by Invoice Number, Customer Name, or Mobile..." oninput="loadBillsList()">
+      </div>
+
+      <!-- Bills Table -->
+      <div class="card-panel" style="padding: 0; overflow: hidden;">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr style="background: var(--bg-surface-hover); color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase;">
+                <th style="padding: 0.75rem 1rem;">Invoice #</th>
+                <th style="padding: 0.75rem;">Date & Time</th>
+                <th style="padding: 0.75rem;">Customer</th>
+                <th style="padding: 0.75rem;">Tax Regime</th>
+                <th style="padding: 0.75rem;">Items</th>
+                <th style="padding: 0.75rem; text-align: right;">Total Amount</th>
+                <th style="padding: 0.75rem;">Cashier</th>
+                <th style="padding: 0.75rem 1rem; text-align: right;">Invoice Action</th>
+              </tr>
+            </thead>
+            <tbody id="bills-tbody">
+              <tr>
+                <td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                  Loading invoices from MongoDB...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- (C) ADMIN DASHBOARD VIEW (Admin Only) -->
+    <section id="view-dashboard" class="app-subview" style="display:none;">
+      <div class="card-panel" style="border-left: 4px solid var(--primary); margin-bottom: 1.5rem;">
+        <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">📊 Admin Executive Dashboard</h2>
+        <p style="color:var(--text-muted); font-size:0.875rem;">
+          Business analytics, GST collection metrics, customer sales volume, and product performance.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-4 md:grid-cols-2 gap-4" style="margin-bottom:1.5rem;">
+        <div class="card-panel">
+          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total Invoices</div>
+          <div id="dash-invoices-count" style="font-size:1.75rem; font-weight:800; margin-top:0.25rem; color:var(--text-main);">0</div>
+          <span class="badge badge-neutral" style="margin-top:0.35rem;">MongoDB Bills</span>
+        </div>
+        <div class="card-panel">
+          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total Revenue (₹)</div>
+          <div id="dash-total-revenue" style="font-size:1.75rem; font-weight:800; margin-top:0.25rem; color:var(--success);">₹0.00</div>
+          <span class="badge badge-success" style="margin-top:0.35rem;">Live Sales</span>
+        </div>
+        <div class="card-panel">
+          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Catalog Products</div>
+          <div id="dash-prod-count" style="font-size:1.75rem; font-weight:800; margin-top:0.25rem; color:#34d399;">8</div>
+          <span class="badge badge-success" style="margin-top:0.35rem;">Barcode Ready</span>
+        </div>
+        <div class="card-panel">
+          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Registered Parties</div>
+          <div id="dash-party-count" style="font-size:1.75rem; font-weight:800; margin-top:0.25rem; color:#f59e0b;">3</div>
+          <span class="badge badge-warning" style="margin-top:0.35rem;">Intra & Inter-State</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- (D) CUSTOMERS (PARTIES) MANAGEMENT VIEW (Admin Only) -->
+    <section id="view-customers" class="app-subview" style="display:none;">
+      <div class="card-panel" style="margin-bottom: 1.25rem;">
+        <div class="flex justify-between items-center flex-wrap gap-3">
+          <div>
+            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">👥 Customers (Parties) Management</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">
+              Manage registered business parties and retail consumers in MongoDB.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="openCustomerModal()">
+            + Add New Customer
+          </button>
+        </div>
+      </div>
+
+      <div class="card-panel" style="margin-bottom: 1.25rem; padding: 1rem 1.25rem;">
+        <div class="flex gap-3 flex-wrap">
+          <div style="flex: 1; min-width: 250px;">
+            <input type="text" id="cust-filter-search" class="form-input" placeholder="🔍 Search customers by Name or Mobile..." oninput="loadCustomersList()">
+          </div>
+          <div style="width: 200px;">
+            <select id="cust-filter-state" class="form-input" onchange="loadCustomersList()">
+              <option value="All">All States</option>
+              <option value="Gujarat">Gujarat (24)</option>
+              <option value="Maharashtra">Maharashtra (27)</option>
+              <option value="Rajasthan">Rajasthan (08)</option>
+              <option value="Delhi">Delhi (07)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-panel" style="padding: 0; overflow: hidden;">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr style="background: var(--bg-surface-hover); color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase;">
+                <th style="padding: 0.75rem 1rem;">Customer Name</th>
+                <th style="padding: 0.75rem;">Mobile</th>
+                <th style="padding: 0.75rem;">State</th>
+                <th style="padding: 0.75rem;">GSTIN</th>
+                <th style="padding: 0.75rem;">City</th>
+                <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="customers-tbody">
+              <tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading customers from MongoDB...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- (E) PRODUCTS & BARCODES CATALOG VIEW (Admin Only) -->
+    <section id="view-products" class="app-subview" style="display:none;">
+      <div class="card-panel" style="margin-bottom: 1.25rem;">
+        <div class="flex justify-between items-center flex-wrap gap-3">
+          <div>
+            <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:0.25rem;">📦 Products & Barcodes Catalog</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">
+              Manage reusable products with statutory GST slabs, HSN/SAC codes, and barcodes in MongoDB.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="openProductModal()">
+            + Add New Product
+          </button>
+        </div>
+      </div>
+
+      <div class="card-panel" style="margin-bottom: 1.25rem; padding: 1rem 1.25rem;">
+        <div class="flex gap-3 flex-wrap">
+          <div style="flex: 1; min-width: 250px;">
+            <input type="text" id="prod-filter-search" class="form-input" placeholder="🔍 Search products by Name, Barcode, or HSN code..." oninput="loadProductsList()">
+          </div>
+          <div style="width: 180px;">
+            <select id="prod-filter-gst" class="form-input" onchange="loadProductsList()">
+              <option value="All">All GST Slabs</option>
+              <option value="0">0% (Nil)</option>
+              <option value="5">5% (Essential)</option>
+              <option value="12">12% (Standard I)</option>
+              <option value="18">18% (Standard II)</option>
+              <option value="28">28% (Luxury)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-panel" style="padding: 0; overflow: hidden;">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr style="background: var(--bg-surface-hover); color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase;">
+                <th style="padding: 0.75rem 1rem;">Product Name</th>
+                <th style="padding: 0.75rem;">HSN/SAC</th>
+                <th style="padding: 0.75rem;">Barcode / QR</th>
+                <th style="padding: 0.75rem;">Unit Price (₹)</th>
+                <th style="padding: 0.75rem;">GST Slab</th>
+                <th style="padding: 0.75rem;">Unit</th>
+                <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody">
+              <tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading products from MongoDB...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       5. MODALS SUITE: SCANNER, REVIEW, INVOICE, CUSTOMER, PRODUCT
+       ========================================================================= -->
+
+  <!-- A. CAMERA BARCODE / QR SCANNER MODAL -->
+  <div id="modal-scanner" class="modal-overlay no-print">
+    <div class="modal-container" style="max-width: 540px;">
+      <div class="modal-header">
+        <div class="flex items-center gap-2">
+          <span style="font-size: 1.3rem;">📷</span>
+          <h3 style="font-weight: 800; font-size: 1.15rem; margin: 0;">Camera Barcode Scanner</h3>
+        </div>
+        <button class="modal-close" onclick="closeScannerModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.25rem;">
+        
+        <!-- Live Webcam Viewfinder -->
+        <div id="scanner-viewfinder">
+          <div id="reader" style="width: 100%; height: 100%;"></div>
+        </div>
+
+        <div style="margin-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+          <span id="scanner-status-indicator" class="badge badge-primary" style="font-size: 0.75rem;">
+            🟢 Camera Stream Active (Point barcode to lens)
+          </span>
+          <label style="font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+            <input type="checkbox" id="scanner-continuous-toggle" checked>
+            <span>Continuous Scan Mode</span>
+          </label>
+        </div>
+
+        <!-- B. QUICK BARCODE SIMULATOR (Fallback for Zero-Camera Environments) -->
+        <div style="margin-top: 1.25rem; background: var(--bg-surface-hover); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 0.85rem;">
+          <div style="font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+            <span>⚡ Quick Barcode Simulator Tray (Click to Scan Instantly)</span>
+            <span style="color: var(--success);">MongoDB Linked</span>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901262010014')">
+              🥛 Amul Milk (8901262010014)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901063012480')">
+              🍞 Bread (8901063012480)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901058852273')">
+              🍜 Maggi (8901058852273)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901058000421')">
+              🧂 Salt (8901058000421)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8906007280014')">
+              🌻 Fortune Oil (8906007280014)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901396316129')">
+              🧴 Dettol (8901396316129)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8901233024873')">
+              🍫 Dairy Milk (8901233024873)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px;" onclick="handleBarcodeScanned('8904330900125')">
+              🎧 Earphones (8904330900125)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.72rem; padding: 3px 8px; border-color: rgba(239,68,68,0.4); color: var(--danger);" onclick="handleBarcodeScanned('9999999999999')">
+              ❌ Invalid (9999999999999)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeScannerModal()">Close Scanner</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- B. BILL REVIEW MODAL -->
+  <div id="modal-review" class="modal-overlay no-print">
+    <div class="modal-container" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 style="font-weight: 800; font-size: 1.15rem;">📋 Review Bill Before Finalizing</h3>
+        <button class="modal-close" onclick="Modal.close('modal-review')">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Customer Details Box -->
+        <div style="background: var(--bg-surface-hover); padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; font-size: 0.85rem; border: 1px solid var(--border-color);">
+          <div class="flex justify-between items-center">
+            <div>
+              <span style="font-weight: 700;" id="rev-cust-name">Amit Patel</span> • 
+              <span id="rev-cust-mobile" style="color: var(--text-muted);">9898012345</span>
+              <div id="rev-cust-address" style="font-size: 0.75rem; color: var(--text-muted);">Rajkot, Gujarat</div>
+            </div>
+            <span id="rev-tax-badge" class="badge badge-success">Intra-State (CGST + SGST)</span>
+          </div>
+        </div>
+
+        <!-- Items Mini Table -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 1rem;">
+          <thead>
+            <tr style="background: var(--bg-surface-hover); color: var(--text-muted); text-transform: uppercase; font-size: 0.7rem; border-bottom: 1px solid var(--border-color);">
+              <th style="padding: 0.5rem;">Item</th>
+              <th style="padding: 0.5rem; text-align: center;">Qty</th>
+              <th style="padding: 0.5rem; text-align: right;">Rate</th>
+              <th style="padding: 0.5rem; text-align: right;">Taxable</th>
+              <th style="padding: 0.5rem; text-align: right;">GST</th>
+              <th style="padding: 0.5rem; text-align: right;">Total</th>
+            </tr>
+          </thead>
+          <tbody id="rev-items-tbody"></tbody>
+        </table>
+
+        <!-- Totals Card -->
+        <div style="background: var(--bg-surface-hover); padding: 1rem; border-radius: var(--radius-md); font-size: 0.85rem; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.4rem;">
+          <div class="flex justify-between">
+            <span>Subtotal (Taxable):</span>
+            <span id="rev-subtotal" style="font-weight: 700;">₹0.00</span>
+          </div>
+          <div class="flex justify-between" id="rev-row-cgst">
+            <span>CGST Amount:</span>
+            <span id="rev-cgst" style="font-weight: 600;">₹0.00</span>
+          </div>
+          <div class="flex justify-between" id="rev-row-sgst">
+            <span>SGST Amount:</span>
+            <span id="rev-sgst" style="font-weight: 600;">₹0.00</span>
+          </div>
+          <div class="flex justify-between" id="rev-row-igst" style="display: none;">
+            <span>IGST Amount:</span>
+            <span id="rev-igst" style="font-weight: 600;">₹0.00</span>
+          </div>
+          <div class="flex justify-between" style="border-top: 1px dashed var(--border-color); padding-top: 0.5rem; font-size: 1.15rem;">
+            <span style="font-weight: 800;">Grand Total:</span>
+            <span id="rev-grandtotal" style="font-weight: 800; color: var(--success);">₹0.00</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <label class="form-label">Payment Mode</label>
+          <select id="rev-payment-method" class="form-input">
+            <option value="CASH" selected>💵 Cash</option>
+            <option value="UPI">📱 UPI / QR Transfer</option>
+            <option value="CARD">💳 Debit / Credit Card</option>
+          </select>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="Modal.close('modal-review')">Cancel</button>
+        <button type="button" id="btn-confirm-finalize" class="btn btn-primary" onclick="confirmFinalizeBill()">
+          ✓ Confirm & Finalize Invoice
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- C. PROFESSIONAL GST A4 TAX INVOICE PREVIEW & PRINT MODAL -->
+  <div id="modal-invoice" class="modal-overlay">
+    <div class="modal-container" style="max-width: 860px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header no-print">
+        <h3 style="font-weight: 800; font-size: 1.15rem;">🧾 Official GST Tax Invoice</h3>
+        <button class="modal-close" onclick="Modal.close('modal-invoice')">&times;</button>
+      </div>
+      
+      <div class="modal-body" style="padding: 1rem 1.5rem;">
+        
+        <!-- Printable Invoice Wrapper (A4 Format) -->
+        <div id="printable-invoice-content" class="invoice-card">
+          
+          <!-- Invoice Header -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 1rem; margin-bottom: 1rem;">
+            <div>
+              <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase;">
+                Darshan SuperMart & Electronics
+              </h1>
+              <div style="color: #475569; font-size: 0.8rem; margin-top: 3px;">
+                Opp. Crystal Mall, Kalawad Road, Rajkot - 360005, Gujarat<br>
+                Phone: +91 98765 43210 • Email: admin@darshanshop.com<br>
+                <strong>GSTIN: 24AAACD1234E1Z5</strong> • State Code: 24 (Gujarat)
+              </div>
+            </div>
+
+            <div style="text-align: right;">
+              <span style="background: #0f172a; color: #fff; padding: 4px 12px; font-weight: 800; font-size: 0.85rem; border-radius: 4px; letter-spacing: 0.05em;">
+                TAX INVOICE
+              </span>
+              <div style="margin-top: 0.6rem; font-family: var(--font-mono); font-weight: 700; font-size: 1rem; color: #0f172a;" id="inv-no">
+                INV-2026-00001
+              </div>
+              <div style="font-size: 0.78rem; color: #64748b;" id="inv-date">
+                19 Sep 2026, 09:30 AM
+              </div>
+            </div>
+          </div>
+
+          <!-- Billed To & Place of Supply Grid -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #f8fafc; padding: 0.85rem 1rem; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 1.25rem;">
+            <div>
+              <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 2px;">
+                Billed To (Customer Details):
+              </div>
+              <div style="font-weight: 800; font-size: 0.95rem;" id="inv-cust-name">Amit Patel</div>
+              <div style="font-size: 0.8rem; color: #475569;" id="inv-cust-address">102 Royal Residency, Rajkot</div>
+              <div style="font-size: 0.8rem; color: #475569;">Mobile: <strong id="inv-cust-mobile">9898012345</strong></div>
+              <div style="font-size: 0.8rem; color: #0f172a; font-family: var(--font-mono);" id="inv-cust-gstin">GSTIN: 24AABCP4321F1ZX</div>
+            </div>
+
+            <div style="text-align: right;">
+              <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 2px;">
+                Invoice Details:
+              </div>
+              <div style="font-size: 0.82rem;">Place of Supply: <strong id="inv-place-of-supply">24 - Gujarat</strong></div>
+              <div style="font-size: 0.82rem;">Tax Regime: <strong id="inv-regime">Intra-State (CGST + SGST)</strong></div>
+              <div style="font-size: 0.82rem;">Payment Method: <strong id="inv-payment-method">CASH</strong></div>
+              <div style="font-size: 0.82rem;">Billed By: <strong id="inv-cashier">Cashier Sunil</strong></div>
+            </div>
+          </div>
+
+          <!-- Itemized GST Table -->
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Item Description</th>
+                <th style="width: 60px; text-align: center;">HSN</th>
+                <th style="width: 45px; text-align: center;">Qty</th>
+                <th style="width: 65px; text-align: right;">Rate (₹)</th>
+                <th style="width: 80px; text-align: right;">Taxable (₹)</th>
+                <th style="width: 50px; text-align: center;">GST %</th>
+                <th style="width: 70px; text-align: right;" id="inv-th-cgst">CGST (₹)</th>
+                <th style="width: 70px; text-align: right;" id="inv-th-sgst">SGST (₹)</th>
+                <th style="width: 70px; text-align: right; display:none;" id="inv-th-igst">IGST (₹)</th>
+                <th style="width: 85px; text-align: right;">Total (₹)</th>
+              </tr>
+            </thead>
+            <tbody id="inv-items-tbody"></tbody>
+          </table>
+
+          <!-- Tax Calculation Summary Grid -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 1rem; border-top: 1px solid #cbd5e1; padding-top: 1rem;">
+            <div style="max-width: 50%;">
+              <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Amount in Words:</div>
+              <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a; margin-top: 2px;" id="inv-amount-words">
+                Two Hundred Thirty-Six Rupees Only
+              </div>
+
+              <div style="margin-top: 1.5rem; font-size: 0.72rem; color: #64748b; line-height: 1.4;">
+                <strong>Terms & Conditions:</strong><br>
+                1. Goods once sold will not be taken back without original invoice.<br>
+                2. Subject to Rajkot Jurisdiction.
+              </div>
+            </div>
+
+            <div style="min-width: 260px;">
+              <table style="width: 100%; font-size: 0.82rem; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 3px 0; color: #475569;">Total Taxable Amount:</td>
+                  <td style="padding: 3px 0; text-align: right; font-weight: 700;" id="inv-subtotal">₹0.00</td>
+                </tr>
+                <tr id="inv-summary-row-cgst">
+                  <td style="padding: 3px 0; color: #475569;">Central GST (CGST):</td>
+                  <td style="padding: 3px 0; text-align: right;" id="inv-cgst">₹0.00</td>
+                </tr>
+                <tr id="inv-summary-row-sgst">
+                  <td style="padding: 3px 0; color: #475569;">State GST (SGST):</td>
+                  <td style="padding: 3px 0; text-align: right;" id="inv-sgst">₹0.00</td>
+                </tr>
+                <tr id="inv-summary-row-igst" style="display: none;">
+                  <td style="padding: 3px 0; color: #475569;">Integrated GST (IGST):</td>
+                  <td style="padding: 3px 0; text-align: right;" id="inv-igst">₹0.00</td>
+                </tr>
+                <tr style="border-top: 2px solid #0f172a; font-size: 1.15rem;">
+                  <td style="padding: 6px 0; font-weight: 800; color: #0f172a;">Grand Total:</td>
+                  <td style="padding: 6px 0; text-align: right; font-weight: 800; color: #0f172a;" id="inv-grandtotal">₹0.00</td>
+                </tr>
+              </table>
+
+              <div style="margin-top: 2rem; text-align: center; border-top: 1px dashed #94a3b8; padding-top: 0.5rem; font-size: 0.72rem; color: #64748b;">
+                For <strong>Darshan SuperMart & Electronics</strong><br>
+                <div style="height: 35px;"></div>
+                Authorized Signatory
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer no-print">
+        <button type="button" class="btn btn-outline" onclick="Modal.close('modal-invoice')">Close Preview</button>
+        <button type="button" class="btn btn-outline" onclick="printInvoice()">🖨️ Print Invoice</button>
+        <button type="button" class="btn btn-success" onclick="downloadInvoicePDF()">📥 Download PDF</button>
+        <button type="button" class="btn btn-primary" onclick="startNewBillFromInvoice()">➕ Next Bill</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- D. CUSTOMER MODAL (Admin CRUD) -->
+  <div id="modal-customer" class="modal-overlay no-print">
+    <div class="modal-container" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 id="modal-customer-title" style="font-weight: 800; font-size: 1.15rem;">➕ Add Customer</h3>
+        <button class="modal-close" onclick="Modal.close('modal-customer')">&times;</button>
+      </div>
+      <form id="form-customer" onsubmit="handleCustomerSubmit(event)">
+        <input type="hidden" id="cust-form-id">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Customer / Business Name *</label>
+            <input type="text" id="cust-name" class="form-input" placeholder="e.g. Ramesh Bhai" required>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="form-group">
+              <label class="form-label">Mobile Number (10 digits) *</label>
+              <input type="tel" id="cust-mobile" class="form-input" placeholder="e.g. 9876543210" required maxLength="10">
+            </div>
+            <div class="form-group">
+              <label class="form-label">State *</label>
+              <select id="cust-state" class="form-input" required>
+                <option value="Gujarat" selected>Gujarat (24)</option>
+                <option value="Maharashtra">Maharashtra (27)</option>
+                <option value="Rajasthan">Rajasthan (08)</option>
+                <option value="Madhya Pradesh">Madhya Pradesh (23)</option>
+                <option value="Delhi">Delhi (07)</option>
+                <option value="Karnataka">Karnataka (29)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">GSTIN (Optional for Retail Consumers)</label>
+            <input type="text" id="cust-gstin" class="form-input" placeholder="e.g. 24AAACD1234E1Z5" maxLength="15" style="text-transform: uppercase;">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <input type="text" id="cust-city" class="form-input" placeholder="e.g. Rajkot">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email (Optional)</label>
+              <input type="email" id="cust-email" class="form-input" placeholder="customer@mail.com">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <textarea id="cust-address" class="form-input" rows="2" placeholder="Street, landmark, pincode..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="Modal.close('modal-customer')">Cancel</button>
+          <button type="submit" id="btn-save-cust" class="btn btn-primary">Save to MongoDB</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- E. PRODUCT MODAL (Admin CRUD) -->
+  <div id="modal-product" class="modal-overlay no-print">
+    <div class="modal-container" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 id="modal-product-title" style="font-weight: 800; font-size: 1.15rem;">➕ Add Product</h3>
+        <button class="modal-close" onclick="Modal.close('modal-product')">&times;</button>
+      </div>
+      <form id="form-product" onsubmit="handleProductSubmit(event)">
+        <input type="hidden" id="prod-form-id">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Product Name *</label>
+            <input type="text" id="prod-name" class="form-input" placeholder="e.g. Amul Gold Milk (500ml)" required>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="form-group">
+              <label class="form-label">Unit Price (₹) *</label>
+              <input type="number" step="0.01" min="0" id="prod-price" class="form-input" placeholder="34.00" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">GST Slab Rate *</label>
+              <select id="prod-gst" class="form-input" required>
+                <option value="0">0% (Nil / Exempted)</option>
+                <option value="5" selected>5% (Essential Goods)</option>
+                <option value="12">12% (Processed Food)</option>
+                <option value="18">18% (Standard / Electronics)</option>
+                <option value="28">28% (Luxury / Aerated)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="form-group">
+              <label class="form-label">HSN/SAC Code</label>
+              <input type="text" id="prod-hsn" class="form-input" placeholder="e.g. 0401">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Unit Type</label>
+              <select id="prod-unit" class="form-input">
+                <option value="pkt">pkt (Packet)</option>
+                <option value="pcs" selected>pcs (Pieces)</option>
+                <option value="kg">kg (Kilogram)</option>
+                <option value="bottle">bottle</option>
+                <option value="box">box</option>
+                <option value="bar">bar</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Barcode / QR Code String (Optional, must be unique)</label>
+            <input type="text" id="prod-barcode" class="form-input" placeholder="e.g. 8901262010014" style="font-family: var(--font-mono);">
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">
+              Used by camera scanner to automatically detect this item during billing.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <input type="text" id="prod-category" class="form-input" placeholder="e.g. Dairy, Grocery, Bakery">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="Modal.close('modal-product')">Cancel</button>
+          <button type="submit" id="btn-save-prod" class="btn btn-primary">Save to MongoDB</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Core Scripts -->
+  <script src="js/hackathon-ui.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    /* =========================================================================
+       APPLICATION STATE
+       ========================================================================= */
+    let currentUser = null;
+    let cachedCustomers = [];
+    let cachedProducts = [];
+    let activeCustomer = null;
+    let billingCart = [];
+    let currentActiveInvoice = null;
+    let html5QrCodeScanner = null;
+
+    // Initialize App Session
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Global Escape key listener to dismiss open modals & restore body scrolling
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal-overlay.active').forEach(m => {
+            m.classList.remove('active');
+          });
+          document.body.style.overflow = '';
+        }
+      });
+
+      await checkAuthSession();
+      await loadTelemetryData();
+    });
+
+    // Check active session token
+    async function checkAuthSession() {
+      const token = api.getToken();
+      if (!token) {
+        showAuthView();
+        return;
+      }
+
+      try {
+        const res = await api.get('/auth/me');
+        if (res.success && res.user && res.user.id !== 'guest') {
+          await setAuthenticatedUser(res.user);
+        } else {
+          showAuthView();
+        }
+      } catch (err) {
+        showAuthView();
+      }
+    }
+
+    // Login Form Submit
+    async function handleLoginForm(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      const btn = document.getElementById('btn-login');
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Authenticating...';
+      }
+
+      try {
+        const res = await api.post('/auth/login', { email, password });
+        if (res.success) {
+          api.setToken(res.token);
+          await setAuthenticatedUser(res.user);
+          Toast.show({
+            title: `Welcome, ${res.user.name}!`,
+            message: `Authenticated as ${res.user.role}`,
+            type: 'success'
+          });
+        }
+      } catch (err) {
+        Toast.show({
+          title: 'Login Failed',
+          message: err.message || 'Invalid email or password',
+          type: 'danger'
+        });
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+        }
+      }
+    }
+
+    // Quick Demo Login Helper
+    async function quickLogin(email, password) {
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-password').value = password;
+      await handleLoginForm(new Event('submit'));
+    }
+
+    // Set Authenticated User State & Apply Role Restrictions
+    async function setAuthenticatedUser(user) {
+      currentUser = user;
+      document.getElementById('auth-view').style.display = 'none';
+      document.getElementById('app-workspace').style.display = 'block';
+      document.getElementById('app-nav-bar').style.display = 'flex';
+      document.getElementById('user-profile-widget').style.display = 'flex';
+
+      document.getElementById('user-display-name').textContent = user.name;
+      const roleBadge = document.getElementById('user-role-badge');
+      roleBadge.textContent = user.role;
+      roleBadge.className = user.role === 'ADMIN' ? 'role-badge role-badge-admin' : 'role-badge role-badge-staff';
+
+      const cashierNameEl = document.getElementById('counter-cashier-name');
+      if (cashierNameEl) cashierNameEl.textContent = `Cashier: ${user.name}`;
+
+      const chkName = document.getElementById('chk-user-name');
+      if (chkName) chkName.textContent = user.name;
+      const chkRole = document.getElementById('chk-user-role');
+      if (chkRole) {
+        chkRole.textContent = user.role;
+        chkRole.className = user.role === 'ADMIN' ? 'badge badge-primary' : 'badge badge-success';
+      }
+
+      // Enforce Role Permissions on Nav Tabs
+      const adminTabs = document.querySelectorAll('.admin-only');
+      if (user.role === 'STAFF') {
+        adminTabs.forEach(el => el.style.display = 'none');
+        switchView('billing');
+      } else {
+        adminTabs.forEach(el => el.style.display = 'flex');
+        switchView('dashboard');
+      }
+
+      // Preload data and initialize active customer & telemetry
+      await loadTelemetryData();
+      loadCustomersList();
+      loadProductsList();
+      loadBillsList();
+    }
+
+    function showAuthView() {
+      currentUser = null;
+      api.clearToken();
+      document.getElementById('auth-view').style.display = 'flex';
+      document.getElementById('app-workspace').style.display = 'none';
+      document.getElementById('app-nav-bar').style.display = 'none';
+      document.getElementById('user-profile-widget').style.display = 'none';
+    }
+
+    async function handleLogout() {
+      try {
+        await api.post('/auth/logout', {});
+      } catch (e) {}
+      showAuthView();
+      Toast.show({ title: 'Logged Out', message: 'Session closed successfully', type: 'primary' });
+    }
+
+    function switchView(viewName) {
+      document.body.style.overflow = '';
+      document.querySelectorAll('.app-subview').forEach(v => v.style.display = 'none');
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+      const targetView = document.getElementById(`view-${viewName}`);
+      const targetBtn = document.getElementById(`tab-${viewName}-btn`);
+
+      if (targetView) targetView.style.display = 'block';
+      if (targetBtn) targetBtn.classList.add('active');
+
+      if (viewName === 'customers') loadCustomersList();
+      if (viewName === 'products') loadProductsList();
+      if (viewName === 'bills') loadBillsList();
+    }
+
+    // Telemetry & Seed Status Loader
+    async function loadTelemetryData() {
+      try {
+        const health = await api.get('/health');
+        const dbStatusEl = document.getElementById('tel-db-status');
+        if (health.databaseConnected) {
+          dbStatusEl.textContent = '🍃 MongoDB Online';
+          dbStatusEl.className = 'badge badge-success';
+        } else {
+          dbStatusEl.textContent = '🛡️ Safe Fallback Active';
+          dbStatusEl.className = 'badge badge-warning';
+        }
+
+        const itemRes = await api.get('/items');
+        if (itemRes.success) {
+          cachedProducts = itemRes.items || [];
+          const count = cachedProducts.length;
+          document.getElementById('tel-prod-count').textContent = `${count} Products`;
+          const dashCount = document.getElementById('dash-prod-count');
+          if (dashCount) dashCount.textContent = count;
+        }
+
+        const partyRes = await api.get('/parties');
+        if (partyRes.success) {
+          cachedCustomers = partyRes.parties || [];
+          const pCount = cachedCustomers.length;
+          document.getElementById('tel-party-count').textContent = `${pCount} Customers`;
+          const dashPartyCount = document.getElementById('dash-party-count');
+          if (dashPartyCount) dashPartyCount.textContent = pCount;
+
+          if (!activeCustomer && cachedCustomers.length > 0) {
+            selectCustomerForBilling(cachedCustomers[0]);
+          }
+        }
+
+        // Bills count
+        const billsRes = await api.get('/bills');
+        if (billsRes.success) {
+          const bCount = billsRes.bills ? billsRes.bills.length : 0;
+          const invCountEl = document.getElementById('dash-invoices-count');
+          if (invCountEl) invCountEl.textContent = bCount;
+          const totalRev = billsRes.bills.reduce((acc, b) => acc + (parseFloat(b.grandTotal) || 0), 0);
+          const revEl = document.getElementById('dash-total-revenue');
+          if (revEl) revEl.textContent = `₹${totalRev.toFixed(2)}`;
+        }
+      } catch (err) {
+        console.warn('Telemetry load notice:', err.message);
+      }
+    }
+
+    async function reseedDatabase() {
+      try {
+        const res = await api.post('/auth/seed', {});
+        Toast.show({ title: 'Database Synced', message: res.message || 'Seeded sample data', type: 'success' });
+        await loadTelemetryData();
+        if (currentUser && currentUser.role === 'ADMIN') {
+          loadCustomersList();
+          loadProductsList();
+        }
+      } catch (err) {
+        Toast.show({ title: 'Seed Warning', message: err.message, type: 'warning' });
+      }
+    }
+
+    function toggleDiagnostics() {
+      const box = document.getElementById('diag-content-box');
+      const icon = document.getElementById('diag-toggle-icon');
+      if (box.style.display === 'none') {
+        box.style.display = 'block';
+        icon.textContent = 'Hide ▲';
+      } else {
+        box.style.display = 'none';
+        icon.textContent = 'Show ▼';
+      }
+    }
+
+    /* =========================================================================
+       CUSTOMER MANAGEMENT (PARTIES)
+       ========================================================================= */
+    async function loadCustomersList() {
+      const tbody = document.getElementById('customers-tbody');
+      if (!tbody) return;
+
+      const search = document.getElementById('cust-filter-search') ? document.getElementById('cust-filter-search').value : '';
+      const state = document.getElementById('cust-filter-state') ? document.getElementById('cust-filter-state').value : 'All';
+
+      try {
+        let endpoint = '/parties';
+        const params = [];
+        if (search) params.push(`search=${encodeURIComponent(search)}`);
+        if (state && state !== 'All') params.push(`state=${encodeURIComponent(state)}`);
+        if (params.length > 0) endpoint += `?${params.join('&')}`;
+
+        const res = await api.get(endpoint);
+        if (res.success) {
+          if (!search && state === 'All') {
+            cachedCustomers = res.parties || [];
+          }
+          renderCustomersTable(res.parties || []);
+          if (!activeCustomer && cachedCustomers.length > 0) {
+            selectCustomerForBilling(cachedCustomers[0]);
+          }
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:2rem; text-align:center; color:var(--danger);">${err.message}</td></tr>`;
+      }
+    }
+
+    function renderCustomersTable(parties) {
+      const tbody = document.getElementById('customers-tbody');
+      if (!tbody) return;
+
+      if (!parties || parties.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:2rem; text-align:center; color:var(--text-muted);">No customers found in MongoDB.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = parties.map(p => {
+        const isGujarat = (p.state || '').toLowerCase() === 'gujarat';
+        const stateBadge = isGujarat ? `<span class="badge badge-success">Gujarat (24)</span>` : `<span class="badge badge-warning">${p.state || 'Other'} (${p.stateCode || 'Inter'})</span>`;
+        const gstinBadge = p.gstin ? `<span class="code-pill">${p.gstin}</span>` : `<span style="color:var(--text-muted); font-size:0.75rem;">Consumer</span>`;
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-main);">${escapeHtml(p.name)}</td>
+            <td style="padding: 0.75rem; font-family: var(--font-mono);">${p.mobile}</td>
+            <td style="padding: 0.75rem;">${stateBadge}</td>
+            <td style="padding: 0.75rem;">${gstinBadge}</td>
+            <td style="padding: 0.75rem; color: var(--text-muted);">${escapeHtml(p.city || '-')}</td>
+            <td style="padding: 0.75rem 1rem; text-align: right;">
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; margin-right: 4px;" onclick="editCustomer('${p._id}')">✏️ Edit</button>
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteCustomer('${p._id}', '${escapeHtml(p.name)}')">🗑️ Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function openCustomerModal(id = null) {
+      document.getElementById('form-customer').reset();
+      document.getElementById('cust-form-id').value = id || '';
+      document.getElementById('modal-customer-title').textContent = id ? '✏️ Edit Customer' : '➕ Add New Customer';
+      document.getElementById('cust-state').value = 'Gujarat';
+
+      if (id) {
+        let party = null;
+        try {
+          const res = await api.get(`/parties/${id}`);
+          if (res.success && res.party) party = res.party;
+        } catch(e) {}
+
+        if (!party) {
+          party = cachedCustomers.find(c => String(c._id) === String(id));
+        }
+
+        if (party) {
+          document.getElementById('cust-name').value = party.name || '';
+          document.getElementById('cust-mobile').value = party.mobile || '';
+          document.getElementById('cust-state').value = party.state || 'Gujarat';
+          document.getElementById('cust-gstin').value = party.gstin || '';
+          document.getElementById('cust-city').value = party.city || '';
+          document.getElementById('cust-email').value = party.email || '';
+          document.getElementById('cust-address').value = party.address || '';
+        }
+      }
+      Modal.open('modal-customer');
+    }
+
+    function editCustomer(id) {
+      openCustomerModal(id);
+    }
+
+    async function handleCustomerSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-save-cust');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Saving to MongoDB...';
+      }
+
+      const id = document.getElementById('cust-form-id').value;
+      const name = document.getElementById('cust-name').value.trim();
+      const mobile = document.getElementById('cust-mobile').value.trim();
+      const state = document.getElementById('cust-state').value;
+      const gstin = document.getElementById('cust-gstin').value.trim().toUpperCase();
+      const city = document.getElementById('cust-city').value.trim();
+      const email = document.getElementById('cust-email').value.trim();
+      const address = document.getElementById('cust-address').value.trim();
+
+      const payload = { name, mobile, state, gstin, city, email, address };
+
+      try {
+        let res;
+        if (id) {
+          res = await api.put(`/parties/${id}`, payload);
+        } else {
+          res = await api.post('/parties', payload);
+        }
+
+        if (res.success) {
+          Toast.show({ title: 'Customer Saved', message: res.message || 'Saved in MongoDB', type: 'success' });
+          Modal.close('modal-customer');
+          const searchInput = document.getElementById('cust-filter-search');
+          if (searchInput) searchInput.value = '';
+          await loadCustomersList();
+          await loadTelemetryData();
+
+          if (!id && res.party) {
+            selectCustomerForBilling(res.party);
+          }
+        }
+      } catch (err) {
+        Toast.show({ title: 'Save Failed', message: err.message, type: 'danger' });
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Save to MongoDB';
+        }
+      }
+    }
+
+    async function deleteCustomer(id, name) {
+      if (!confirm(`Are you sure you want to delete customer "${name}" from MongoDB?`)) {
+        return;
+      }
+
+      try {
+        const res = await api.delete(`/parties/${id}`);
+        if (res.success) {
+          Toast.show({ title: 'Deleted', message: `Customer ${name} removed from MongoDB`, type: 'success' });
+          await loadCustomersList();
+          await loadTelemetryData();
+        }
+      } catch (err) {
+        Toast.show({ title: 'Delete Failed', message: err.message, type: 'danger' });
+      }
+    }
+
+    function openQuickAddCustomerModal() {
+      openCustomerModal(null);
+    }
+
+    function selectCustomerForBilling(party) {
+      activeCustomer = party;
+      document.getElementById('sel-cust-name').textContent = party.name;
+      document.getElementById('sel-cust-mobile').textContent = party.mobile;
+      document.getElementById('sel-cust-state').textContent = `${party.state} (${party.stateCode || 'Code'})`;
+      document.getElementById('sel-cust-gstin').textContent = party.gstin ? `GSTIN: ${party.gstin}` : 'Consumer (No GSTIN)';
+
+      // Intra vs Inter-State Tax Detection
+      const isGujarat = (party.state || '').toLowerCase() === 'gujarat';
+      const taxBadge = document.getElementById('active-customer-tax-badge');
+      const taxSplitLabel = document.getElementById('cart-tax-split-label');
+      const cgstRow = document.getElementById('row-cgst');
+      const sgstRow = document.getElementById('row-sgst');
+      const igstRow = document.getElementById('row-igst');
+
+      if (isGujarat) {
+        taxBadge.textContent = 'State: Gujarat (Intra-State: CGST + SGST)';
+        taxBadge.className = 'badge badge-success';
+        taxSplitLabel.innerHTML = 'Tax Split: <strong style="color:var(--primary);">CGST + SGST (Intra-State: 50% / 50%)</strong>';
+        cgstRow.style.display = 'flex';
+        sgstRow.style.display = 'flex';
+        igstRow.style.display = 'none';
+      } else {
+        taxBadge.textContent = `State: ${party.state} (Inter-State: IGST)`;
+        taxBadge.className = 'badge badge-warning';
+        taxSplitLabel.innerHTML = `Tax Split: <strong style="color:#f59e0b;">IGST (Inter-State: 100% Integrated Tax)</strong>`;
+        cgstRow.style.display = 'none';
+        sgstRow.style.display = 'none';
+        igstRow.style.display = 'flex';
+      }
+
+      document.getElementById('customer-autocomplete-list').style.display = 'none';
+      document.getElementById('billing-customer-search').value = `${party.name} (${party.mobile})`;
+
+      recalculateCart();
+    }
+
+    function handleCustomerSearchInput(val) {
+      const box = document.getElementById('customer-autocomplete-list');
+      if (!val || !val.trim()) {
+        box.style.display = 'none';
+        return;
+      }
+
+      const q = val.trim().toLowerCase();
+      const matches = cachedCustomers.filter(c => 
+        (c.name && c.name.toLowerCase().includes(q)) || 
+        (c.mobile && c.mobile.includes(q)) ||
+        (c.gstin && c.gstin.toLowerCase().includes(q))
+      );
+
+      if (matches.length === 0) {
+        box.innerHTML = `<div style="padding:0.75rem 1rem; color:var(--text-muted); font-size:0.8rem;">No customer found. Click [+ Quick Add] to create.</div>`;
+        box.style.display = 'block';
+        return;
+      }
+
+      box.innerHTML = matches.map(c => `
+        <div class="autocomplete-item" onclick='selectCustomerForBilling(${JSON.stringify(c).replace(/'/g, "&apos;")})'>
+          <div>
+            <div style="font-weight:700;">${escapeHtml(c.name)}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">${c.mobile} • ${c.state}</div>
+          </div>
+          <span class="badge ${c.state.toLowerCase()==='gujarat'?'badge-success':'badge-warning'}">${c.state}</span>
+        </div>
+      `).join('');
+      box.style.display = 'block';
+    }
+
+    /* =========================================================================
+       PRODUCT CATALOG MANAGEMENT (ITEMS)
+       ========================================================================= */
+    async function loadProductsList() {
+      const tbody = document.getElementById('products-tbody');
+      if (!tbody) return;
+
+      const search = document.getElementById('prod-filter-search') ? document.getElementById('prod-filter-search').value : '';
+      const gst = document.getElementById('prod-filter-gst') ? document.getElementById('prod-filter-gst').value : 'All';
+
+      try {
+        let endpoint = '/items';
+        const params = [];
+        if (search) params.push(`search=${encodeURIComponent(search)}`);
+        if (gst && gst !== 'All') params.push(`gst=${encodeURIComponent(gst)}`);
+        if (params.length > 0) endpoint += `?${params.join('&')}`;
+
+        const res = await api.get(endpoint);
+        if (res.success) {
+          if (!search && gst === 'All') {
+            cachedProducts = res.items || [];
+          }
+          renderProductsTable(res.items || []);
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center; color:var(--danger);">${err.message}</td></tr>`;
+      }
+    }
+
+    function renderProductsTable(items) {
+      const tbody = document.getElementById('products-tbody');
+      if (!tbody) return;
+
+      if (!items || items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center; color:var(--text-muted);">No products found in MongoDB catalog.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = items.map(p => {
+        const gstBadge = `<span class="badge badge-primary">${p.gstPercent}% GST</span>`;
+        const barcodeDisplay = p.barcode ? `<span class="code-pill">${p.barcode}</span>` : `<span style="color:var(--text-muted);">-</span>`;
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-main);">${escapeHtml(p.name)}</td>
+            <td style="padding: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">${p.hsnCode || '-'}</td>
+            <td style="padding: 0.75rem;">${barcodeDisplay}</td>
+            <td style="padding: 0.75rem; font-weight: 700;">₹${parseFloat(p.price).toFixed(2)}</td>
+            <td style="padding: 0.75rem;">${gstBadge}</td>
+            <td style="padding: 0.75rem; color: var(--text-muted);">${escapeHtml(p.unit || 'pcs')}</td>
+            <td style="padding: 0.75rem 1rem; text-align: right;">
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; margin-right: 4px;" onclick="editProduct('${p._id}')">✏️ Edit</button>
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.6rem; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteProduct('${p._id}', '${escapeHtml(p.name)}')">🗑️ Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function openProductModal(id = null) {
+      document.getElementById('form-product').reset();
+      document.getElementById('prod-form-id').value = id || '';
+      document.getElementById('modal-product-title').textContent = id ? '✏️ Edit Product' : '➕ Add New Product';
+      document.getElementById('prod-gst').value = '5';
+      document.getElementById('prod-unit').value = 'pcs';
+
+      if (id) {
+        let product = null;
+        try {
+          const res = await api.get(`/items/${id}`);
+          if (res.success && res.item) product = res.item;
+        } catch(e) {}
+
+        if (!product) {
+          product = cachedProducts.find(p => String(p._id) === String(id));
+        }
+
+        if (product) {
+          document.getElementById('prod-name').value = product.name || '';
+          document.getElementById('prod-price').value = product.price != null ? product.price : 0;
+          document.getElementById('prod-gst').value = product.gstPercent != null ? product.gstPercent : 5;
+          document.getElementById('prod-hsn').value = product.hsnCode || '';
+          document.getElementById('prod-barcode').value = product.barcode || '';
+          document.getElementById('prod-unit').value = product.unit || 'pcs';
+          document.getElementById('prod-category').value = product.category || '';
+        }
+      }
+      Modal.open('modal-product');
+    }
+
+    function editProduct(id) {
+      openProductModal(id);
+    }
+
+    async function handleProductSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-save-prod');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Saving to MongoDB...';
+      }
+
+      const id = document.getElementById('prod-form-id').value;
+      const name = document.getElementById('prod-name').value.trim();
+      const price = parseFloat(document.getElementById('prod-price').value);
+      const gstPercent = parseFloat(document.getElementById('prod-gst').value);
+      const hsnCode = document.getElementById('prod-hsn').value.trim();
+      const barcode = document.getElementById('prod-barcode').value.trim();
+      const unit = document.getElementById('prod-unit').value;
+      const category = document.getElementById('prod-category').value.trim();
+
+      const payload = { name, price, gstPercent, hsnCode, barcode, unit, category };
+
+      try {
+        let res;
+        if (id) {
+          res = await api.put(`/items/${id}`, payload);
+        } else {
+          res = await api.post('/items', payload);
+        }
+
+        if (res.success) {
+          Toast.show({ title: 'Product Saved', message: res.message || 'Saved in MongoDB', type: 'success' });
+          Modal.close('modal-product');
+          const searchInput = document.getElementById('prod-filter-search');
+          if (searchInput) searchInput.value = '';
+          await loadProductsList();
+          await loadTelemetryData();
+        }
+      } catch (err) {
+        Toast.show({ title: 'Save Failed', message: err.message, type: 'danger' });
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Save to MongoDB';
+        }
+      }
+    }
+
+    async function deleteProduct(id, name) {
+      if (!confirm(`Are you sure you want to delete product "${name}" from MongoDB catalog?`)) {
+        return;
+      }
+
+      try {
+        const res = await api.delete(`/items/${id}`);
+        if (res.success) {
+          Toast.show({ title: 'Deleted', message: `Product ${name} removed from MongoDB`, type: 'success' });
+          await loadProductsList();
+          await loadTelemetryData();
+        }
+      } catch (err) {
+        Toast.show({ title: 'Delete Failed', message: err.message, type: 'danger' });
+      }
+    }
+
+    /* =========================================================================
+       CAMERA BARCODE SCANNER (html5-qrcode) & BARCODE LOOKUP
+       ========================================================================= */
+    
+    // Audio feedback synthesizer
+    function playBeep() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      } catch (e) {}
+    }
+
+    let lastCameraBarcode = null;
+    let lastCameraScanTime = 0;
+
+    // Open camera scanner modal
+    function openScannerModal() {
+      Modal.open('modal-scanner');
+      document.getElementById('scanner-status-indicator').textContent = '🟡 Starting Camera Stream...';
+      document.getElementById('scanner-status-indicator').className = 'badge badge-neutral';
+
+      if (window.Html5Qrcode) {
+        try {
+          if (!html5QrCodeScanner) {
+            const formats = window.Html5QrcodeSupportedFormats ? [
+              Html5QrcodeSupportedFormats.EAN_13,
+              Html5QrcodeSupportedFormats.EAN_8,
+              Html5QrcodeSupportedFormats.UPC_A,
+              Html5QrcodeSupportedFormats.UPC_E,
+              Html5QrcodeSupportedFormats.CODE_128,
+              Html5QrcodeSupportedFormats.CODE_39,
+              Html5QrcodeSupportedFormats.QR_CODE
+            ] : undefined;
+            html5QrCodeScanner = new Html5Qrcode('reader', formats ? { formatsToSupport: formats, verbose: false } : undefined);
+          }
+
+          const config = {
+            fps: 15,
+            qrbox: { width: 280, height: 180 },
+            aspectRatio: 1.5
+          };
+
+          // Check if already scanning
+          const isScanning = html5QrCodeScanner.isScanning || (html5QrCodeScanner.getState && html5QrCodeScanner.getState() === 2);
+          if (!isScanning) {
+            html5QrCodeScanner.start(
+              { facingMode: 'environment' },
+              config,
+              (decodedText) => {
+                // Camera detected barcode! Apply cooldown to prevent duplicate frame multi-firing
+                const now = Date.now();
+                if (decodedText === lastCameraBarcode && (now - lastCameraScanTime) < 1600) {
+                  return; // Debounce frame repeat
+                }
+                lastCameraBarcode = decodedText;
+                lastCameraScanTime = now;
+                handleBarcodeScanned(decodedText);
+              },
+              (error) => {
+                // Frame non-detection (silent)
+              }
+            ).then(() => {
+              document.getElementById('scanner-status-indicator').textContent = '🟢 Camera Active: Align Barcode in Box';
+              document.getElementById('scanner-status-indicator').className = 'badge badge-success';
+            }).catch(err => {
+              console.warn('Webcam permission note:', err);
+              document.getElementById('scanner-status-indicator').textContent = '⚠️ Webcam unavailable - Use Barcode Simulator below';
+              document.getElementById('scanner-status-indicator').className = 'badge badge-warning';
+            });
+          }
+        } catch (e) {
+          console.warn('Scanner init error:', e);
+          document.getElementById('scanner-status-indicator').textContent = 'ℹ️ Quick Barcode Simulator Active';
+          document.getElementById('scanner-status-indicator').className = 'badge badge-primary';
+        }
+      } else {
+        document.getElementById('scanner-status-indicator').textContent = 'ℹ️ Quick Barcode Simulator Active';
+        document.getElementById('scanner-status-indicator').className = 'badge badge-primary';
+      }
+    }
+
+    // Close camera scanner modal
+    function closeScannerModal() {
+      if (html5QrCodeScanner) {
+        try {
+          const isScanning = html5QrCodeScanner.isScanning || (html5QrCodeScanner.getState && html5QrCodeScanner.getState() === 2);
+          if (isScanning) {
+            html5QrCodeScanner.stop().then(() => {
+              try { html5QrCodeScanner.clear(); } catch(e) {}
+            }).catch(() => {});
+          }
+        } catch(e) {}
+      }
+      Modal.close('modal-scanner');
+    }
+
+    // The Master Barcode Engine: Real MongoDB API Lookup
+    async function handleBarcodeScanned(code) {
+      if (!code || !code.trim()) return;
+      const cleanCode = code.trim();
+
+      // 1. Play audio confirmation beep
+      playBeep();
+
+      const scanBadge = document.getElementById('scanner-status-indicator');
+      if (scanBadge) {
+        scanBadge.textContent = `⚡ Detected: ${cleanCode}`;
+        scanBadge.className = 'badge badge-success';
+      }
+
+      try {
+        // 2. Real MongoDB lookup via GET /api/items/barcode/:code
+        const res = await api.get(`/items/barcode/${encodeURIComponent(cleanCode)}`);
+        if (res.success && res.product) {
+          
+          // 3. Add to cart (or increment qty if already present)
+          addProductToCart(res.product);
+
+          Toast.show({
+            title: 'Barcode Matched!',
+            message: `"${res.product.name}" added to cart (₹${res.product.price})`,
+            type: 'success'
+          });
+
+          // Check if continuous scanning is enabled
+          const contToggle = document.getElementById('scanner-continuous-toggle');
+          if (contToggle && !contToggle.checked) {
+            closeScannerModal();
+          }
+        }
+      } catch (err) {
+        Toast.show({
+          title: 'Barcode Not Found',
+          message: err.message || `No product matches barcode ${cleanCode} in MongoDB`,
+          type: 'danger'
+        });
+      }
+    }
+
+    // Barcode enter from keyboard in product search box
+    async function handleBarcodeEnter(barcodeVal) {
+      if (!barcodeVal || !barcodeVal.trim()) {
+        Toast.show({ title: 'Barcode Empty', message: 'Please enter or scan a barcode.', type: 'warning' });
+        return;
+      }
+      await handleBarcodeScanned(barcodeVal);
+      document.getElementById('billing-product-search').value = '';
+      document.getElementById('product-autocomplete-list').style.display = 'none';
+    }
+
+    function handleProductSearchInput(val) {
+      const box = document.getElementById('product-autocomplete-list');
+      if (!val || !val.trim()) {
+        box.style.display = 'none';
+        return;
+      }
+
+      const q = val.trim().toLowerCase();
+      const matches = cachedProducts.filter(p => 
+        (p.name && p.name.toLowerCase().includes(q)) || 
+        (p.barcode && p.barcode.includes(q)) ||
+        (p.hsnCode && p.hsnCode.includes(q))
+      );
+
+      if (matches.length === 0) {
+        box.innerHTML = `<div style="padding:0.75rem 1rem; color:var(--text-muted); font-size:0.8rem;">No products found for "${escapeHtml(val)}". Press Enter to query barcode directly.</div>`;
+        box.style.display = 'block';
+        return;
+      }
+
+      box.innerHTML = matches.map(p => `
+        <div class="autocomplete-item" onclick='handleProductSelect(${JSON.stringify(p).replace(/'/g, "&apos;")})'>
+          <div>
+            <div style="font-weight:700;">${escapeHtml(p.name)}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+              HSN: ${p.hsnCode || '-'} • Barcode: ${p.barcode || '-'}
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:700; color:var(--success);">₹${parseFloat(p.price).toFixed(2)}</div>
+            <span class="badge badge-primary" style="font-size:0.68rem;">${p.gstPercent}% GST</span>
+          </div>
+        </div>
+      `).join('');
+      box.style.display = 'block';
+    }
+
+    function handleProductSelect(product) {
+      addProductToCart(product);
+      document.getElementById('billing-product-search').value = '';
+      document.getElementById('product-autocomplete-list').style.display = 'none';
+      Toast.show({ title: 'Item Added', message: `${product.name} added to cart`, type: 'success' });
+    }
+
+    // Add Product to Cart or Increment Qty if already present
+    function addProductToCart(product) {
+      const existing = billingCart.find(item => item._id === product._id || (item.barcode && item.barcode !== '-' && item.barcode === product.barcode));
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        billingCart.push({
+          _id: product._id,
+          name: product.name,
+          hsnCode: product.hsnCode || '-',
+          barcode: product.barcode || '-',
+          price: parseFloat(product.price) || 0,
+          gstPercent: parseFloat(product.gstPercent) || 0,
+          unit: product.unit || 'pcs',
+          qty: 1
+        });
+      }
+      renderCartTable();
+    }
+
+    function changeCartItemQty(index, delta) {
+      if (!billingCart[index]) return;
+      billingCart[index].qty += delta;
+      if (billingCart[index].qty <= 0) {
+        billingCart.splice(index, 1);
+      }
+      renderCartTable();
+    }
+
+    function removeCartItem(index) {
+      if (!billingCart[index]) return;
+      billingCart.splice(index, 1);
+      renderCartTable();
+    }
+
+    function resetBillingCounter() {
+      billingCart = [];
+      renderCartTable();
+      Toast.show({ title: 'Bill Cleared', message: 'Billing counter is ready for new invoice.', type: 'info' });
+    }
+
+    function renderCartTable() {
+      const tbody = document.getElementById('billing-cart-tbody');
+      const countEl = document.getElementById('cart-item-count');
+      if (!tbody) return;
+
+      countEl.textContent = billingCart.reduce((acc, item) => acc + item.qty, 0);
+
+      if (billingCart.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="10" style="padding: 3rem 1rem; text-align: center; color: var(--text-muted);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
+              <div style="font-weight: 700; font-size: 1rem; color: var(--text-main); margin-bottom: 0.25rem;">
+                Billing Counter is Empty
+              </div>
+              <div style="font-size: 0.82rem;">
+                Click <strong>[📷 Scan Barcode]</strong> or search a product above to add items.
+              </div>
+            </td>
+          </tr>
+        `;
+        recalculateCart();
+        return;
+      }
+
+      tbody.innerHTML = billingCart.map((item, idx) => {
+        const taxable = item.price * item.qty;
+        const tax = taxable * (item.gstPercent / 100);
+        const lineTotal = taxable + tax;
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 0.75rem 1rem; color: var(--text-muted);">${idx + 1}</td>
+            <td style="padding: 0.75rem; font-weight: 700; color: var(--text-main);">${escapeHtml(item.name)}</td>
+            <td style="padding: 0.75rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">${item.hsnCode}</td>
+            <td style="padding: 0.75rem; font-family: var(--font-mono); font-size: 0.8rem;">${item.barcode}</td>
+            <td style="padding: 0.75rem;">₹${item.price.toFixed(2)}</td>
+            <td style="padding: 0.75rem;"><span class="badge badge-primary">${item.gstPercent}%</span></td>
+            <td style="padding: 0.75rem; text-align: center;">
+              <div style="display: inline-flex; align-items: center; gap: 4px;">
+                <button type="button" class="btn btn-sm btn-outline" style="padding: 2px 8px;" onclick="changeCartItemQty(${idx}, -1)">-</button>
+                <span style="font-weight: 700; min-width: 20px; text-align: center;">${item.qty}</span>
+                <button type="button" class="btn btn-sm btn-outline" style="padding: 2px 8px;" onclick="changeCartItemQty(${idx}, 1)">+</button>
+              </div>
+            </td>
+            <td style="padding: 0.75rem; text-align: right; font-weight: 600;">₹${taxable.toFixed(2)}</td>
+            <td style="padding: 0.75rem; text-align: right; font-weight: 800; color: var(--success);">₹${lineTotal.toFixed(2)}</td>
+            <td style="padding: 0.75rem 1rem; text-align: center;">
+              <button type="button" class="btn btn-sm btn-outline" style="color: var(--danger); border-color: rgba(239,68,68,0.3); padding: 2px 8px;" onclick="removeCartItem(${idx})">✕</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      recalculateCart();
+    }
+
+    // Real-Time GST Calculation
+    function recalculateCart() {
+      let subtotal = 0;
+      let totalTax = 0;
+
+      billingCart.forEach(item => {
+        const taxable = item.price * item.qty;
+        const tax = taxable * (item.gstPercent / 100);
+        subtotal += taxable;
+        totalTax += tax;
+      });
+
+      const grandTotal = subtotal + totalTax;
+      const isGujarat = activeCustomer ? ((activeCustomer.state || '').toLowerCase() === 'gujarat') : true;
+
+      document.getElementById('sum-subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById('sum-totaltax').textContent = `₹${totalTax.toFixed(2)}`;
+      document.getElementById('sum-grandtotal').textContent = `₹${grandTotal.toFixed(2)}`;
+
+      const cgstRow = document.getElementById('row-cgst');
+      const sgstRow = document.getElementById('row-sgst');
+      const igstRow = document.getElementById('row-igst');
+
+      if (isGujarat) {
+        const halfTax = totalTax / 2;
+        document.getElementById('sum-cgst').textContent = `₹${halfTax.toFixed(2)}`;
+        document.getElementById('sum-sgst').textContent = `₹${halfTax.toFixed(2)}`;
+        document.getElementById('sum-igst').textContent = `₹0.00`;
+        cgstRow.style.display = 'flex';
+        sgstRow.style.display = 'flex';
+        igstRow.style.display = 'none';
+      } else {
+        document.getElementById('sum-cgst').textContent = `₹0.00`;
+        document.getElementById('sum-sgst').textContent = `₹0.00`;
+        document.getElementById('sum-igst').textContent = `₹${totalTax.toFixed(2)}`;
+        cgstRow.style.display = 'none';
+        sgstRow.style.display = 'none';
+        igstRow.style.display = 'flex';
+      }
+    }
+
+    /* =========================================================================
+       BILL FINALIZATION & INVOICE PREVIEW / PDF ENGINE
+       ========================================================================= */
+
+    // Open Bill Review Modal
+    function openReviewModal() {
+      if (!activeCustomer) {
+        Toast.show({ title: 'Customer Required', message: 'Please select a customer first.', type: 'warning' });
+        return;
+      }
+
+      if (billingCart.length === 0) {
+        Toast.show({ title: 'Cart Empty', message: 'Please add at least one product to the bill.', type: 'warning' });
+        return;
+      }
+
+      const isGujarat = (activeCustomer.state || '').toLowerCase() === 'gujarat';
+      document.getElementById('rev-cust-name').textContent = activeCustomer.name;
+      document.getElementById('rev-cust-mobile').textContent = activeCustomer.mobile;
+      document.getElementById('rev-cust-address').textContent = `${activeCustomer.city || ''}, ${activeCustomer.state} ${activeCustomer.gstin ? '• GSTIN: ' + activeCustomer.gstin : ''}`;
+      
+      const badge = document.getElementById('rev-tax-badge');
+      badge.textContent = isGujarat ? 'Intra-State (CGST + SGST)' : `Inter-State (IGST: ${activeCustomer.state})`;
+      badge.className = isGujarat ? 'badge badge-success' : 'badge badge-warning';
+
+      // Populate item list
+      let subtotal = 0;
+      let totalTax = 0;
+      const tbody = document.getElementById('rev-items-tbody');
+
+      tbody.innerHTML = billingCart.map(item => {
+        const taxable = item.price * item.qty;
+        const tax = taxable * (item.gstPercent / 100);
+        subtotal += taxable;
+        totalTax += tax;
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 0.4rem 0.5rem; font-weight: 700;">${escapeHtml(item.name)}</td>
+            <td style="padding: 0.4rem 0.5rem; text-align: center;">${item.qty}</td>
+            <td style="padding: 0.4rem 0.5rem; text-align: right;">₹${item.price.toFixed(2)}</td>
+            <td style="padding: 0.4rem 0.5rem; text-align: right;">₹${taxable.toFixed(2)}</td>
+            <td style="padding: 0.4rem 0.5rem; text-align: right;"><span class="badge badge-primary" style="font-size:0.65rem;">${item.gstPercent}%</span></td>
+            <td style="padding: 0.4rem 0.5rem; text-align: right; font-weight: 700;">₹${(taxable + tax).toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const grandTotal = subtotal + totalTax;
+      document.getElementById('rev-subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById('rev-grandtotal').textContent = `₹${grandTotal.toFixed(2)}`;
+
+      const rCgst = document.getElementById('rev-row-cgst');
+      const rSgst = document.getElementById('rev-row-sgst');
+      const rIgst = document.getElementById('rev-row-igst');
+
+      if (isGujarat) {
+        const half = totalTax / 2;
+        document.getElementById('rev-cgst').textContent = `₹${half.toFixed(2)}`;
+        document.getElementById('rev-sgst').textContent = `₹${half.toFixed(2)}`;
+        document.getElementById('rev-igst').textContent = `₹0.00`;
+        rCgst.style.display = 'flex';
+        rSgst.style.display = 'flex';
+        rIgst.style.display = 'none';
+      } else {
+        document.getElementById('rev-cgst').textContent = `₹0.00`;
+        document.getElementById('rev-sgst').textContent = `₹0.00`;
+        document.getElementById('rev-igst').textContent = `₹${totalTax.toFixed(2)}`;
+        rCgst.style.display = 'none';
+        rSgst.style.display = 'none';
+        rIgst.style.display = 'flex';
+      }
+
+      Modal.open('modal-review');
+    }
+
+    // Confirm & Finalize Bill: Store Immutable Snapshot in MongoDB
+    async function confirmFinalizeBill() {
+      const btn = document.getElementById('btn-confirm-finalize');
+      btn.disabled = true;
+      btn.textContent = 'Saving to MongoDB...';
+
+      let subtotal = 0;
+      let totalTax = 0;
+      billingCart.forEach(item => {
+        const taxable = item.price * item.qty;
+        const tax = taxable * (item.gstPercent / 100);
+        subtotal += taxable;
+        totalTax += tax;
+      });
+
+      const isGujarat = (activeCustomer.state || '').toLowerCase() === 'gujarat';
+      const isInterState = !isGujarat;
+      const cgst = isInterState ? 0 : (totalTax / 2);
+      const sgst = isInterState ? 0 : (totalTax / 2);
+      const igst = isInterState ? totalTax : 0;
+      const grandTotal = subtotal + totalTax;
+
+      const payload = {
+        party: activeCustomer,
+        items: billingCart,
+        isInterState,
+        subtotal,
+        cgst,
+        sgst,
+        igst,
+        totalTax,
+        grandTotal,
+        paymentMethod: document.getElementById('rev-payment-method').value
+      };
+
+      try {
+        const res = await api.post('/bills', payload);
+        if (res.success && res.bill) {
+          Modal.close('modal-review');
+          Toast.show({
+            title: 'Bill Finalized!',
+            message: `Invoice ${res.bill.invoiceNo} saved permanently to MongoDB.`,
+            type: 'success'
+          });
+
+          // Show Invoice Preview
+          showInvoiceModal(res.bill);
+
+          // Reset cart
+          billingCart = [];
+          renderCartTable();
+          await loadTelemetryData();
+        }
+      } catch (err) {
+        Toast.show({ title: 'Finalization Failed', message: err.message, type: 'danger' });
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '✓ Confirm & Finalize Invoice';
+      }
+    }
+
+    // Render & Open Statutory A4 GST Invoice Preview
+    function showInvoiceModal(bill) {
+      currentActiveInvoice = bill;
+
+      document.getElementById('inv-no').textContent = bill.invoiceNo;
+      const dateObj = new Date(bill.invoiceDate || bill.createdAt);
+      document.getElementById('inv-date').textContent = dateObj.toLocaleDateString('en-IN', {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+
+      // Customer Details
+      document.getElementById('inv-cust-name').textContent = bill.party.name;
+      document.getElementById('inv-cust-mobile').textContent = bill.party.mobile;
+      document.getElementById('inv-cust-address').textContent = `${bill.party.address || ''} ${bill.party.city ? bill.party.city + ', ' : ''}${bill.party.state}`;
+      document.getElementById('inv-cust-gstin').textContent = bill.party.gstin ? `GSTIN: ${bill.party.gstin}` : 'Consumer (Unregistered)';
+
+      // Meta
+      document.getElementById('inv-place-of-supply').textContent = `${bill.party.stateCode || ''} - ${bill.party.state}`;
+      document.getElementById('inv-regime').textContent = bill.isInterState ? 'Inter-State (IGST 100%)' : 'Intra-State (CGST 50% + SGST 50%)';
+      document.getElementById('inv-payment-method').textContent = bill.paymentMethod || 'CASH';
+      document.getElementById('inv-cashier').textContent = bill.createdBy ? bill.createdBy.name : 'Cashier';
+
+      // Table Columns Toggle (CGST+SGST vs IGST)
+      const thCgst = document.getElementById('inv-th-cgst');
+      const thSgst = document.getElementById('inv-th-sgst');
+      const thIgst = document.getElementById('inv-th-igst');
+      const rCgst = document.getElementById('inv-summary-row-cgst');
+      const rSgst = document.getElementById('inv-summary-row-sgst');
+      const rIgst = document.getElementById('inv-summary-row-igst');
+
+      if (bill.isInterState) {
+        thCgst.style.display = 'none';
+        thSgst.style.display = 'none';
+        thIgst.style.display = 'table-cell';
+        rCgst.style.display = 'none';
+        rSgst.style.display = 'none';
+        rIgst.style.display = 'table-row';
+      } else {
+        thCgst.style.display = 'table-cell';
+        thSgst.style.display = 'table-cell';
+        thIgst.style.display = 'none';
+        rCgst.style.display = 'table-row';
+        rSgst.style.display = 'table-row';
+        rIgst.style.display = 'none';
+      }
+
+      // Render Itemized Rows
+      const tbody = document.getElementById('inv-items-tbody');
+      tbody.innerHTML = bill.items.map((item, idx) => {
+        const cgstCol = bill.isInterState ? '' : `<td style="text-align: right;">₹${item.cgst.toFixed(2)}</td>`;
+        const sgstCol = bill.isInterState ? '' : `<td style="text-align: right;">₹${item.sgst.toFixed(2)}</td>`;
+        const igstCol = bill.isInterState ? `<td style="text-align: right;">₹${item.igst.toFixed(2)}</td>` : '';
+
+        return `
+          <tr>
+            <td style="text-align: center;">${idx + 1}</td>
+            <td style="font-weight: 700;">${escapeHtml(item.name)}</td>
+            <td style="text-align: center; font-family: var(--font-mono); font-size: 0.75rem;">${item.hsnCode}</td>
+            <td style="text-align: center;">${item.qty} ${item.unit}</td>
+            <td style="text-align: right;">₹${item.rate.toFixed(2)}</td>
+            <td style="text-align: right;">₹${item.taxableAmount.toFixed(2)}</td>
+            <td style="text-align: center;">${item.gstPercent}%</td>
+            ${cgstCol}
+            ${sgstCol}
+            ${igstCol}
+            <td style="text-align: right; font-weight: 800;">₹${item.lineTotal.toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Summary Totals
+      document.getElementById('inv-subtotal').textContent = `₹${bill.subtotal.toFixed(2)}`;
+      document.getElementById('inv-cgst').textContent = `₹${bill.cgstTotal.toFixed(2)}`;
+      document.getElementById('inv-sgst').textContent = `₹${bill.sgstTotal.toFixed(2)}`;
+      document.getElementById('inv-igst').textContent = `₹${bill.igstTotal.toFixed(2)}`;
+      document.getElementById('inv-grandtotal').textContent = `₹${bill.grandTotal.toFixed(2)}`;
+      document.getElementById('inv-amount-words').textContent = bill.amountInWords || 'Zero Rupees Only';
+
+      Modal.open('modal-invoice');
+    }
+
+    // Download PDF via html2pdf.js
+    function downloadInvoicePDF() {
+      const element = document.getElementById('printable-invoice-content');
+      const invoiceNo = currentActiveInvoice ? currentActiveInvoice.invoiceNo : 'Invoice';
+      
+      Toast.show({ title: 'Generating PDF', message: `Exporting ${invoiceNo}.pdf...`, type: 'info' });
+
+      if (window.html2pdf) {
+        const opt = {
+          margin: [8, 8, 8, 8],
+          filename: `${invoiceNo}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save().then(() => {
+          Toast.show({ title: 'PDF Downloaded', message: `Saved ${invoiceNo}.pdf`, type: 'success' });
+        });
+      } else {
+        window.print();
+      }
+    }
+
+    // Direct Browser Print
+    function printInvoice() {
+      window.print();
+    }
+
+    function startNewBillFromInvoice() {
+      Modal.close('modal-invoice');
+      switchView('billing');
+    }
+
+    /* =========================================================================
+       BILL HISTORY (AUDIT OF SAVED INVOICES)
+       ========================================================================= */
+    async function loadBillsList() {
+      const tbody = document.getElementById('bills-tbody');
+      if (!tbody) return;
+
+      const search = document.getElementById('bill-filter-search') ? document.getElementById('bill-filter-search').value : '';
+
+      try {
+        let endpoint = '/bills';
+        if (search && search.trim()) {
+          endpoint += `?search=${encodeURIComponent(search.trim())}`;
+        }
+
+        const res = await api.get(endpoint);
+        if (res.success) {
+          renderBillsTable(res.bills || []);
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="padding:2rem; text-align:center; color:var(--danger);">${err.message}</td></tr>`;
+      }
+    }
+
+    function renderBillsTable(bills) {
+      const tbody = document.getElementById('bills-tbody');
+      if (!tbody) return;
+
+      if (!bills || bills.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="padding:2rem; text-align:center; color:var(--text-muted);">No finalized invoices saved in MongoDB yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = bills.map(b => {
+        const d = new Date(b.invoiceDate || b.createdAt);
+        const dateStr = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const taxBadge = b.isInterState ? `<span class="badge badge-warning">IGST (${b.party.state})</span>` : `<span class="badge badge-success">CGST+SGST</span>`;
+        const itemCount = b.items ? b.items.reduce((s, i) => s + (i.qty || 1), 0) : 0;
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-subtle);">
+            <td style="padding: 0.75rem 1rem; font-family: var(--font-mono); font-weight: 700; color: var(--primary);">${b.invoiceNo}</td>
+            <td style="padding: 0.75rem; font-size: 0.78rem; color: var(--text-muted);">${dateStr}</td>
+            <td style="padding: 0.75rem;">
+              <div style="font-weight: 700;">${escapeHtml(b.party.name)}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${b.party.mobile}</div>
+            </td>
+            <td style="padding: 0.75rem;">${taxBadge}</td>
+            <td style="padding: 0.75rem;">${itemCount} items</td>
+            <td style="padding: 0.75rem; text-align: right; font-weight: 800; color: var(--success);">₹${parseFloat(b.grandTotal).toFixed(2)}</td>
+            <td style="padding: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(b.createdBy ? b.createdBy.name : 'Staff')}</td>
+            <td style="padding: 0.75rem 1rem; text-align: right;">
+              <button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.65rem;" onclick='showInvoiceModal(${JSON.stringify(b).replace(/'/g, "&apos;")})'>
+                🔍 View Invoice
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Automated Verification Test Runner
+    async function runPhase2Tests() {
+      Toast.show({ title: 'Running Tests', message: 'Executing 12 automated verification tests in MongoDB...', type: 'primary' });
+      try {
+        const res = await api.get('/test-phase2');
+        if (res.success) {
+          const passCount = res.results.filter(r => r.status.startsWith('PASS')).length;
+          Toast.show({
+            title: res.summary,
+            message: `${passCount} of ${res.results.length} tests passed cleanly in MongoDB.`,
+            type: res.allPassed ? 'success' : 'warning',
+            duration: 6000
+          });
+          await loadTelemetryData();
+          if (currentUser && currentUser.role === 'ADMIN') {
+            loadCustomersList();
+            loadProductsList();
+          }
+        }
+      } catch (err) {
+        Toast.show({ title: 'Test Execution Failed', message: err.message, type: 'danger' });
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>

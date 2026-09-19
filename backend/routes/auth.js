@@ -1,7 +1,9 @@
 /* ==========================================================================
    AUTHENTICATION ROUTES (routes/auth.js)
    --------------------------------------------------------------------------
-   Simple, Student-Friendly MongoDB Auth with Zero-Dependency Password Hashing
+   Role-Based Authentication with strictly TWO roles:
+   - ADMIN (Shop Owner)
+   - STAFF (Cashier)
    Collections: users (codeathon_db)
    ========================================================================== */
 
@@ -9,6 +11,7 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const { getCollection, ObjectId } = require('../mongodb');
+const { seedDatabase } = require('../services/seedData');
 
 function usersCol() {
   return getCollection('users');
@@ -19,7 +22,7 @@ function hashPassword(password) {
   return crypto.createHash('sha256').update(password.trim()).digest('hex');
 }
 
-// 1. POST /api/auth/register (and alias /signup for backwards compatibility)
+// 1. POST /api/auth/register
 async function handleRegister(req, res, next) {
   try {
     const { name, email, password, role } = req.body;
@@ -41,11 +44,14 @@ async function handleRegister(req, res, next) {
       });
     }
 
+    // Strictly enforce TWO roles: ADMIN or STAFF
+    const sanitizedRole = (role && String(role).toUpperCase() === 'ADMIN') ? 'ADMIN' : 'STAFF';
+
     const newUser = {
-      name: name ? name.trim() : normalizedEmail.split('@')[0],
+      name: name ? name.trim() : (sanitizedRole === 'ADMIN' ? 'Shop Admin' : 'Cashier Staff'),
       email: normalizedEmail,
       password: hashPassword(password),
-      role: role || 'user',
+      role: sanitizedRole,
       createdAt: new Date()
     };
 
@@ -54,7 +60,7 @@ async function handleRegister(req, res, next) {
 
     return res.status(201).json({
       success: true,
-      message: 'Account registered successfully in MongoDB!',
+      message: `${sanitizedRole} account registered successfully in MongoDB!`,
       token,
       user: {
         id: result.insertedId,
@@ -70,7 +76,7 @@ async function handleRegister(req, res, next) {
 }
 
 router.post('/register', handleRegister);
-router.post('/signup', handleRegister); // Alias for existing components
+router.post('/signup', handleRegister); // Backwards compatibility alias
 
 // 2. POST /api/auth/login
 router.post('/login', async (req, res, next) => {
@@ -102,17 +108,19 @@ router.post('/login', async (req, res, next) => {
       });
     }
 
+    // Ensure role is strictly standardized
+    const role = (user.role && String(user.role).toUpperCase() === 'ADMIN') ? 'ADMIN' : 'STAFF';
     const token = `token_${Date.now()}_${user._id.toString()}`;
 
     return res.json({
       success: true,
-      message: 'Logged in successfully!',
+      message: `Welcome back, ${user.name}!`,
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role,
         createdAt: user.createdAt
       }
     });
@@ -139,9 +147,9 @@ router.get('/me', async (req, res, next) => {
       user = await usersCol().findOne({ _id: new ObjectId(userId) });
     }
 
-    // Fallback to the latest registered user if no token provided
+    // Fallback to default user if no token provided
     if (!user) {
-      user = await usersCol().find({}).sort({ createdAt: -1 }).limit(1).next();
+      user = await usersCol().findOne({ role: 'STAFF' }) || await usersCol().findOne({});
     }
 
     if (!user) {
@@ -149,12 +157,14 @@ router.get('/me', async (req, res, next) => {
         success: true,
         user: {
           id: 'guest',
-          name: 'Guest Developer',
-          email: 'guest@codeathon.local',
-          role: 'guest'
+          name: 'Guest User',
+          email: 'guest@shop.com',
+          role: 'STAFF'
         }
       });
     }
+
+    const role = (user.role && String(user.role).toUpperCase() === 'ADMIN') ? 'ADMIN' : 'STAFF';
 
     return res.json({
       success: true,
@@ -162,7 +172,7 @@ router.get('/me', async (req, res, next) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role,
         createdAt: user.createdAt
       }
     });
@@ -171,7 +181,28 @@ router.get('/me', async (req, res, next) => {
   }
 });
 
-// 4. POST /api/auth/logout
+// 4. POST /api/auth/seed - Trigger DB Seed on demand
+router.post('/seed', async (req, res, next) => {
+  try {
+    const result = await seedDatabase();
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// 5. GET /api/auth/demo-accounts - Fast-fill accounts for evaluation
+router.get('/demo-accounts', (req, res) => {
+  return res.json({
+    success: true,
+    accounts: [
+      { role: 'ADMIN', email: 'admin@shop.com', password: 'admin123', label: 'Shop Owner (Admin)' },
+      { role: 'STAFF', email: 'staff@shop.com', password: 'staff123', label: 'Cashier Sunil (Staff)' }
+    ]
+  });
+});
+
+// 6. POST /api/auth/logout
 router.post('/logout', (req, res) => {
   return res.json({ success: true, message: 'Logged out successfully.' });
 });
