@@ -9,6 +9,8 @@
   <!-- External Libraries: html5-qrcode for Camera Scanning & html2pdf for PDF Invoicing -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Chart.js for Reports & Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <style>
     /* Application Custom Refinements */
@@ -445,6 +447,12 @@
           </button>
         </div>
 
+        <!-- Language Selector -->
+        <select id="lang-selector" class="form-input" style="width:auto; padding:0.3rem 0.6rem; font-size:0.8rem; border-color:var(--border-color); background:var(--bg-surface); color:var(--text-main); cursor:pointer;" onchange="applyLanguage(this.value)" title="Select Language">
+          <option value="en">🌐 English</option>
+          <option value="hi">🇮🇳 हिंदी</option>
+        </select>
+
         <!-- Theme Toggle -->
         <button class="btn btn-sm btn-outline" style="border-color:var(--border-color);" onclick="ThemeManager.toggle()" title="Toggle Light/Dark Theme">
           🌓
@@ -470,6 +478,9 @@
     </button>
     <button id="tab-products-btn" class="nav-tab-btn admin-only" onclick="switchView('products')">
       📦 Products & Barcodes
+    </button>
+    <button id="tab-reports-btn" class="nav-tab-btn admin-only" onclick="switchView('reports')">
+      📈 Reports & Analytics
     </button>
   </nav>
 
@@ -974,6 +985,85 @@
       </div>
     </section>
 
+    <!-- (F) REPORTS & ANALYTICS VIEW (Admin Only) -->
+    <section id="view-reports" class="app-subview" style="display:none;">
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-4 md:grid-cols-2 gap-4" style="margin-bottom:1.5rem;">
+        <div class="card-panel" style="text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;" data-lang-key="rep_total_bills">Total Bills</div>
+          <div id="rep-total-bills" style="font-size:2rem;font-weight:800;color:var(--primary);margin-top:0.25rem;">0</div>
+        </div>
+        <div class="card-panel" style="text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;" data-lang-key="rep_total_sales">Total Sales</div>
+          <div id="rep-total-sales" style="font-size:2rem;font-weight:800;color:var(--success);margin-top:0.25rem;">₹0</div>
+        </div>
+        <div class="card-panel" style="text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;" data-lang-key="rep_total_tax">Total Tax</div>
+          <div id="rep-total-tax" style="font-size:2rem;font-weight:800;color:#818cf8;margin-top:0.25rem;">₹0</div>
+        </div>
+        <div class="card-panel" style="text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;" data-lang-key="rep_avg_bill">Avg Bill Value</div>
+          <div id="rep-avg-bill" style="font-size:2rem;font-weight:800;color:#f59e0b;margin-top:0.25rem;">₹0</div>
+        </div>
+      </div>
+
+      <!-- Filters + Export -->
+      <div class="card-panel" style="margin-bottom:1.25rem;padding:1rem 1.25rem;">
+        <div class="flex gap-3 flex-wrap items-center">
+          <span style="font-weight:700;font-size:0.85rem;color:var(--text-muted);" data-lang-key="rep_filter">Filter:</span>
+          <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-primary" id="rep-filter-today" onclick="setReportFilter('today',this)">Today</button>
+            <button class="btn btn-sm btn-outline" id="rep-filter-7d" onclick="setReportFilter('7d',this)">Last 7 Days</button>
+            <button class="btn btn-sm btn-outline" id="rep-filter-month" onclick="setReportFilter('month',this)">This Month</button>
+            <button class="btn btn-sm btn-outline" id="rep-filter-all" onclick="setReportFilter('all',this)">All Time</button>
+          </div>
+          <button class="btn btn-sm btn-success" onclick="exportReportsCSV()" style="margin-left:auto;" data-lang-key="rep_export_csv">📥 Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Sales Chart -->
+      <div class="card-panel" style="margin-bottom:1.25rem;padding:1.25rem;">
+        <div style="font-weight:700;font-size:1rem;margin-bottom:1rem;" data-lang-key="rep_sales_chart">📊 Sales Trend</div>
+        <div style="position:relative;height:220px;">
+          <canvas id="rep-sales-chart"></canvas>
+          <div id="rep-chart-empty" style="display:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;color:var(--text-muted);">
+            <span style="font-size:2rem;">📭</span>
+            <span style="font-size:0.875rem;">No bill data for this period</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction Table -->
+      <div class="card-panel" style="padding:0;overflow:hidden;">
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:700;font-size:0.95rem;" data-lang-key="rep_transactions">📋 Transaction History</div>
+          <span id="rep-txn-count" class="badge badge-neutral">0 records</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+            <thead>
+              <tr style="background:var(--bg-surface-hover);color:var(--text-muted);border-bottom:1px solid var(--border-color);font-size:0.72rem;text-transform:uppercase;">
+                <th style="padding:0.65rem 1rem;">Invoice No</th>
+                <th style="padding:0.65rem;">Date</th>
+                <th style="padding:0.65rem;">Customer</th>
+                <th style="padding:0.65rem;text-align:right;">Taxable (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">CGST (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">SGST (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">IGST (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">Total Tax (₹)</th>
+                <th style="padding:0.65rem;text-align:right;">Grand Total (₹)</th>
+                <th style="padding:0.65rem;text-align:center;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="rep-txn-tbody">
+              <tr><td colspan="10" style="padding:2rem;text-align:center;color:var(--text-muted);">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- =========================================================================
@@ -1435,6 +1525,7 @@
         }
       });
 
+      initLanguage();
       await checkAuthSession();
       await loadTelemetryData();
     });
@@ -1575,6 +1666,7 @@
       if (viewName === 'customers') loadCustomersList();
       if (viewName === 'products') loadProductsList();
       if (viewName === 'bills') loadBillsList();
+      if (viewName === 'reports') loadReportsData();
     }
 
     // Telemetry & Seed Status Loader
@@ -2730,6 +2822,273 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    /* =========================================================================
+       REPORTS & ANALYTICS
+       ========================================================================= */
+    let repCurrentFilter = 'today';
+    let repAllBills = [];
+    let repFilteredBills = [];
+    let repChart = null;
+
+    async function loadReportsData() {
+      try {
+        const res = await api.get('/bills');
+        if (res.success) {
+          repAllBills = res.bills || [];
+          applyReportFilter(repCurrentFilter);
+        }
+      } catch (err) {
+        document.getElementById('rep-txn-tbody').innerHTML = `<tr><td colspan="10" style="padding:2rem;text-align:center;color:var(--danger);">${err.message}</td></tr>`;
+      }
+    }
+
+    function setReportFilter(filter, btn) {
+      repCurrentFilter = filter;
+      document.querySelectorAll('[id^="rep-filter-"]').forEach(b => {
+        b.className = 'btn btn-sm btn-outline';
+      });
+      if (btn) btn.className = 'btn btn-sm btn-primary';
+      applyReportFilter(filter);
+    }
+
+    function applyReportFilter(filter) {
+      const now = new Date();
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const start7d = new Date(startOfDay); start7d.setDate(start7d.getDate() - 6);
+      const startMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      repFilteredBills = repAllBills.filter(b => {
+        const d = new Date(b.createdAt || b.date);
+        if (filter === 'today') return d >= startOfDay;
+        if (filter === '7d') return d >= start7d;
+        if (filter === 'month') return d >= startMonth;
+        return true; // 'all'
+      });
+
+      renderReportCards();
+      renderReportChart();
+      renderReportTransactions();
+    }
+
+    function renderReportCards() {
+      const bills = repFilteredBills;
+      const total = bills.length;
+      const totalSales = bills.reduce((s, b) => s + (parseFloat(b.grandTotal) || 0), 0);
+      const totalTax = bills.reduce((s, b) => {
+        return s + (parseFloat(b.totalCgst) || 0) + (parseFloat(b.totalSgst) || 0) + (parseFloat(b.totalIgst) || 0);
+      }, 0);
+      const avgBill = total > 0 ? totalSales / total : 0;
+
+      document.getElementById('rep-total-bills').textContent = total;
+      document.getElementById('rep-total-sales').textContent = '₹' + totalSales.toFixed(2);
+      document.getElementById('rep-total-tax').textContent = '₹' + totalTax.toFixed(2);
+      document.getElementById('rep-avg-bill').textContent = '₹' + avgBill.toFixed(2);
+    }
+
+    function renderReportChart() {
+      const canvas = document.getElementById('rep-sales-chart');
+      const emptyEl = document.getElementById('rep-chart-empty');
+      if (!canvas) return;
+
+      // Group by date
+      const dayMap = {};
+      repFilteredBills.forEach(b => {
+        const d = new Date(b.createdAt || b.date);
+        const key = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+        dayMap[key] = (dayMap[key] || 0) + (parseFloat(b.grandTotal) || 0);
+      });
+
+      const labels = Object.keys(dayMap);
+      const data = Object.values(dayMap);
+
+      if (labels.length === 0) {
+        canvas.style.display = 'none';
+        emptyEl.style.display = 'flex';
+        if (repChart) { repChart.destroy(); repChart = null; }
+        return;
+      }
+
+      canvas.style.display = 'block';
+      emptyEl.style.display = 'none';
+
+      const ctx = canvas.getContext('2d');
+      if (repChart) repChart.destroy();
+
+      repChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Sales (₹)',
+            data,
+            backgroundColor: 'rgba(99,102,241,0.7)',
+            borderColor: 'rgba(99,102,241,1)',
+            borderWidth: 1,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#94a3b8', callback: v => '₹' + v },
+              grid: { color: 'rgba(148,163,184,0.15)' }
+            },
+            x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderReportTransactions() {
+      const tbody = document.getElementById('rep-txn-tbody');
+      const countEl = document.getElementById('rep-txn-count');
+      if (!tbody) return;
+
+      const bills = repFilteredBills;
+      countEl.textContent = bills.length + ' records';
+
+      if (bills.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="padding:2rem;text-align:center;color:var(--text-muted);">No transactions in this period.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = bills.map(b => {
+        const cgst = parseFloat(b.totalCgst || 0).toFixed(2);
+        const sgst = parseFloat(b.totalSgst || 0).toFixed(2);
+        const igst = parseFloat(b.totalIgst || 0).toFixed(2);
+        const totalTax = (parseFloat(b.totalCgst || 0) + parseFloat(b.totalSgst || 0) + parseFloat(b.totalIgst || 0)).toFixed(2);
+        const taxable = parseFloat(b.subtotal || 0).toFixed(2);
+        const grand = parseFloat(b.grandTotal || 0).toFixed(2);
+        const date = new Date(b.createdAt || b.date).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        const custName = b.party ? escapeHtml(b.party.name) : 'N/A';
+        return `
+          <tr style="border-bottom:1px solid var(--border-subtle);">
+            <td style="padding:0.6rem 1rem;font-family:var(--font-mono);font-size:0.78rem;color:var(--primary);">${escapeHtml(b.invoiceNo || b._id)}</td>
+            <td style="padding:0.6rem;font-size:0.78rem;">${date}</td>
+            <td style="padding:0.6rem;font-weight:600;">${custName}</td>
+            <td style="padding:0.6rem;text-align:right;">₹${taxable}</td>
+            <td style="padding:0.6rem;text-align:right;">₹${cgst}</td>
+            <td style="padding:0.6rem;text-align:right;">₹${sgst}</td>
+            <td style="padding:0.6rem;text-align:right;">₹${igst}</td>
+            <td style="padding:0.6rem;text-align:right;color:#818cf8;">₹${totalTax}</td>
+            <td style="padding:0.6rem;text-align:right;font-weight:700;color:var(--success);">₹${grand}</td>
+            <td style="padding:0.6rem;text-align:center;">
+              <button class="btn btn-sm btn-outline" style="padding:0.2rem 0.5rem;font-size:0.72rem;" onclick='showInvoiceModal(${JSON.stringify(b).replace(/'/g, "&apos;")})'>🧾 View</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function exportReportsCSV() {
+      const bills = repFilteredBills;
+      if (bills.length === 0) {
+        Toast.show({ title: 'No Data', message: 'No transactions to export for this filter.', type: 'warning' });
+        return;
+      }
+
+      const headers = ['Invoice No','Date','Customer','Taxable Amount','CGST','SGST','IGST','Total Tax','Grand Total'];
+      const rows = bills.map(b => {
+        const cgst = parseFloat(b.totalCgst || 0).toFixed(2);
+        const sgst = parseFloat(b.totalSgst || 0).toFixed(2);
+        const igst = parseFloat(b.totalIgst || 0).toFixed(2);
+        const totalTax = (parseFloat(b.totalCgst || 0) + parseFloat(b.totalSgst || 0) + parseFloat(b.totalIgst || 0)).toFixed(2);
+        const date = new Date(b.createdAt || b.date).toLocaleString('en-IN');
+        const custName = b.party ? b.party.name : 'N/A';
+        return [
+          b.invoiceNo || b._id,
+          `"${date}"`,
+          `"${custName}"`,
+          parseFloat(b.subtotal || 0).toFixed(2),
+          cgst, sgst, igst, totalTax,
+          parseFloat(b.grandTotal || 0).toFixed(2)
+        ].join(',');
+      });
+
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `GST_Report_${repCurrentFilter}_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      Toast.show({ title: 'CSV Exported', message: `${bills.length} transactions exported.`, type: 'success' });
+    }
+
+    /* =========================================================================
+       LANGUAGE SELECTOR (English / Hindi)
+       ========================================================================= */
+    const LANG = {
+      en: {
+        tab_billing: '⚡ Smart Billing Counter',
+        tab_bills: '📜 Bill History',
+        tab_dashboard: '📊 Admin Dashboard',
+        tab_customers: '👥 Customers (Parties)',
+        tab_products: '📦 Products & Barcodes',
+        tab_reports: '📈 Reports & Analytics',
+        rep_total_bills: 'Total Bills',
+        rep_total_sales: 'Total Sales',
+        rep_total_tax: 'Total Tax',
+        rep_avg_bill: 'Avg Bill Value',
+        rep_filter: 'Filter:',
+        rep_export_csv: '📥 Export CSV',
+        rep_sales_chart: '📊 Sales Trend',
+        rep_transactions: '📋 Transaction History',
+      },
+      hi: {
+        tab_billing: '⚡ बिलिंग काउंटर',
+        tab_bills: '📜 बिल इतिहास',
+        tab_dashboard: '📊 डैशबोर्ड',
+        tab_customers: '👥 ग्राहक',
+        tab_products: '📦 उत्पाद',
+        tab_reports: '📈 रिपोर्ट और विश्लेषण',
+        rep_total_bills: 'कुल बिल',
+        rep_total_sales: 'कुल बिक्री',
+        rep_total_tax: 'कुल कर',
+        rep_avg_bill: 'औसत बिल',
+        rep_filter: 'फ़िल्टर:',
+        rep_export_csv: '📥 CSV निर्यात करें',
+        rep_sales_chart: '📊 बिक्री ट्रेंड',
+        rep_transactions: '📋 लेनदेन इतिहास',
+      }
+    };
+
+    function applyLanguage(lang) {
+      localStorage.setItem('billingLang', lang);
+      const t = LANG[lang] || LANG.en;
+
+      // Nav tabs
+      const setTabText = (id, key) => { const el = document.getElementById(id); if (el && t[key]) el.textContent = t[key]; };
+      setTabText('tab-billing-btn', 'tab_billing');
+      setTabText('tab-bills-btn', 'tab_bills');
+      setTabText('tab-dashboard-btn', 'tab_dashboard');
+      setTabText('tab-customers-btn', 'tab_customers');
+      setTabText('tab-products-btn', 'tab_products');
+      setTabText('tab-reports-btn', 'tab_reports');
+
+      // Data-lang-key elements
+      document.querySelectorAll('[data-lang-key]').forEach(el => {
+        const key = el.getAttribute('data-lang-key');
+        if (t[key]) el.textContent = t[key];
+      });
+
+      // Update selector
+      const sel = document.getElementById('lang-selector');
+      if (sel) sel.value = lang;
+    }
+
+    function initLanguage() {
+      const saved = localStorage.getItem('billingLang') || 'en';
+      applyLanguage(saved);
     }
   </script>
 </body>
