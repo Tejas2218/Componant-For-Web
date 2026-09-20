@@ -685,6 +685,11 @@
                 📷 Scan Barcode
               </button>
 
+              <!-- Browser Voice Command Trigger -->
+              <button type="button" id="voice-command-btn" class="btn btn-outline" style="display: flex; align-items: center; gap: 0.4rem; font-weight: 700;" onclick="toggleVoiceCommands()" title="Use voice commands">
+                🎙️ Voice
+              </button>
+
               <!-- Search Bar -->
               <div style="flex: 1; min-width: 220px; position: relative;">
                 <input type="text" id="billing-product-search" class="form-input" placeholder="🔍 Search product by name or enter barcode (e.g. 8901262010014)..." oninput="handleProductSearchInput(this.value)" onkeydown="if(event.key==='Enter'){handleBarcodeEnter(this.value);}" autocomplete="off">
@@ -695,6 +700,7 @@
                 + Add by Barcode
               </button>
             </div>
+            <div id="voice-command-status" role="status" aria-live="polite" style="display: none; margin-top: 0.65rem; font-size: 0.8rem; color: var(--text-muted);"></div>
           </div>
 
           <!-- 3. Billing Cart Table -->
@@ -1568,6 +1574,7 @@
     let billingCart = [];
     let currentActiveInvoice = null;
     let html5QrCodeScanner = null;
+    let voiceRecognition = null;
 
     // Initialize App Session
     document.addEventListener('DOMContentLoaded', async () => {
@@ -1582,6 +1589,7 @@
       });
 
       initLanguage();
+      initVoiceCommandsSupport();
       await checkAuthSession();
       await loadTelemetryData();
     });
@@ -2393,6 +2401,170 @@
       document.getElementById('billing-product-search').value = '';
       document.getElementById('product-autocomplete-list').style.display = 'none';
       Toast.show({ title: 'Item Added', message: `${product.name} added to cart`, type: 'success' });
+    }
+
+    const VOICE_QUANTITIES = {
+      one: 1, a: 1, an: 1, two: 2, three: 3, four: 4, five: 5,
+      six: 6, seven: 7, eight: 8, nine: 9, ten: 10
+    };
+
+    function getVoiceRecognitionLanguage() {
+      const selector = document.getElementById('lang-selector');
+      return selector && selector.value === 'hi' ? 'hi-IN' : 'en-IN';
+    }
+
+    function initVoiceCommandsSupport() {
+      if (!getSpeechRecognitionConstructor()) {
+        setVoiceStatus('Voice commands are not supported in this browser', 'error');
+      }
+    }
+
+    function setVoiceStatus(message, type) {
+      const status = document.getElementById('voice-command-status');
+      if (!status) return;
+      status.textContent = message;
+      status.style.display = 'block';
+      status.style.color = type === 'error' ? 'var(--danger)' :
+        type === 'success' ? 'var(--success)' : 'var(--text-muted)';
+    }
+
+    function getSpeechRecognitionConstructor() {
+      return window.SpeechRecognition || window.webkitSpeechRecognition;
+    }
+
+    function toggleVoiceCommands() {
+      const Recognition = getSpeechRecognitionConstructor();
+      if (!Recognition) {
+        setVoiceStatus('Voice commands are not supported in this browser', 'error');
+        return;
+      }
+
+      if (voiceRecognition) {
+        voiceRecognition.stop();
+        return;
+      }
+
+      voiceRecognition = new Recognition();
+      voiceRecognition.lang = getVoiceRecognitionLanguage();
+      voiceRecognition.continuous = false;
+      voiceRecognition.interimResults = false;
+      voiceRecognition.maxAlternatives = 1;
+
+      voiceRecognition.onstart = () => {
+        const button = document.getElementById('voice-command-btn');
+        if (button) {
+          button.textContent = '🔴 Listening...';
+          button.classList.add('btn-primary');
+          button.classList.remove('btn-outline');
+        }
+        setVoiceStatus('Listening...', 'info');
+      };
+
+      voiceRecognition.onresult = async (event) => {
+        const transcript = event.results[0][0].transcript.trim();
+        await handleVoiceCommand(transcript);
+      };
+
+      voiceRecognition.onerror = (event) => {
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          setVoiceStatus('Microphone permission is required for voice commands.', 'error');
+        } else if (event.error !== 'aborted') {
+          setVoiceStatus('Command not recognized. Please try again.', 'error');
+        }
+      };
+
+      voiceRecognition.onend = () => {
+        voiceRecognition = null;
+        const button = document.getElementById('voice-command-btn');
+        if (button) {
+          button.textContent = '🎙️ Voice';
+          button.classList.remove('btn-primary');
+          button.classList.add('btn-outline');
+        }
+      };
+
+      try {
+        voiceRecognition.start();
+      } catch (err) {
+        voiceRecognition = null;
+        setVoiceStatus('Unable to start voice commands. Please try again.', 'error');
+      }
+    }
+
+    function parseVoiceQuantity(words) {
+      if (!words.length) return { productName: '', quantity: 1 };
+      const lastWord = words[words.length - 1].toLowerCase().replace(/[.,!?]$/, '');
+      const quantity = /^\d+$/.test(lastWord) ? parseInt(lastWord, 10) : VOICE_QUANTITIES[lastWord];
+      if (!quantity || quantity < 1) return { productName: words.join(' '), quantity: 1 };
+      return { productName: words.slice(0, -1).join(' '), quantity };
+    }
+
+    async function findVoiceProduct(productName) {
+      const response = await api.get(`/items?search=${encodeURIComponent(productName)}`);
+      const products = response.success ? (response.items || []) : [];
+      const normalizedName = productName.toLowerCase().trim();
+      return products.find(product => (product.name || '').toLowerCase() === normalizedName) ||
+        products.find(product => (product.name || '').toLowerCase().includes(normalizedName)) ||
+        products[0];
+    }
+
+    async function handleVoiceCommand(transcript) {
+      const command = transcript.toLowerCase().replace(/[.,!?]+$/, '').trim();
+
+      if (command === 'clear cart' || command === 'clear bill') {
+        resetBillingCounter();
+        setVoiceStatus('Added command: Cart cleared.', 'success');
+        return;
+      }
+
+      if (command === 'finalize bill' || command === 'finalise bill') {
+        setVoiceStatus('Opening bill review...', 'info');
+        openReviewModal();
+        return;
+      }
+
+      const addMatch = command.match(/^add\s+(.+)$/i);
+      const removeMatch = command.match(/^remove\s+(.+)$/i);
+      if (!addMatch && !removeMatch) {
+        setVoiceStatus('Command not recognized. Please try again.', 'error');
+        return;
+      }
+
+      const parsed = parseVoiceQuantity((addMatch || removeMatch)[1].split(/\s+/));
+      if (!parsed.productName) {
+        setVoiceStatus('Command not recognized. Please try again.', 'error');
+        return;
+      }
+
+      setVoiceStatus('Searching for product...', 'info');
+      try {
+        const product = await findVoiceProduct(parsed.productName);
+        if (!product) {
+          setVoiceStatus('Product not found...', 'error');
+          return;
+        }
+
+        if (removeMatch) {
+          const cartIndex = billingCart.findIndex(item =>
+            item._id === product._id ||
+            (item.barcode && item.barcode !== '-' && item.barcode === product.barcode)
+          );
+          if (cartIndex === -1) {
+            setVoiceStatus('Product not found in cart...', 'error');
+            return;
+          }
+          removeCartItem(cartIndex);
+          setVoiceStatus('Product removed from cart.', 'success');
+          return;
+        }
+
+        for (let index = 0; index < parsed.quantity; index += 1) {
+          addProductToCart(product);
+        }
+        setVoiceStatus('Product found... Added to cart...', 'success');
+      } catch (err) {
+        setVoiceStatus('Product not found...', 'error');
+      }
     }
 
     // Add Product to Cart or Increment Qty if already present
